@@ -25,15 +25,18 @@ class GcodestatPrintTimeEstimator(
     def __init__(self, job_type):
         GcodestatPrintTimeEstimator.estimatedTime  = 0
         GcodestatPrintTimeEstimator.percentageDone = -1
+        PrintTimeEstimator.__init__(self, job_type)
+        self._job_type = job_type
 
     def on_after_startup(self):
         self._logger.info("Started up gcodestatEstimator")
         
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
-        #this is crashing octoprint
-        #if GcodestatPrintTimeEstimator.percentageDone == -1: return None, None
-        #so let us try this:
-        if GcodestatPrintTimeEstimator.percentageDone == -1: return 9223372036854775807, "estimate"
+        if self._job_type != "local":
+          return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
+
+        if GcodestatPrintTimeEstimator.percentageDone == -1: 
+          return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
         
         return GcodestatPrintTimeEstimator.estimatedTime, "estimate"
 
