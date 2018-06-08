@@ -3,12 +3,12 @@ Estimator for OctoPrint that uses data embedded in gcode by [gcodestat](https://
 
 ## Requirement
  * Needs octoprint 1.3.9 that implements
-   http://docs.octoprint.org/en/maintenance/plugins/hooks.html#octoprint-filemanager-analysis-factory
-   http://docs.octoprint.org/en/maintenance/plugins/hooks.html#octoprint-printer-estimation-factory
+   * http://docs.octoprint.org/en/maintenance/plugins/hooks.html#octoprint-filemanager-analysis-factory
+   * http://docs.octoprint.org/en/maintenance/plugins/hooks.html#octoprint-printer-estimation-factory
  * Needs M117 codes in your G-Code to look like (12hours+43minutes+4seconds or 43minutes + 4seconds or 4 seconds):
-     M117 35% Remaining ( 12:43:04 )
-     M117 17% Remaining ( 43:04 )
-     M117 5% Remaining ( 04 )
+   * M117 35% Remaining ( 12:43:04 )
+   * M117 17% Remaining ( 43:04 )
+   * M117 5% Remaining ( 04 )
  * You can use [gcodestat](https://github.com/arhi/gcodestat) to pre-process your G-Code files and embed these M117 codes
 
 ## Issues
