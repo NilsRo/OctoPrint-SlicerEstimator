@@ -1,5 +1,4 @@
-Estimator for OctoPrint that uses data embedded in gcode by [gcodestat](https://github.com/arhi/gcodestat)
-=====================================================================
+# Estimator for OctoPrint that uses data embedded in gcode by [gcodestat](https://github.com/arhi/gcodestat)
 
 ## Requirement
  * Needs octoprint 1.3.9 that implements
