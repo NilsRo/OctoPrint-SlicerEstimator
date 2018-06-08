@@ -10,16 +10,14 @@
    * M117 5% Remaining ( 04 )
  * You can use [gcodestat](https://github.com/arhi/gcodestat) to pre-process your G-Code files and embed these M117 codes
 
-## Issues
- * Does not know how to handle prints from the SD card, only knows how to handle prints from local octoprint storage. In case of SDCARD prints it will show fixed 9.5 days time to finish
- * Does not know how to handle files that do not have M117 codes embedded and till properly formatted M117 code is found it will report 9.5 days time to finish
- 
 ## ToDo
  * Auto preprocess the G-Code file on upload and embed M117 codes (use externally gcodestat for e.g. for speed)
- * Allow original OctoPrint estimator to work in case we don't find M117 or in case of SDCARD prints
+ * Push a % value to the OctoPrint (I have the value I just have no clue how to send it to OctoPrint)
  
 ## Notes
  * I'm no Python developer, I do C++, so if you can suggest code cleanup, solving something differently etc. feel free to step in
+ * In case there are no M117 codes that can be recognised the original estimator from OctoPrint will be used
+ * In case SDCARD print is used the original estimator from OctoPrint will be used
  
  
  
