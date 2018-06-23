@@ -15,6 +15,7 @@
 ## ToDo
  * Auto preprocess the G-Code file on upload and embed M117 codes (use externally gcodestat for e.g. for speed)
  * Push a % value to the OctoPrint (I have the value I just have no clue how to send it to OctoPrint)
+ * Add configuration so that custom regex can be used to parse M117 valuess
  
 ## Notes
  * I'm no Python developer, I do C++, so if you can suggest code cleanup, solving something differently etc. feel free to step in, this code would never be presented without serious help from foosel!!!
