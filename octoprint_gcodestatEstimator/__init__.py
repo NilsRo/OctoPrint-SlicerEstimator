@@ -15,65 +15,48 @@ class GcodestatPrintTimeEstimator(PrintTimeEstimator):
         self.estimated_time = 0
         self.percentage_done = -1
 
-    def estimate(self, *args, **kwargs):
+    def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         if self._job_type != "local" or self.percentage_done == -1:
-            return PrintTimeEstimator.estimate(self, *args, **kwargs)
+            return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
         return self.estimated_time, "estimate"
 
 class GcodestatPrintTimeEstimatorPlugin(octoprint.plugin.StartupPlugin):
 
-    pw = re.compile('M117 ([0-9]+)%+ Remaining ([0-9]+) weeks ([0-9]+) days \( ([0-9]+):([0-9]+):([0-9]+) \)')
-    pd = re.compile('M117 ([0-9]+)%+ Remaining ([0-9]+) days \( ([0-9]+):([0-9]+):([0-9]+) \)')
-    ph = re.compile('M117 ([0-9]+)%+ Remaining \( ([0-9]+):([0-9]+):([0-9]+) \)')
-    pm = re.compile('M117 ([0-9]+)%+ Remaining \( ([0-9]+):([0-9]+) \)')
-    ps = re.compile('M117 ([0-9]+)%+ Remaining \( ([0-9]+) \)')
+    ph = re.compile('M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s')
+    pc = re.compile('M73 P([0-9]+)')
 
     def __init__(self):
         self._estimator = None
 
     def on_after_startup(self):
-        self._logger.info("Started up gcodestatEstimator")
+        self._logger.info("Started up gcodestatEstimator Cura")
 
 
     ##~~ queuing gcode hook
 
     def updateEstimation(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if gcode != "M117" or self._estimator is None:
+        if (self._estimator is None:
             return
 
-        self._logger.debug("gcodestatEstimator: M117 found")
+        if (gcode == "M73" ):
+            self._logger.debug("gcodestatEstimator: M73 found")
 
-        mw = self.pw.match(cmd)
-        md = self.pd.match(cmd)
-        mh = self.ph.match(cmd)
-        mm = self.pm.match(cmd)
-        ms = self.ps.match(cmd)
-        if mw:
-            self._estimator.estimated_time = float(mw.group(2))*7*24*60*60 + float(mw.group(3))*24*60*60 + float(mw.group(4))*60*60 + float(mw.group(5))*60 + float(mw.group(6))
-            self._estimator.percentage_done = float(mw.group(1))
-        elif md:
-            self._estimator.estimated_time = float(mw.group(2))*24*60*60 + float(md.group(3))*60*60 + float(md.group(4))*60 + float(md.group(5))
-            self._estimator.percentage_done = float(md.group(1))
-        elif mh:
-            self._estimator.estimated_time = float(mh.group(2))*60*60 + float(mh.group(3))*60 + float(mh.group(4))
-            self._estimator.percentage_done = float(mh.group(1))
-        elif mm:
-            self._estimator.estimated_time = float(mm.group(2))*60 + float(mm.group(3))
-            self._estimator.percentage_done = float(mm.group(1))
-        elif ms:
-            self._estimator.estimated_time = float(ms.group(2))
-            self._estimator.percentage_done = float(ms.group(1))
-        else :
-            self._logger.debug("gcodestatEstimator: NO MATCH!")
-            return
+            mp = self.pc.match(cmd)
+            self._estimator.percentage_done = float(mp.group(1))
+
+        if (gcode == "M117"):
+            self._logger.debug("gcodestatEstimator: M117 found")
+
+            mh = self.ph.match(cmd)
+            self._estimator.estimated_time = float(mh.group(1))*60*60 + float(mh.group(2))*60 + float(mh.group(3))
 
         self._logger.debug("gcodestatEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
 
     ##~~ estimator factory hook
 
     def estimator_factory(self):
-        def factory(*args, **kwargs):
-            self._estimator = GcodestatPrintTimeEstimator(*args, **kwargs)
+        def factory(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
+            self._estimator = GcodestatPrintTimeEstimator(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
             return self._estimator
         return factory
 
@@ -87,15 +70,18 @@ class GcodestatPrintTimeEstimatorPlugin(octoprint.plugin.StartupPlugin):
 
                 # version check: github repository
                 type="github_release",
-                user="arhi",
+                user="NilsRo",
                 repo="OctoPrint-gcodestatEstimator",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/arhi/OctoPrint-gcodestatEstimator/archive/{target_version}.zip"
+                pip="https://github.com/NilsRo/OctoPrint-gcodestatEstimator/archive/{target_version}.zip"
             )
         )
 
+
+__plugin_name__ = "gcodestatEstimator-Cura"
+__plugin_pythoncompat__ = ">=2.7,<4"
 
 __plugin_implementation__ = GcodestatPrintTimeEstimatorPlugin()
 __plugin_hooks__ = {
