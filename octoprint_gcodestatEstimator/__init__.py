@@ -35,7 +35,7 @@ class GcodestatPrintTimeEstimatorPlugin(octoprint.plugin.StartupPlugin):
     ##~~ queuing gcode hook
 
     def updateEstimation(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if (self._estimator is None:
+        if (self._estimator is None):
             return
 
         if (gcode == "M73" ):
