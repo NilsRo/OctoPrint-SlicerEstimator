@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import octoprint.plugin
 
@@ -22,8 +22,8 @@ class GcodestatPrintTimeEstimator(PrintTimeEstimator):
 
 class GcodestatPrintTimeEstimatorPlugin(octoprint.plugin.StartupPlugin):
 
-    ph = re.compile('M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s')
-    pc = re.compile('M73 P([0-9]+)')
+    ph = re.compile("M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s")
+    pc = re.compile("M73 P([0-9]+)")
 
     def __init__(self):
         self._estimator = None
@@ -35,28 +35,37 @@ class GcodestatPrintTimeEstimatorPlugin(octoprint.plugin.StartupPlugin):
     ##~~ queuing gcode hook
 
     def updateEstimation(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if (self._estimator is None):
+        if self._estimator is None:
             return
 
-        if (gcode == "M73" ):
+        if gcode and gcode == "M73":
             self._logger.debug("gcodestatEstimator: M73 found")
 
             mp = self.pc.match(cmd)
-            self._estimator.percentage_done = float(mp.group(1))
+            if mp:
+                self._estimator.percentage_done = float(mp.group(1))
 
-        if (gcode == "M117"):
+                self._logger.debug("gcodestatEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
+            else:
+                self._logger.debug("gcodestatEstimator: unknown cmd {}".format(cmd))
+
+        if gcode and gcode == "M117":
             self._logger.debug("gcodestatEstimator: M117 found")
 
             mh = self.ph.match(cmd)
-            self._estimator.estimated_time = float(mh.group(1))*60*60 + float(mh.group(2))*60 + float(mh.group(3))
+            if mh: 
+                self._estimator.estimated_time = float(mh.group(1))*60*60 + float(mh.group(2))*60 + float(mh.group(3))
 
-        self._logger.debug("gcodestatEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
+                self._logger.debug("gcodestatEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
+            else:
+                self._logger.debug("gcodestatEstimator: unknown cmd {}".format(cmd))
+
 
     ##~~ estimator factory hook
 
     def estimator_factory(self):
-        def factory(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
-            self._estimator = GcodestatPrintTimeEstimator(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
+        def factory(*args, **kwargs):
+            self._estimator = GcodestatPrintTimeEstimator(*args, **kwargs)
             return self._estimator
         return factory
 
@@ -80,12 +89,11 @@ class GcodestatPrintTimeEstimatorPlugin(octoprint.plugin.StartupPlugin):
         )
 
 
-__plugin_name__ = "gcodestatEstimator-Cura"
-__plugin_pythoncompat__ = ">=2.7,<4"
-
+__plugin_name__ = "Print Time Estimator Cura"
+__plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 __plugin_implementation__ = GcodestatPrintTimeEstimatorPlugin()
 __plugin_hooks__ = {
-    "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.updateEstimation,
+    "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.updateEstimation,
     "octoprint.printer.estimation.factory": __plugin_implementation__.estimator_factory,
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
 }
