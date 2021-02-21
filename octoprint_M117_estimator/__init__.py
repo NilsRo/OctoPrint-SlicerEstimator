@@ -29,8 +29,7 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
 
     # Settings
     def on_after_startup(self):
-        self._logger.info("Started up M117_estimator Cura")
-        self._logger.info(self._settings.get(["pw"]))
+        self._logger.info("Started up M117_estimator")        
         self._pw = re.compile(self._settings.get(["pw"]))
         self._pd = re.compile(self._settings.get(["pd"]))
         self._ph = re.compile(self._settings.get(["ph"]))
