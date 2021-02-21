@@ -3,9 +3,9 @@ With this plugin and active Post Processing in Cura you will get an excact estim
 
 The default configuration matches the syntax of Cura, but you can change it in the plugin configuration according your needs.
 
-For the following command M117 100% Remaining 1 weeks 6 days ( 07:54:19 ) to get the weeks you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1, as the week is the first match. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
+For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
 
-I like to suggest regex101.com for testing.
+I like to suggest regex101.com for testing and to get the right match group.
 
 ![](images/RegEx.png)
 

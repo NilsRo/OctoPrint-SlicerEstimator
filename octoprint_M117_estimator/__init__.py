@@ -144,7 +144,7 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
         )
 
 
-__plugin_name__ = "Print Time Estimator Cura"
+__plugin_name__ = "M117 Print Time Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 __plugin_implementation__ = M117_estimatorPlugin()
 __plugin_hooks__ = {
