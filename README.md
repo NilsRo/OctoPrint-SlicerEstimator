@@ -16,8 +16,8 @@ I like to suggest regex101.com for testing and to get the right match group.
 ![](images/RegEx.png)
 
 ## Requirement
- * Needs M73 and M117 codes in your G-Code in Cura format. M73 contains percentage done and M117 remaining time. As percentage done is not processed further it is not really necessary.
- * You have to add Cura Post Processing Script "Display Progress On LCD" and activate "Time Remaining" and "Percentage" to add necessary information to G-Code file. 
+ * Needs M73 and M117 codes in your GCODE in Cura format. M73 contains percentage done and M117 remaining time. As percentage done is not processed further it is not really necessary.
+ * You have to add Cura Post Processing Script "Display Progress On LCD" and activate "Time Remaining" and "Percentage" to add necessary information to GCODE file. 
 ## Notes
  * In case there are no M117 codes that can be recognised the original estimator from OctoPrint will be used
  * In case SDCARD print is used the original estimator from OctoPrint will be used
