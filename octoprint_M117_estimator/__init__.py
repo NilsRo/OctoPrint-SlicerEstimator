@@ -29,21 +29,49 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
 
     # Settings
     def on_after_startup(self):
-        self._logger.info("Started up M117_estimator")        
-        self._pw = re.compile(self._settings.get(["pw"]))
-        self._pd = re.compile(self._settings.get(["pd"]))
-        self._ph = re.compile(self._settings.get(["ph"]))
-        self._pm = re.compile(self._settings.get(["pm"]))
-        self._ps = re.compile(self._settings.get(["ps"]))
+        self._logger.info("Started up M117_estimator")
+        
+        #Slicer defaults - actual Cura only
+        slicer_def = [[
+            "","",
+            "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+            "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+            "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+            1,1,1,2,3]]
+        
+        
+        self._slicer = self._settings.get(["slicer"])
+        self._logger.debug("M117_estimator: Slicer Setting {}".format(self._slicer))
 
-        self._pwp = int(self._settings.get(["pwp"]))
-        self._pdp = int(self._settings.get(["pdp"]))
-        self._php = int(self._settings.get(["php"]))
-        self._pmp = int(self._settings.get(["pmp"]))
-        self._psp = int(self._settings.get(["psp"]))
+        if self._slicer == "c": 
+            self._pw = re.compile(self._settings.get(["pw"]))
+            self._pd = re.compile(self._settings.get(["pd"]))
+            self._ph = re.compile(self._settings.get(["ph"]))
+            self._pm = re.compile(self._settings.get(["pm"]))
+            self._ps = re.compile(self._settings.get(["ps"]))
+
+            self._pwp = int(self._settings.get(["pwp"]))
+            self._pdp = int(self._settings.get(["pdp"]))
+            self._php = int(self._settings.get(["php"]))
+            self._pmp = int(self._settings.get(["pmp"]))
+            self._psp = int(self._settings.get(["psp"]))
+        else:
+            self._pw = slicer_def[int(self._slicer)][0]
+            self._pd = slicer_def[int(self._slicer)][1]
+            self._ph = slicer_def[int(self._slicer)][2]
+            self._pm = slicer_def[int(self._slicer)][3]
+            self._ps = slicer_def[int(self._slicer)][4]
+
+            self._pwp = slicer_def[int(self._slicer)][5]
+            self._pdp = slicer_def[int(self._slicer)][6]
+            self._php = slicer_def[int(self._slicer)][7]
+            self._pmp = slicer_def[int(self._slicer)][8]
+            self._psp = slicer_def[int(self._slicer)][9]
+
 
     def get_settings_defaults(self):
-        return dict(pw="",
+        return dict(slicer="1",
+                    pw="",
                     pd="",
                     ph="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
                     pm="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",

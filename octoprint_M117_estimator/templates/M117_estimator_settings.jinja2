@@ -1,93 +1,112 @@
 <form class="form-horizontal">
-	<h4>{{ _('M117 Slicer Estimator') }}</h4>
-    For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>
-    <p>
-    <div class="control-group">
-        <label class="control-label">{{ _('RegEx Week') }}</label>
-        <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.pw">            
-			<select data-bind="value: settings.plugins.M117_estimator.pwp">
-                <option value="1">Match 1</option>
-                <option value="2">Match 2</option>
-                <option value="3">Match 3</option>
-                <option value="4">Match 4</option>
-                <option value="5">Match 5</option>
-                <option value="6">Match 6</option>
-                <option value="7">Match 7</option>
-                <option value="8">Match 8</option>
-                <option value="9">Match 9</option>
-                <option value="10">Match 10</option>                
-            </select>
-        </div>
-        <p>
-        <label class="control-label">{{ _('RegEx Day') }}</label>
-        <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Days') }}">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.pd">            
-			<select data-bind="value: settings.plugins.M117_estimator.pdp">
-                <option value="1">Match 1</option>
-                <option value="2">Match 2</option>
-                <option value="3">Match 3</option>
-                <option value="4">Match 4</option>
-                <option value="5">Match 5</option>
-                <option value="6">Match 6</option>
-                <option value="7">Match 7</option>
-                <option value="8">Match 8</option>
-                <option value="9">Match 9</option>
-                <option value="10">Match 10</option>                
-            </select>
-        </div>
-        <p>
-        <label class="control-label">{{ _('RegEx Hour') }}</label>
-        <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Hours') }}">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.ph">            
-			<select data-bind="value: settings.plugins.M117_estimator.php">
-                <option value="1">Match 1</option>
-                <option value="2">Match 2</option>
-                <option value="3">Match 3</option>
-                <option value="4">Match 4</option>
-                <option value="5">Match 5</option>
-                <option value="6">Match 6</option>
-                <option value="7">Match 7</option>
-                <option value="8">Match 8</option>
-                <option value="9">Match 9</option>
-                <option value="10">Match 10</option>                
-            </select>
-        </div>
-        <p>
-        <label class="control-label">{{ _('RegEx Minute') }}</label>
-        <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Minutes') }}">
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.pm">            
-			<select data-bind="value: settings.plugins.M117_estimator.pmp">
-                <option value="1">Match 1</option>
-                <option value="2">Match 2</option>
-                <option value="3">Match 3</option>
-                <option value="4">Match 4</option>
-                <option value="5">Match 5</option>
-                <option value="6">Match 6</option>
-                <option value="7">Match 7</option>
-                <option value="8">Match 8</option>
-                <option value="9">Match 9</option>
-                <option value="10">Match 10</option>                
-            </select>
-        </div>
-        <p>
-        <label class="control-label">{{ _('RegEx Second') }}</label>
-        <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Seconds') }}">            
-            <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.ps">            
-			<select data-bind="value: settings.plugins.M117_estimator.psp">
-                <option value="1">Match 1</option>
-                <option value="2">Match 2</option>
-                <option value="3">Match 3</option>
-                <option value="4">Match 4</option>
-                <option value="5">Match 5</option>
-                <option value="6">Match 6</option>
-                <option value="7">Match 7</option>
-                <option value="8">Match 8</option>
-                <option value="9">Match 9</option>
-                <option value="10">Match 10</option>                
-            </select>                                    
-            <div class="help-block">{{ _('All not matching components are ignored so the remaining time calculation will be wrong in case of a mistake. 
-                Initial settings are fine for Cura, will add predefined settings for other slicers later.') }}</div>   
+	<div class="tabbable">
+        <h4>{{ _('M117 Slicer Estimator') }}</h4>
+        
+
+        <ul class="nav nav-tabs" id="M117_estimator_tabs">
+            <li class="active"><a data-toggle="tab" href="#M117_estimator_basic">Basic</a></li>
+            <li><a data-toggle="tab" href="#M117_estimator_custom">Custom</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="M117_estimator_basic" class="tab-pane active">
+                <div class="control-group">
+                    <label class="control-label">{{ _('Slicer') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Select slicer or custom for your own settings') }}">
+                        <select data-bind="value: settings.plugins.M117_estimator.slicer">
+                            <option value="0">Cura</option>
+                            <option value="c">Custom</option>               
+                        </select>
+                    </div>
+                </div>
+                <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}</div>   
+          
+            </div>
+            <div id="M117_estimator_custom" class="tab-pane">
+                <div class="help-block">{{ _('For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>') }}</div>
+                <label class="control-label">{{ _('RegEx Week') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.pw">           
+                    <select data-bind="value: settings.plugins.M117_estimator.pwp">
+                        <option value="1">Match 1</option>
+                        <option value="2">Match 2</option>
+                        <option value="3">Match 3</option>
+                        <option value="4">Match 4</option>
+                        <option value="5">Match 5</option>
+                        <option value="6">Match 6</option>
+                        <option value="7">Match 7</option>
+                        <option value="8">Match 8</option>
+                        <option value="9">Match 9</option>
+                        <option value="10">Match 10</option>                
+                    </select>
+                </div>
+                <label class="control-label">{{ _('RegEx Day') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Days') }}">
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.pd">            
+                    <select data-bind="value: settings.plugins.M117_estimator.pdp">
+                        <option value="1">Match 1</option>
+                        <option value="2">Match 2</option>
+                        <option value="3">Match 3</option>
+                        <option value="4">Match 4</option>
+                        <option value="5">Match 5</option>
+                        <option value="6">Match 6</option>
+                        <option value="7">Match 7</option>
+                        <option value="8">Match 8</option>
+                        <option value="9">Match 9</option>
+                        <option value="10">Match 10</option>                
+                    </select>
+                </div>
+                <label class="control-label">{{ _('RegEx Hour') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Hours') }}">
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.ph">            
+                    <select data-bind="value: settings.plugins.M117_estimator.php">
+                        <option value="1">Match 1</option>
+                        <option value="2">Match 2</option>
+                        <option value="3">Match 3</option>
+                        <option value="4">Match 4</option>
+                        <option value="5">Match 5</option>
+                        <option value="6">Match 6</option>
+                        <option value="7">Match 7</option>
+                        <option value="8">Match 8</option>
+                        <option value="9">Match 9</option>
+                        <option value="10">Match 10</option>                
+                    </select>
+                </div>
+                <label class="control-label">{{ _('RegEx Minute') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Minutes') }}">
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.pm">            
+                    <select data-bind="value: settings.plugins.M117_estimator.pmp">
+                        <option value="1">Match 1</option>
+                        <option value="2">Match 2</option>
+                        <option value="3">Match 3</option>
+                        <option value="4">Match 4</option>
+                        <option value="5">Match 5</option>
+                        <option value="6">Match 6</option>
+                        <option value="7">Match 7</option>
+                        <option value="8">Match 8</option>
+                        <option value="9">Match 9</option>
+                        <option value="10">Match 10</option>                
+                    </select>
+                </div>
+                <label class="control-label">{{ _('RegEx Second') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Seconds') }}">            
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.M117_estimator.ps">            
+                    <select data-bind="value: settings.plugins.M117_estimator.psp">
+                        <option value="1">Match 1</option>
+                        <option value="2">Match 2</option>
+                        <option value="3">Match 3</option>
+                        <option value="4">Match 4</option>
+                        <option value="5">Match 5</option>
+                        <option value="6">Match 6</option>
+                        <option value="7">Match 7</option>
+                        <option value="8">Match 8</option>
+                        <option value="9">Match 9</option>
+                        <option value="10">Match 10</option>                
+                    </select>                                    
+                    <div class="help-block">{{ _('All not matching components are ignored so the remaining time calculation will be wrong in case of a mistake. 
+                        Initial settings are fine for Cura, will add predefined settings for other slicers later.') }}</div>   
+                </div>
+            </div>
         </div>
     </div>
 </form>
