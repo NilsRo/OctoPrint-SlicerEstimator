@@ -4,30 +4,30 @@
 ### Do not forget to adjust the following variables to your own plugin.
 
 # The plugin's identifier, has to be unique
-plugin_identifier = "gcodestatEstimator_Cura"
+plugin_identifier = "M117_estimator"
 
 # The plugin's python package, should be "octoprint_<plugin identifier>", has to be unique
 plugin_package = "octoprint_%s" % plugin_identifier
 
 # The plugin's human readable name. Can be overwritten within OctoPrint's internal data via __plugin_name__ in the
 # plugin modul
-plugin_name = "OctoPrint-gcodestatEstimator_Cura"
+plugin_name = "OctoPrint-M117_estimator"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
 plugin_version = "0.4"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = "Estimate printing time from Cura embedded info"
+plugin_description = "Estimate printing time from Slicer M117 embedded info"
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
-plugin_author = "Bogdan Kecman, Nils Rottgardt"
+plugin_author = "Nils Rottgardt"
 
 # The plugin's author's mail address.
 plugin_author_email = "n.rottgardt@gmail.com"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
-plugin_url = "https://github.com/NilsRo/OctoPrint-gcodestatEstimator"
+plugin_url = "https://github.com/NilsRo/OctoPrint-M117_estimator"
 
 # The plugin's license. Can be overwritten within OctoPrint's internal data via __plugin_license__ in the plugin module
 plugin_license = "UNLICENCE"
