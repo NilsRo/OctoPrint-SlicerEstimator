@@ -8,7 +8,7 @@ import re
 from octoprint.printer.estimation import PrintTimeEstimator
 
 
-class M117_estimator(PrintTimeEstimator):
+class SlicerEstimator(PrintTimeEstimator):
     def __init__(self, job_type):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
@@ -20,7 +20,7 @@ class M117_estimator(PrintTimeEstimator):
             return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
         return self.estimated_time, "estimate"
 
-class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin):
+class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin):
     pc = re.compile("M73 P([0-9]+)")
 
     def __init__(self):
@@ -29,7 +29,7 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
 
     # Settings
     def on_after_startup(self):
-        self._logger.info("Started up M117_estimator")
+        self._logger.info("Started up SlicerEstimator")
         
         #Slicer defaults - actual Cura only
         slicer_def = [[
@@ -41,7 +41,7 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
         
         
         self._slicer = self._settings.get(["slicer"])
-        self._logger.debug("M117_estimator: Slicer Setting {}".format(self._slicer))
+        self._logger.debug("SlicerEstimator: Slicer Setting {}".format(self._slicer))
 
         if self._slicer == "c": 
             self._pw = re.compile(self._settings.get(["pw"]))
@@ -95,18 +95,18 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
             return
 
         if gcode and gcode == "M73":
-            self._logger.debug("M117_estimator: M73 found")
+            self._logger.debug("SlicerEstimator: M73 found")
 
             mp = self.pc.match(cmd)
             if mp:
                 self._estimator.percentage_done = float(mp.group(1))
 
-                self._logger.debug("M117_estimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
+                self._logger.debug("SlicerEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
             else:
-                self._logger.debug("M117_estimator: unknown cmd {}".format(cmd))
+                self._logger.debug("SlicerEstimator: unknown cmd {}".format(cmd))
 
         if gcode and gcode == "M117":
-            self._logger.debug("M117_estimator: M117 found")
+            self._logger.debug("SlicerEstimator: M117 found")
 
             mw = self._pw.match(cmd)
             md = self._pd.match(cmd)
@@ -136,18 +136,18 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
                 else: 
                     seconds = 0
 
-                self._logger.debug("M117_estimator: Weeks {}, Days {}, Hours {}, Minutes {}, Seconds {}".format(weeks, days, hours, minutes, seconds))
+                self._logger.debug("SlicerEstimator: Weeks {}, Days {}, Hours {}, Minutes {}, Seconds {}".format(weeks, days, hours, minutes, seconds))
                 self._estimator.estimated_time = weeks*7*24*60*60 + days*24*60*60 + hours*60*60 + minutes*60 + seconds
-                self._logger.debug("M117_estimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
+                self._logger.debug("SlicerEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
             else:
-                self._logger.debug("M117_estimator: unknown cmd {}".format(cmd))
+                self._logger.debug("SlicerEstimator: unknown cmd {}".format(cmd))
 
 
     ##~~ estimator factory hook
 
     def estimator_factory(self):
         def factory(*args, **kwargs):
-            self._estimator = M117_estimator(*args, **kwargs)
+            self._estimator = SlicerEstimator(*args, **kwargs)
             return self._estimator
         return factory
 
@@ -155,25 +155,25 @@ class M117_estimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Temp
 
     def get_update_information(self):
         return dict(
-            M117_estimator=dict(
+            SlicerEstimator=dict(
                 displayName=self._plugin_name,
                 displayVersion=self._plugin_version,
 
                 # version check: github repository
                 type="github_release",
                 user="NilsRo",
-                repo="OctoPrint-M117_estimator",
+                repo="OctoPrint-SlicerEstimator",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/NilsRo/OctoPrint-M117_estimator/archive/{target_version}.zip"
+                pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
             )
         )
 
 
-__plugin_name__ = "M117 Print Time Estimator"
+__plugin_name__ = "Slicer Print Time Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
-__plugin_implementation__ = M117_estimatorPlugin()
+__plugin_implementation__ = SlicerEstimatorPlugin()
 __plugin_hooks__ = {
     "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.updateEstimation,
     "octoprint.printer.estimation.factory": __plugin_implementation__.estimator_factory,

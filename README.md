@@ -1,4 +1,4 @@
-# M117 Estimator is general way to interpret M117 commands from slicer to set remaining time to print
+# Slicer Estimator is a generic implemenation to interpret M73 and M117 commands from slicer to set remaining time to print
 With this plugin and active Post Processing in e.g. Cura you will get an exact estimation of time remaining as it will set from information analysed in the slicer. So it will be very accurate. Thanks to arhi for the idea and first implementation.
 
 The default configuration matches the syntax of Cura, but you can change it in the plugin configuration according your needs.
@@ -23,3 +23,5 @@ I like to suggest regex101.com for testing and to get the right match group.
  * In case SDCARD print is used the original estimator from OctoPrint will be used
  * The Plugin does not have anything to configure simply install and activate Post Processing. If no corresponding commands are found standard estimation is used.
 
+##Todo
+ * Add M73 support
