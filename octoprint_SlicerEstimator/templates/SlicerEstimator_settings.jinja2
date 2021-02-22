@@ -15,6 +15,7 @@
                     <div class="controls" data-toggle="tooltip" title="{{ _('Select slicer or custom for your own settings') }}">
                         <select data-bind="value: settings.plugins.SlicerEstimator.slicer">
                             <option value="0">Cura</option>
+                            <option value="1">PrusaSlicer</option>
                             <option value="c">Custom</option>               
                         </select>
                     </div>
@@ -24,6 +25,10 @@
             </div>
             <div id="SlicerEstimator_custom" class="tab-pane">
                 <div class="help-block">{{ _('For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>') }}</div>
+                <label class="control-label">{{ _('GCODE') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('GCODE to watch') }}">
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.slicer_gcode">           
+                </div>
                 <label class="control-label">{{ _('RegEx Week') }}</label>
                 <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">
                     <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pw">           
