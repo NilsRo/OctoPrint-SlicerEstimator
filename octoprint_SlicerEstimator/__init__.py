@@ -31,19 +31,24 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
     def on_after_startup(self):
         self._logger.info("Started up SlicerEstimator")
         
-        #Slicer defaults - actual Cura only
-        slicer_def = [[
-            "","",
-            "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-            "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-            "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-            1,1,1,2,3]]
-        
+        #Slicer defaults - actual Cura and Prusa
+        slicer_def = [
+                ["M117","","",
+                "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+                "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+                "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+                1,1,1,2,3],
+                ["M73","","",
+                "",
+                "M73 P([0-9]+) R([0-9]+)",
+                "",
+                1,1,1,2,1]]
         
         self._slicer = self._settings.get(["slicer"])
         self._logger.debug("SlicerEstimator: Slicer Setting {}".format(self._slicer))
 
         if self._slicer == "c": 
+            self._slicer_gcode = self._settings.get(["slicer_gcode"])
             self._pw = re.compile(self._settings.get(["pw"]))
             self._pd = re.compile(self._settings.get(["pd"]))
             self._ph = re.compile(self._settings.get(["ph"]))
@@ -56,21 +61,23 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             self._pmp = int(self._settings.get(["pmp"]))
             self._psp = int(self._settings.get(["psp"]))
         else:
-            self._pw = slicer_def[int(self._slicer)][0]
-            self._pd = slicer_def[int(self._slicer)][1]
-            self._ph = slicer_def[int(self._slicer)][2]
-            self._pm = slicer_def[int(self._slicer)][3]
-            self._ps = slicer_def[int(self._slicer)][4]
+            self._slicer_gcode = slicer_def[int(self._slicer)][0]
+            self._pw = slicer_def[int(self._slicer)][1]
+            self._pd = slicer_def[int(self._slicer)][2]
+            self._ph = slicer_def[int(self._slicer)][3]
+            self._pm = slicer_def[int(self._slicer)][4]
+            self._ps = slicer_def[int(self._slicer)][5]
 
-            self._pwp = slicer_def[int(self._slicer)][5]
-            self._pdp = slicer_def[int(self._slicer)][6]
-            self._php = slicer_def[int(self._slicer)][7]
-            self._pmp = slicer_def[int(self._slicer)][8]
-            self._psp = slicer_def[int(self._slicer)][9]
+            self._pwp = slicer_def[int(self._slicer)][6]
+            self._pdp = slicer_def[int(self._slicer)][7]
+            self._php = slicer_def[int(self._slicer)][8]
+            self._pmp = slicer_def[int(self._slicer)][9]
+            self._psp = slicer_def[int(self._slicer)][10]
 
 
     def get_settings_defaults(self):
-        return dict(slicer="1",
+        return dict(slicer="0",
+                    slicer_gcode="M117",
                     pw="",
                     pd="",
                     ph="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
@@ -94,19 +101,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
         if self._estimator is None:
             return
 
-        if gcode and gcode == "M73":
-            self._logger.debug("SlicerEstimator: M73 found")
-
-            mp = self.pc.match(cmd)
-            if mp:
-                self._estimator.percentage_done = float(mp.group(1))
-
-                self._logger.debug("SlicerEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
-            else:
-                self._logger.debug("SlicerEstimator: unknown cmd {}".format(cmd))
-
-        if gcode and gcode == "M117":
-            self._logger.debug("SlicerEstimator: M117 found")
+        if gcode and gcode == self._slicer_gcode:
+            self._logger.debug("SlicerEstimator: {} found".format(self._slicer_gcode))
 
             mw = self._pw.match(cmd)
             md = self._pd.match(cmd)

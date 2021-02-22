@@ -21,8 +21,6 @@ I like to suggest regex101.com for testing and to get the right match group.
  * Needs M73 and M117 codes in your GCODE. As percentage done is not processed further it is not really necessary.
  * You have to add Cura Post Processing Script "Display Progress On LCD" and activate "Time Remaining" to add necessary information to GCODE file. 
 ## Notes
- * In case there are no M117 codes that can be recognised the original estimator from OctoPrint will be used
+ * In case there are no matching M73 or M117 codes the original estimator from OctoPrint will be used
  * In case SDCARD print is used the original estimator from OctoPrint will be used
  * For known slicers only the slicer has to be selected and the slicers Post Processing has to be set. If no corresponding commands are found standard estimation is used.
-## Todo
- * Add M73 support
