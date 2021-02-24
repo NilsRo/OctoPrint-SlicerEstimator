@@ -21,8 +21,6 @@ class SlicerEstimator(PrintTimeEstimator):
         return self.estimated_time, "estimate"
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin):
-    pc = re.compile("M73 P([0-9]+)")
-
     def __init__(self):
         self._estimator = None
 

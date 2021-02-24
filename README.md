@@ -1,7 +1,7 @@
 # Slicer Estimator is a generic implemenation to interpret M73 and M117 commands from slicer to set remaining time to print
 With this plugin and active Post Processing in e.g. Cura you will get an exact estimation of time remaining as it will set from information analysed by the slicer. So it will be very accurate. Thanks to arhi for the idea and first implementation.
 
-The default configuration matches the syntax of Cura and PrusaSlicer, but you can change it in the plugin configuration according your needs.
+The default configuration matches the syntax of Cura and Slic3r Prusa Edition, but you can change it in the plugin configuration according your needs.
 
 Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
 
