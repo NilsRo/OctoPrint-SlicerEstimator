@@ -13,13 +13,12 @@ class SlicerEstimator(PrintTimeEstimator):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
         self.estimated_time = 0
-        self.percentage_done = -1
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
-        if self._job_type != "local" or self.percentage_done == -1:
+        if self._job_type != "local":
             return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
         return self.estimated_time, "estimate"
-
+        
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin):
     def __init__(self):
         self._estimator = None
@@ -100,13 +99,28 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             return
 
         if gcode and gcode == self._slicer_gcode:
-            self._logger.debug("SlicerEstimator: {} found".format(self._slicer_gcode))
+            self._logger.debug("SlicerEstimator: {} found - {}".format(gcode,cmd))
 
-            mw = self._pw.match(cmd)
-            md = self._pd.match(cmd)
-            mh = self._ph.match(cmd)
-            mm = self._pm.match(cmd)
-            ms = self._ps.match(cmd)
+            if self._pw.pattern != "":
+                mw = self._pw.match(cmd)
+            else:
+                mw = None
+            if self._pd.pattern != "": 
+                md = self._pd.match(cmd)
+            else:
+                md = None
+            if self._ph.pattern != "":
+                mh = self._ph.match(cmd)
+            else:
+                mh = None
+            if self._pm.pattern != "":    
+                mm = self._pm.match(cmd)
+            else:
+                mm = None
+            if self._ps.pattern != "":
+                ms = self._ps.match(cmd)
+            else:
+                ms = None
 
             if mw or md or mh or mm or ms:
                 if mw:
@@ -132,7 +146,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
 
                 self._logger.debug("SlicerEstimator: Weeks {}, Days {}, Hours {}, Minutes {}, Seconds {}".format(weeks, days, hours, minutes, seconds))
                 self._estimator.estimated_time = weeks*7*24*60*60 + days*24*60*60 + hours*60*60 + minutes*60 + seconds
-                self._logger.debug("SlicerEstimator: {}% {}sec".format(self._estimator.percentage_done, self._estimator.estimated_time))
+                self._logger.debug("SlicerEstimator: {}sec".format(self._estimator.estimated_time))
             else:
                 self._logger.debug("SlicerEstimator: unknown cmd {}".format(cmd))
 
