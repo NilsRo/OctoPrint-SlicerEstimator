@@ -60,11 +60,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             self._psp = int(self._settings.get(["psp"]))
         else:
             self._slicer_gcode = slicer_def[int(self._slicer)][0]
-            self._pw = slicer_def[int(self._slicer)][1]
-            self._pd = slicer_def[int(self._slicer)][2]
-            self._ph = slicer_def[int(self._slicer)][3]
-            self._pm = slicer_def[int(self._slicer)][4]
-            self._ps = slicer_def[int(self._slicer)][5]
+            self._pw = re.compile(slicer_def[int(self._slicer)][1])
+            self._pd = re.compile(slicer_def[int(self._slicer)][2])
+            self._ph = re.compile(slicer_def[int(self._slicer)][3])
+            self._pm = re.compile(slicer_def[int(self._slicer)][4])
+            self._ps = re.compile(slicer_def[int(self._slicer)][5])
 
             self._pwp = slicer_def[int(self._slicer)][6]
             self._pdp = slicer_def[int(self._slicer)][7]
