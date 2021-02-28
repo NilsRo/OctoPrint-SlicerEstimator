@@ -14,10 +14,10 @@
                     <label class="control-label">{{ _('Slicer') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Select slicer or custom for your own settings') }}">
                         <select data-bind="value: settings.plugins.SlicerEstimator.slicer">
+                            <option value="2">Cura</option>
                             <option value="0">Cura M117</option>
-                            <option value="1">Slic3r Prusa Edition</option>
-                            <option value="2">Cura native</option>
                             <option value="3">Simplify3D</option>
+                            <option value="1">Slic3r Prusa Edition</option>
                             <option value="c">Custom</option>               
                         </select>
                     </div>
@@ -25,8 +25,8 @@
                 <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
                     <p>
                     <ul>
-                        <li><b>Cura M117</b>: M117 is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time</li>
-                        <li><b>Cura native</b>: With Cura native no changes has to be done to the configuration of the slicer. Using slicer comment and Octoprints percentage done for estimation.</li>
+                        <li><b>Cura</b>: With Cura native no changes has to be done to the configuration of the slicer. Using slicer comment and Octoprints percentage done for estimation.</li>
+                        <li><b>Cura M117</b>: M117 is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time</li> 
                         <li><b>Simply3D</b>: With Cura native no changes has to be done to the configuration of the slicer. Using slicer comment and Octoprints percentage done for estimation.</li>
                         <li><b>Slic3er Prusa Edition</b>: The M73 GCODE has to be activated that the correct remaining time can be read out.</li>
                     </ul>
