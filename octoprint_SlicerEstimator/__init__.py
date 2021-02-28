@@ -16,11 +16,12 @@ class SlicerEstimator(PrintTimeEstimator):
     def __init__(self, job_type):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
-        self.estimated_time = 0
+        self.estimated_time = -1
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
-        if self._job_type != "local":
+        if self._job_type != "local" or self.estimated_time == -1:
+            # using standard estimator
             return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
         return self.estimated_time, "estimate"
 
@@ -31,10 +32,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
         self._slicer_estimation = None
         self._executor = ThreadPoolExecutor()
 
-    # Settings
-    def on_after_startup(self):
-        self._logger.info("Started up SlicerEstimator")
-        
+
         #Slicer defaults - actual Cura, Slic3r Prusa Edition, Cura Native, Simplify3D
         self._slicer_def = [
                 ["M117","","",
@@ -57,9 +55,43 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
                 ";   Build time: ([0-9]+) hour ([0-9]+) minutes",
                 "",
                 1,1,1,2,1,"COMMENT",";   Build time: ([0-9]+) hour ([0-9]+) minutes"]]
+        
+
+# SECTION: Settings
+    def on_after_startup(self):
+        self._logger.info("Started up SlicerEstimator")
         self._update_settings_from_config()
 
 
+    def get_settings_defaults(self):
+        return dict(slicer="a",
+                    slicer_gcode="M117",
+                    pw="",
+                    pd="",
+                    ph="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+                    pm="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+                    ps="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+                    pwp=1,
+                    pdp=1,
+                    php=1,
+                    pmp=2,
+                    psp=3,
+                    search_mode="GCODE",
+                    search_pattern="")
+
+
+    def on_settings_save(self, data):  
+        octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
+        self._update_settings_from_config()
+
+
+    def get_template_configs(self):
+        return [
+            dict(type="settings", custom_bindings=False)
+        ]
+
+
+# SECTION: Settings helper
     def _update_settings_from_config(self):
         self._slicer_conf = self._settings.get(["slicer"])
         self._logger.debug("SlicerEstimator: Slicer Setting {}".format(self._slicer_conf))
@@ -104,37 +136,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
         self._search_pattern = self._slicer_def[int(slicer)][12]
 
 
-
-    def get_settings_defaults(self):
-        return dict(slicer="a",
-                    slicer_gcode="M117",
-                    pw="",
-                    pd="",
-                    ph="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                    pm="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                    ps="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                    pwp=1,
-                    pdp=1,
-                    php=1,
-                    pmp=2,
-                    psp=3,
-                    search_mode="GCODE",
-                    search_pattern="")
-
-
-    def on_settings_save(self, data):  
-        octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
-        self._update_settings_from_config()
-
-
-    def get_template_configs(self):
-        return [
-            dict(type="settings", custom_bindings=False)
-        ]
-
-
-    ##~~ queuing gcode hook
-
+# SECTION: Estimation
     def updateGcodeEstimation(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         if self._estimator is None:
             return
@@ -146,8 +148,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             return
 
 
-    ##~~ calculate estimation on print progress
-
+    # calculate estimation on print progress
     def on_print_progress(self, storage, path, progress):
         if self._search_mode == "COMMENT":
             if self._slicer_estimation:
@@ -155,6 +156,26 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
                 self._logger.debug("SlicerEstimator: {}sec".format(self._estimator.estimated_time))
 
 
+    # estimator factory hook
+    def estimator_factory(self):
+        def factory(*args, **kwargs):
+            self._estimator = SlicerEstimator(*args, **kwargs)
+            return self._estimator
+        return factory
+
+
+    # EventHandlerPlugin for native information search
+    def on_event(self, event, payload):
+        if event == octoprint.events.Events.PRINT_STARTED:
+            if payload["origin"] == "local":
+                if self._search_mode == "COMMENT":
+                    self._logger.debug("Search started in file {}".format(payload["path"]))
+                    self._executor.submit(
+                        self._search_slicer_comment_file, payload["origin"], payload["path"]
+                    )
+
+
+# SECTION: Estimation helper
     def _parseEstimation(self,cmd):
         if self._pw.pattern != "":
             mw = self._pw.match(cmd)
@@ -206,29 +227,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             self._logger.debug("SlicerEstimator: unknown cmd {}".format(cmd))
 
 
-    ##~~ estimator factory hook
-
-    def estimator_factory(self):
-        def factory(*args, **kwargs):
-            self._estimator = SlicerEstimator(*args, **kwargs)
-            return self._estimator
-        return factory
-
-
-    ##~~ EventHandlerPlugin for native information search
-
-    def on_event(self, event, payload):
-        if event == octoprint.events.Events.PRINT_STARTED:
-            if payload["origin"] == "local":
-                if self._search_mode == "COMMENT":
-                    self._logger.debug("Search started in file {}".format(payload["path"]))
-                    self._executor.submit(
-                        self._search_slicer_comment_file, payload["origin"], payload["path"]
-                    )
-
-
-    ##~~ file search
-
+    # file search slicer comment
     def _search_slicer_comment_file(self, origin, path):
         self._slicer_estimation = ""
         slicer_estimation_str = self._search_through_file(origin, path, self._search_pattern)
@@ -239,6 +238,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             self._estimator.estimated_time = self._slicer_estimation
 
 
+    # generic file search with RegEx
     def _search_through_file(self, origin, path, pattern):
         path_on_disk = self._file_manager.path_on_disk(origin, path)
         self._logger.debug("Path on disc searched: {}".format(path_on_disk))
@@ -249,8 +249,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
                     return line
 
 
-    ##~~ software update hook
-
+# SECTION: software update hook
     def get_update_information(self):
         return dict(
             SlicerEstimator=dict(

@@ -22,8 +22,15 @@
                         </select>
                     </div>
                 </div>
-                <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab. AUTO Mode actually works for Cura and Simplify3D only.') }}</div>   
-          
+                <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
+                    <p>
+                    <ul>
+                        <li><b>Cura M117</b>: M117 is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time</li>
+                        <li><b>Cura native</b>: With Cura native no changes has to be done to the configuration of the slicer. Using slicer comment and Octoprints percentage done for estimation.</li>
+                        <li><b>Simply3D</b>: With Cura native no changes has to be done to the configuration of the slicer. Using slicer comment and Octoprints percentage done for estimation.</li>
+                        <li><b>Slic3er Prusa Edition</b>: The M73 GCODE has to be activated that the correct remaining time can be read out.</li>
+                    </ul>
+                </div>   
             </div>
             <div id="SlicerEstimator_custom" class="tab-pane">
                 <div class="help-block">{{ _('For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>') }}</div>
