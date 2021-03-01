@@ -1,7 +1,7 @@
 # Slicer Estimator is a generic implemenation to interpret M73 and M117 commands from slicer to set remaining time to print
-With this plugin and active Post Processing in e.g. Cura you will get an exact estimation of time remaining as it will set from information analysed by the slicer. So it will be very accurate. Thanks to arhi for the idea and first implementation.
+With this plugin you can use the more accurate estimation of time remaining of the slicer instead of Octoprints estimations. So it will be very accurate, as the slicer created each command of the GCODE. Thanks to arhi for the idea and first implementation.
 
-The default configuration matches the syntax of the following slicers, but you can change it in the plugin configuration according your needs.
+The default configuration matches the syntax of the following slicers, but you can change it in the plugins custom settings according your needs.
 
 * Cura M117
 * Cura native
@@ -9,18 +9,19 @@ The default configuration matches the syntax of the following slicers, but you c
 * Simplify 3D
 
 You can see that Slicer Estimator detected the embedded ramaining time if the dot right of the estimation looks like this:
+
 ![](images/OctoPrint-estimator_dot.png)
 
 ## Slicers supported
-### Cura M117
-M117 is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time
-![](images/Cura.png)
 
 ### Cura native
-With Cura native no changes has to be applied. The overall printing time as a comment to the GCODE which will be read by the plugin. For a correct estimation the percentage done is used as there is only the overall printing time present.
+With Cura native no changes has to be applied to Cura. The overall printing time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall printing time available.
+### Cura M117
+Remaining time is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time
+![](images/Cura.png)
 
-### Simply3D
-With Cura native no changes has to be applied. The overall printing time as a comment to the GCODE which will be read by the plugin. For a correct estimation the percentage done is used as there is only the overall printing time present.
+### Simplify3D
+With Simplify3D no changes has to be applied to Simplify3D. The overall printing time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall printing time available.
 
 ### Slic3er Prusa Edition
 The M73 GCODE has to be activated that the correct remaining time can be read out.
@@ -36,8 +37,6 @@ Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:1
 
  
 ![](images/Gcode.png)
-
-![](images/Settings_Basic.png)
 
 ![](images/Settings_Custom.png)
 
