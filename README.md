@@ -1,12 +1,13 @@
-# Slicer Estimator is a generic implemenation to interpret M73 and M117 commands from slicer to set remaining time to print
+# Slicer Estimator is a generic implemenation to read remaining time to print embedded in the GCODE file by the slicer
 With this plugin you can use the more accurate estimation of time remaining of the slicer instead of Octoprints estimations. So it will be very accurate, as the slicer created each command of the GCODE. Thanks to arhi for the idea and first implementation.
 
 The default configuration matches the syntax of the following slicers, but you can change it in the plugins custom settings according your needs.
 
 * Cura M117
 * Cura native
-* Slic3r Prusa Edition
 * Simplify 3D
+* Slic3r Prusa Edition
+
 
 You can see that Slicer Estimator detected the embedded remaining time if the dot right of the estimation looks like this:
 
@@ -14,7 +15,7 @@ You can see that Slicer Estimator detected the embedded remaining time if the do
 
 ## Slicers supported
 
-### Cura native
+### Cura
 With Cura native no changes has to be applied to Cura. The overall printing time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall printing time available.
 ### Cura M117
 Remaining time is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time
