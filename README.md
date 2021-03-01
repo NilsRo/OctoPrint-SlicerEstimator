@@ -8,7 +8,7 @@ The default configuration matches the syntax of the following slicers, but you c
 * Slic3r Prusa Edition
 * Simplify 3D
 
-You can see that Slicer Estimator detected the embedded ramaining time if the dot right of the estimation looks like this:
+You can see that Slicer Estimator detected the embedded remaining time if the dot right of the estimation looks like this:
 
 ![](images/OctoPrint-estimator_dot.png)
 
