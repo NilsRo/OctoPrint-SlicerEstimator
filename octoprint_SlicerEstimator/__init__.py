@@ -17,14 +17,21 @@ class SlicerEstimator(PrintTimeEstimator):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
         self.estimated_time = -1
+        self.average_prio = False
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
+        std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
+        
         if self._job_type != "local" or self.estimated_time == -1:
             # using standard estimator
-            return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
-        # return "slicer" as Origin of estimation
-        return self.estimated_time, "slicer"
+            return std_estimator
+        elif std_estimator[1] == "average" and self.average_prio:
+            # average more impartand
+            return std_estimator
+        else:
+            # return "slicer" as Origin of estimation
+            return self.estimated_time, "slicer"
 
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin, octoprint.plugin.EventHandlerPlugin, octoprint.plugin.ProgressPlugin):
@@ -78,7 +85,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
                     pmp=2,
                     psp=3,
                     search_mode="GCODE",
-                    search_pattern="")
+                    search_pattern="",
+                    average_prio=False)
 
 
     def on_settings_save(self, data):  
@@ -96,6 +104,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
     def _update_settings_from_config(self):
         self._slicer_conf = self._settings.get(["slicer"])
         self._logger.debug("SlicerEstimator: Slicer Setting {}".format(self._slicer_conf))
+
+        self._average_prio = self._settings.get(["average_prio"])
+        if self._estimator != None:
+            self._estimator.average_prio = self._average_prio
+
+        self._logger.debug("Average: {}".format(self._average_prio))
 
         if self._slicer_conf == "c": 
             self.slicer = self._slicer_conf 
@@ -161,6 +175,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
     def estimator_factory(self):
         def factory(*args, **kwargs):
             self._estimator = SlicerEstimator(*args, **kwargs)
+            self._estimator.average_prio = self._average_prio
             return self._estimator
         return factory
 

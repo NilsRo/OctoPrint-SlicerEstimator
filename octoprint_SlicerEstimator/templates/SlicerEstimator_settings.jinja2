@@ -22,6 +22,13 @@
                         </select>
                     </div>
                 </div>
+                <div class="control-group">
+                    <label class="control-label">{{ _('Use average estimation before slicer') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints so it could be more accurate than the slicer estimation.') }}">
+                        <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.average_prio">                       
+                    </div>
+                </div>
+
                 <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
                     <p>
                     <ul>
