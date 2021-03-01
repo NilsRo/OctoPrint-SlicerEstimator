@@ -3,15 +3,16 @@ With this plugin you can use the more accurate estimation of time remaining of t
 
 The default configuration matches the syntax of the following slicers, but you can change it in the plugins custom settings according your needs.
 
+* Cura
 * Cura M117
-* Cura native
 * Simplify 3D
-* Slic3r Prusa Edition
+* PrusaSlicer
 
 
 You can see that Slicer Estimator detected the embedded remaining time if the dot right of the estimation looks like this:
 
 ![](images/OctoPrint-estimator_dot.png)
+
 If you did not get a popup if you hover over the dot everything is fine. (have to check if I can add my own color in the future)
 
 ## Slicers supported
@@ -25,8 +26,8 @@ Remaining time is read out of M117 commands added by Cura if the following Post-
 ### Simplify3D
 With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall print time available.
 
-### Prusa Slicer
-Remaining time is read out of M73 commands added by Prusa Slicer. This will update continouusly the remaining print time
+### PrusaSlicer
+Remaining time is read out of M73 commands added by PrusaSlicer. This will update continouusly the remaining print time
 
 ## Notes
  * In case there are no matching information available the original estimator from OctoPrint will be used. If Slicer Estimator is used you can see that by the green dot right to the estimation.
