@@ -59,10 +59,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
                 ";TIME:([0-9]+)",
                 1,1,1,1,1,"COMMENT",";TIME:([0-9]+)"],
                 ["","","",
-                ";   Build time: ([0-9]+) hour ([0-9]+) minutes",
-                ";   Build time: ([0-9]+) hour ([0-9]+) minutes",
+                ";   Build time: ([0-9]+) hours? ([0-9]+) minutes",
+                ";   Build time: ([0-9]+) hours? ([0-9]+) minutes",
                 "",
-                1,1,1,2,1,"COMMENT",";   Build time: ([0-9]+) hour ([0-9]+) minutes"]]
+                1,1,1,2,1,"COMMENT",";   Build time: ([0-9]+) hours? ([0-9]+) minutes"]]
         
 
 # SECTION: Settings

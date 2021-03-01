@@ -12,6 +12,7 @@ The default configuration matches the syntax of the following slicers, but you c
 You can see that Slicer Estimator detected the embedded remaining time if the dot right of the estimation looks like this:
 
 ![](images/OctoPrint-estimator_dot.png)
+If you did not get a popup if you hover over the dot everything is fine. (have to check if I can add my own color in the future)
 
 ## Slicers supported
 
@@ -32,6 +33,7 @@ The M73 GCODE has to be activated that the correct remaining time can be read ou
  * In case SDCARD print is used the original estimator from OctoPrint will be used
  * For known slicers only the slicer has to be selected and the slicers Post Processing has to be set. If no corresponding commands are found standard estimation is used.
  * Compared to some slicer estimations the average estimation by Octoprint (based on the average of the last real prints) could be more accurate. So you can change in the settings if you like to use average estimation if available.
+ * GCODE files will be scanned in background so until the necessary information is found the Octoprint estimator is used. But so there is no delay in start printing but with files e.g. 150Mbyte in size the scan could take some seconds.
 
 ## Custom Settings
 Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
