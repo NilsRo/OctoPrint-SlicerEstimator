@@ -8,7 +8,8 @@ The default configuration matches the syntax of the following slicers, but you c
 * Slic3r Prusa Edition
 * Simplify 3D
 
-Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
+You can see that Slicer Estimator detected the embedded ramaining time if the dot right of the estimation looks like this:
+![](images/OctoPrint-estimator_dot.png)
 
 ## Slicers supported
 ### Cura M117
@@ -28,6 +29,9 @@ The M73 GCODE has to be activated that the correct remaining time can be read ou
  * In case there are no matching information available the original estimator from OctoPrint will be used. If Slicer Estimator is used you can see that by the green dot right to the estimation.
  * In case SDCARD print is used the original estimator from OctoPrint will be used
  * For known slicers only the slicer has to be selected and the slicers Post Processing has to be set. If no corresponding commands are found standard estimation is used.
+
+## Custom Settings
+Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
 
  
 ![](images/Gcode.png)

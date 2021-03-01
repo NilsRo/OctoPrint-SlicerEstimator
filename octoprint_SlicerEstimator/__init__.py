@@ -23,7 +23,8 @@ class SlicerEstimator(PrintTimeEstimator):
         if self._job_type != "local" or self.estimated_time == -1:
             # using standard estimator
             return PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
-        return self.estimated_time, "estimate"
+        # return "slicer" as Origin of estimation
+        return self.estimated_time, "slicer"
 
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin, octoprint.plugin.EventHandlerPlugin, octoprint.plugin.ProgressPlugin):
@@ -173,6 +174,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
                     self._executor.submit(
                         self._search_slicer_comment_file, payload["origin"], payload["path"]
                     )
+        if event == octoprint.events.Events.PRINT_CANCELLED or event == octoprint.events.Events.PRINT_FAILED or event == octoprint.events.Events.PRINT_DONE:
+                # Init of Class variables for new estimation
+                self._slicer_estimation = None
+                self._sliver_estimation_str = None
+                self._estimator.estimated_time = -1
+                self._logger.debug("Event received: {}".format(event))
 
 
 # SECTION: Estimation helper
