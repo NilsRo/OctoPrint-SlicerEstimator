@@ -17,16 +17,16 @@ If you did not get a popup if you hover over the dot everything is fine. (have t
 ## Slicers supported
 
 ### Cura
-With Cura native no changes has to be applied to Cura. The overall printing time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall printing time available.
+With Cura native no changes has to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall print time available.
 ### Cura M117
-Remaining time is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time
+Remaining time is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining print time
 ![](images/Cura.png)
 
 ### Simplify3D
-With Simplify3D no changes has to be applied to Simplify3D. The overall printing time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall printing time available.
+With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall print time available.
 
-### Slic3er Prusa Edition
-The M73 GCODE has to be activated that the correct remaining time can be read out.
+### Prusa Slicer
+Remaining time is read out of M73 commands added by Prusa Slicer. This will update continouusly the remaining print time
 
 ## Notes
  * In case there are no matching information available the original estimator from OctoPrint will be used. If Slicer Estimator is used you can see that by the green dot right to the estimation.
