@@ -35,6 +35,7 @@ Remaining time is read out of M73 commands added by PrusaSlicer. This will updat
  * For known slicers only the slicer has to be selected and the slicers Post Processing has to be set. If no corresponding commands are found standard estimation is used.
  * Compared to some slicer estimations the average estimation by Octoprint (based on the average of the last real prints) could be more accurate. So you can change in the settings if you like to use average estimation if available.
  * GCODE files will be scanned in background so until the necessary information is found the Octoprint estimator is used. But so there is no delay in start printing but with files e.g. 150Mbyte in size the scan could take some seconds.
+ * If you like to see information how often the estimation is done simply activate DEBUG mode in Octoprint logging for the plugin.
 
 ## Custom Settings
 Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
