@@ -14,11 +14,11 @@ plugin_package = "octoprint_%s" % plugin_identifier
 plugin_name = "OctoPrint-SlicerEstimator"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.5"
+plugin_version = "0.51"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = "Estimate printing time from Slicer M73 and M117 embedded info"
+plugin_description = "Estimate printing time from Slicer embedded info"
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "Nils Hendrik Rottgardt"

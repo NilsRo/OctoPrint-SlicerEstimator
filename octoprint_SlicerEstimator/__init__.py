@@ -72,7 +72,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
 
 
     def get_settings_defaults(self):
-        return dict(slicer="a",
+        return dict(slicer="2",
                     slicer_gcode="M117",
                     pw="",
                     pd="",
