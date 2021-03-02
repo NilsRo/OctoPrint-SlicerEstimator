@@ -41,101 +41,116 @@
             </div>
             <div id="SlicerEstimator_custom" class="tab-pane">
                 <div class="help-block">{{ _('For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>') }}</div>
-                <label class="control-label">{{ _('GCODE') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('GCODE to watch') }}">
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.slicer_gcode">           
+             	<div class="control-group">
+                    <label class="control-label">{{ _('RegEx Week') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">
+                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pw">           
+                        <select data-bind="value: settings.plugins.SlicerEstimator.pwp">
+                            <option value="1">Match 1</option>
+                            <option value="2">Match 2</option>
+                            <option value="3">Match 3</option>
+                            <option value="4">Match 4</option>
+                            <option value="5">Match 5</option>
+                            <option value="6">Match 6</option>
+                            <option value="7">Match 7</option>
+                            <option value="8">Match 8</option>
+                            <option value="9">Match 9</option>
+                            <option value="10">Match 10</option>                
+                        </select>
+                    </div>
                 </div>
-                <label class="control-label">{{ _('RegEx Week') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pw">           
-                    <select data-bind="value: settings.plugins.SlicerEstimator.pwp">
-                        <option value="1">Match 1</option>
-                        <option value="2">Match 2</option>
-                        <option value="3">Match 3</option>
-                        <option value="4">Match 4</option>
-                        <option value="5">Match 5</option>
-                        <option value="6">Match 6</option>
-                        <option value="7">Match 7</option>
-                        <option value="8">Match 8</option>
-                        <option value="9">Match 9</option>
-                        <option value="10">Match 10</option>                
-                    </select>
-                </div>
+                <div class="control-group">
                 <label class="control-label">{{ _('RegEx Day') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Days') }}">
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pd">            
-                    <select data-bind="value: settings.plugins.SlicerEstimator.pdp">
-                        <option value="1">Match 1</option>
-                        <option value="2">Match 2</option>
-                        <option value="3">Match 3</option>
-                        <option value="4">Match 4</option>
-                        <option value="5">Match 5</option>
-                        <option value="6">Match 6</option>
-                        <option value="7">Match 7</option>
-                        <option value="8">Match 8</option>
-                        <option value="9">Match 9</option>
-                        <option value="10">Match 10</option>                
-                    </select>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Days') }}">
+                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pd">            
+                        <select data-bind="value: settings.plugins.SlicerEstimator.pdp">
+                            <option value="1">Match 1</option>
+                            <option value="2">Match 2</option>
+                            <option value="3">Match 3</option>
+                            <option value="4">Match 4</option>
+                            <option value="5">Match 5</option>
+                            <option value="6">Match 6</option>
+                            <option value="7">Match 7</option>
+                            <option value="8">Match 8</option>
+                            <option value="9">Match 9</option>
+                            <option value="10">Match 10</option>                
+                        </select>
+                    </div>
                 </div>
+                <div class="control-group">
                 <label class="control-label">{{ _('RegEx Hour') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Hours') }}">
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ph">            
-                    <select data-bind="value: settings.plugins.SlicerEstimator.php">
-                        <option value="1">Match 1</option>
-                        <option value="2">Match 2</option>
-                        <option value="3">Match 3</option>
-                        <option value="4">Match 4</option>
-                        <option value="5">Match 5</option>
-                        <option value="6">Match 6</option>
-                        <option value="7">Match 7</option>
-                        <option value="8">Match 8</option>
-                        <option value="9">Match 9</option>
-                        <option value="10">Match 10</option>                
-                    </select>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Hours') }}">
+                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ph">            
+                        <select data-bind="value: settings.plugins.SlicerEstimator.php">
+                            <option value="1">Match 1</option>
+                            <option value="2">Match 2</option>
+                            <option value="3">Match 3</option>
+                            <option value="4">Match 4</option>
+                            <option value="5">Match 5</option>
+                            <option value="6">Match 6</option>
+                            <option value="7">Match 7</option>
+                            <option value="8">Match 8</option>
+                            <option value="9">Match 9</option>
+                            <option value="10">Match 10</option>                
+                        </select>
+                    </div>
                 </div>
+                <div class="control-group">
                 <label class="control-label">{{ _('RegEx Minute') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Minutes') }}">
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pm">            
-                    <select data-bind="value: settings.plugins.SlicerEstimator.pmp">
-                        <option value="1">Match 1</option>
-                        <option value="2">Match 2</option>
-                        <option value="3">Match 3</option>
-                        <option value="4">Match 4</option>
-                        <option value="5">Match 5</option>
-                        <option value="6">Match 6</option>
-                        <option value="7">Match 7</option>
-                        <option value="8">Match 8</option>
-                        <option value="9">Match 9</option>
-                        <option value="10">Match 10</option>                
-                    </select>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Minutes') }}">
+                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pm">            
+                        <select data-bind="value: settings.plugins.SlicerEstimator.pmp">
+                            <option value="1">Match 1</option>
+                            <option value="2">Match 2</option>
+                            <option value="3">Match 3</option>
+                            <option value="4">Match 4</option>
+                            <option value="5">Match 5</option>
+                            <option value="6">Match 6</option>
+                            <option value="7">Match 7</option>
+                            <option value="8">Match 8</option>
+                            <option value="9">Match 9</option>
+                            <option value="10">Match 10</option>                
+                        </select>
+                    </div>
                 </div>
+                <div class="control-group">
                 <label class="control-label">{{ _('RegEx Second') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Seconds') }}">            
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ps">            
-                    <select data-bind="value: settings.plugins.SlicerEstimator.psp">
-                        <option value="1">Match 1</option>
-                        <option value="2">Match 2</option>
-                        <option value="3">Match 3</option>
-                        <option value="4">Match 4</option>
-                        <option value="5">Match 5</option>
-                        <option value="6">Match 6</option>
-                        <option value="7">Match 7</option>
-                        <option value="8">Match 8</option>
-                        <option value="9">Match 9</option>
-                        <option value="10">Match 10</option>                
-                    </select>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Seconds') }}">            
+                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ps">            
+                        <select data-bind="value: settings.plugins.SlicerEstimator.psp">
+                            <option value="1">Match 1</option>
+                            <option value="2">Match 2</option>
+                            <option value="3">Match 3</option>
+                            <option value="4">Match 4</option>
+                            <option value="5">Match 5</option>
+                            <option value="6">Match 6</option>
+                            <option value="7">Match 7</option>
+                            <option value="8">Match 8</option>
+                            <option value="9">Match 9</option>
+                            <option value="10">Match 10</option>                
+                        </select>
+                    </div>
                 </div>
-                <label class="control-label">{{ _('GCODE or Slicer Comment Search') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('Defindes if the Plugin should look for GCODE during print or scan the file once for a slicer comment.') }}">            
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.search_mode">            
-                    <select data-bind="value: settings.plugins.SlicerEstimator.psp">
-                        <option value="GCODE">GCODE</option>
-                        <option value="COMMENT">Comment</option>
-                    </select>
+  				<div class="control-group">              
+                    <label class="control-label">{{ _('GCODE or Slicer Comment Search') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Defindes if the Plugin should look for GCODE during print or scan the file once for a slicer comment.') }}">            
+                        <select data-bind="value: settings.plugins.SlicerEstimator.search_mode">
+                            <option value="GCODE">GCODE</option>
+                            <option value="COMMENT">Comment</option>
+                        </select>
+                    </div>
                 </div>
-                <label class="control-label">{{ _('Comment RegEx') }}</label>
-                <div class="controls" data-toggle="tooltip" title="{{ _('GCODE to watch') }}">
-                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.search_pattern">           
+             	<div class="control-group">   
+                    <label class="control-label">{{ _('GCODE') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('GCODE to watch') }}">
+                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.slicer_gcode">           
+                    </div>
+                </div>
+        		<div class="control-group">
+                    <label class="control-label">{{ _('RegEx Comment') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Comment to look for') }}">
+                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.search_pattern">           
+                    </div>
                 </div>
                 <div class="help-block">{{ _('All not matching components are ignored so the remaining time calculation will be wrong in case of a mistake. 
                 Initial settings are fine with Cura for example.') }}</div> 
