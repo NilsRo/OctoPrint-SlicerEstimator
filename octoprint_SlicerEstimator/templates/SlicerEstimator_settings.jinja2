@@ -14,14 +14,30 @@
                     <label class="control-label">{{ _('Slicer') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Select slicer or custom for your own settings') }}">
                         <select data-bind="value: settings.plugins.SlicerEstimator.slicer">
-                            <option value="0">Cura</option>
-                            <option value="1">Slic3r Prusa Edition</option>
+                            <option value="2">Cura</option>
+                            <option value="0">Cura M117</option>
+                            <option value="3">Simplify3D</option>
+                            <option value="1">PrusaSlicer</option>
                             <option value="c">Custom</option>               
                         </select>
                     </div>
                 </div>
-                <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}</div>   
-          
+                <div class="control-group">
+                    <label class="control-label">{{ _('Use average estimation before slicer') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints so it could be more accurate than the slicer estimation.') }}">
+                        <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.average_prio">                       
+                    </div>
+                </div>
+
+                <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
+                    <p>
+                    <ul>
+                        <li><b>Cura</b>: With Cura native no changes has to be done to the configuration of the slicer. Using slicer comment and Octoprints percentage done for estimation.</li>
+                        <li><b>Cura M117</b>: M117 is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continouusly the remaining printing time</li> 
+                        <li><b>Simply3D</b>: With Cura native no changes has to be done to the configuration of the slicer. Using slicer comment and Octoprints percentage done for estimation.</li>
+                        <li><b>PrusaSlicer</b>: The M73 GCODE has to be activated that the correct remaining time can be read out.</li>
+                    </ul>
+                </div>   
             </div>
             <div id="SlicerEstimator_custom" class="tab-pane">
                 <div class="help-block">{{ _('For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>') }}</div>
@@ -107,10 +123,22 @@
                         <option value="8">Match 8</option>
                         <option value="9">Match 9</option>
                         <option value="10">Match 10</option>                
-                    </select>                                    
-                    <div class="help-block">{{ _('All not matching components are ignored so the remaining time calculation will be wrong in case of a mistake. 
-                        Initial settings are fine with Cura for example.') }}</div>   
+                    </select>
                 </div>
+                <label class="control-label">{{ _('GCODE or Slicer Comment Search') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('Defindes if the Plugin should look for GCODE during print or scan the file once for a slicer comment.') }}">            
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.search_mode">            
+                    <select data-bind="value: settings.plugins.SlicerEstimator.psp">
+                        <option value="GCODE">GCODE</option>
+                        <option value="COMMENT">Comment</option>
+                    </select>
+                </div>
+                <label class="control-label">{{ _('Comment RegEx') }}</label>
+                <div class="controls" data-toggle="tooltip" title="{{ _('GCODE to watch') }}">
+                    <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.search_pattern">           
+                </div>
+                <div class="help-block">{{ _('All not matching components are ignored so the remaining time calculation will be wrong in case of a mistake. 
+                Initial settings are fine with Cura for example.') }}</div> 
             </div>
         </div>
     </div>
