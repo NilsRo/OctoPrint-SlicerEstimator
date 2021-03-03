@@ -1,4 +1,4 @@
-# Slicer Estimator is a generic implemenation to read remaining time to print embedded in the GCODE file by the slicer
+# Slicer Print Time Estimator is a generic implemenation to read remaining time to print embedded in the GCODE file by the slicer
 With this plugin you can use the more accurate estimation of time remaining of the slicer instead of Octoprints estimations. So it will be very accurate, as the slicer created each command of the GCODE. Thanks to arhi for the idea and first implementation.
 
 The default configuration matches the syntax of the following slicers, but you can change it in the plugins custom settings according your needs.
@@ -9,11 +9,10 @@ The default configuration matches the syntax of the following slicers, but you c
 * PrusaSlicer
 
 
-You can see that Slicer Estimator detected the embedded remaining time if the dot right of the estimation looks like this:
+You can see that Slicer Print Time Estimator detected the embedded remaining time if the dot right of the estimation looks like this:
 
 ![](images/OctoPrint-estimator_dot.png)
 
-If you did not get a popup if you hover over the dot everything is fine. (have to check if I can add my own color in the future)
 
 ## Slicers supported
 
@@ -34,7 +33,7 @@ Remaining time is read out of M73 commands added by PrusaSlicer. This will updat
  * In case SDCARD print is used the original estimator from OctoPrint will be used
  * For known slicers only the slicer has to be selected and the slicers Post Processing has to be set. If no corresponding commands are found standard estimation is used.
  * Compared to some slicer estimations the average estimation by Octoprint (based on the average of the last real prints) could be more accurate. So you can change in the settings if you like to use average estimation if available.
- * GCODE files will be scanned in background so until the necessary information is found the Octoprint estimator is used. But so there is no delay in start printing but with files e.g. 150Mbyte in size the scan could take some seconds.
+ * GCODE files will be scanned in background so until the necessary information is found the Octoprint estimator is used. There is no delay in start printing but with files e.g. 150Mbyte in size the scan could take some seconds.
  * If you like to see information how often the estimation is done simply activate DEBUG mode in Octoprint logging for the plugin.
 
 ## Custom Settings

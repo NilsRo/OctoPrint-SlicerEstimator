@@ -1,0 +1,3 @@
+.slicerestimator { visibility: hidden}
+.slicerestimator:before { color: green; content: "✔"; visibility: visible; position: absolute;}
+.slicerestimator-after { position: relative; }
