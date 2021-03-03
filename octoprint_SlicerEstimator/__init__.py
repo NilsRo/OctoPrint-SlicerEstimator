@@ -31,10 +31,15 @@ class SlicerEstimator(PrintTimeEstimator):
             return std_estimator
         else:
             # return "slicer" as Origin of estimation
-            return self.estimated_time, "slicer"
+            return self.estimated_time, "slicerestimator"
 
 
-class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.TemplatePlugin, octoprint.plugin.SettingsPlugin, octoprint.plugin.EventHandlerPlugin, octoprint.plugin.ProgressPlugin):
+class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, 
+                            octoprint.plugin.TemplatePlugin,
+                            octoprint.plugin.SettingsPlugin,
+                            octoprint.plugin.EventHandlerPlugin,
+                            octoprint.plugin.ProgressPlugin,
+                            octoprint.plugin.AssetPlugin):
     def __init__(self):
         self._estimator = None
         self._slicer_estimation = None
@@ -86,7 +91,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
                     psp=3,
                     search_mode="GCODE",
                     search_pattern="",
-                    average_prio=False)
+                    average_prio=False,
+                    use_assets=True)
 
 
     def on_settings_save(self, data):  
@@ -258,6 +264,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             self._logger.debug("Slicer-Comment {} found.".format(slicer_estimation_str))
             self._slicer_estimation = self._parseEstimation(slicer_estimation_str)
             self._estimator.estimated_time = self._slicer_estimation
+        else:
+            self._logger.warning("Slicer-Comment not found. Please check if you selected the correct slicer.")
 
 
     # generic file search with RegEx
@@ -269,6 +277,18 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, octoprint.plugin.Tem
             for line in f:
                 if compiled.match(line):
                     return line
+
+
+# SECTION: Assets
+    def get_assets(self):
+        # Define your plugin's asset files to automatically include in the
+        # core UI here.
+        self._logger.debug("Assets registered")
+        return dict(
+        js=["js/SlicerEstimator.js"],
+        css=["css/SlicerEstimator.css"],
+        less=["less/SlicerEstimator.less"]
+        )
 
 
 # SECTION: software update hook
