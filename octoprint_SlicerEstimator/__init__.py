@@ -27,10 +27,10 @@ class SlicerEstimator(PrintTimeEstimator):
             # using standard estimator
             return std_estimator
         elif std_estimator[1] == "average" and self.average_prio:
-            # average more impartand
+            # average more important than estimation
             return std_estimator
         else:
-            # return "slicer" as Origin of estimation
+            # return "slicerestimator" as Origin of estimation
             return self.estimated_time, "slicerestimator"
 
 
@@ -46,7 +46,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._executor = ThreadPoolExecutor()
 
 
-        #Slicer defaults - actual Cura, Slic3r Prusa Edition, Cura Native, Simplify3D
+        #Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
         self._slicer_def = [
                 ["M117","","",
                 "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",

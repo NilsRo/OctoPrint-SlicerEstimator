@@ -19,7 +19,7 @@ You can see that Slicer Print Time Estimator detected the embedded remaining tim
 ### Cura
 With Cura native no changes has to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall print time available.
 ### Cura M117
-Remaining time is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will update continuously the remaining print time.
+Remaining time is read out of M117 commands added by Cura if the Post-Processing actions are activated. This will update continuously the remaining print time.
 ![](images/Cura.png)
 
 ### Simplify3D
