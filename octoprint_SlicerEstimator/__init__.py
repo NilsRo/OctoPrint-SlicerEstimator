@@ -27,10 +27,10 @@ class SlicerEstimator(PrintTimeEstimator):
             # using standard estimator
             return std_estimator
         elif std_estimator[1] == "average" and self.average_prio:
-            # average more impartand
+            # average more important than estimation
             return std_estimator
         else:
-            # return "slicer" as Origin of estimation
+            # return "slicerestimator" as Origin of estimation
             return self.estimated_time, "slicerestimator"
 
 
@@ -46,7 +46,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._executor = ThreadPoolExecutor()
 
 
-        #Slicer defaults - actual Cura, Slic3r Prusa Edition, Cura Native, Simplify3D
+        #Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
         self._slicer_def = [
                 ["M117","","",
                 "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
@@ -92,7 +92,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     search_mode="GCODE",
                     search_pattern="",
                     average_prio=False,
-                    use_assets=True)
+                    use_assets=True,
+                    slicer_auto=True)
 
 
     def on_settings_save(self, data):  
@@ -111,6 +112,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_conf = self._settings.get(["slicer"])
         self._logger.debug("SlicerEstimator: Slicer Setting {}".format(self._slicer_conf))
 
+        self._slicer_auto = self._settings.get(["slicer_auto"])
         self._average_prio = self._settings.get(["average_prio"])
         if self._estimator != None:
             self._estimator.average_prio = self._average_prio
@@ -118,7 +120,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._logger.debug("Average: {}".format(self._average_prio))
 
         if self._slicer_conf == "c": 
-            self.slicer = self._slicer_conf 
+            self._slicer = self._slicer_conf 
             self._slicer_gcode = self._settings.get(["slicer_gcode"])
             self._pw = re.compile(self._settings.get(["pw"]))
             self._pd = re.compile(self._settings.get(["pd"]))
@@ -190,6 +192,14 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     def on_event(self, event, payload):
         if event == octoprint.events.Events.PRINT_STARTED:
             if payload["origin"] == "local":
+                # detect the slicer before starting the print, fallback to config if fails
+                if self._slicer_auto:
+                    slicer_detected = self._detect_slicer(payload["origin"], payload["path"])
+                    if slicer_detected:
+                        self._set_slicer_settings(slicer_detected)
+                    else:
+                        self._set_slicer_settings(self._slicer_conf)
+
                 if self._search_mode == "COMMENT":
                     self._logger.debug("Search started in file {}".format(payload["path"]))
                     self._executor.submit(
@@ -257,7 +267,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # file search slicer comment
     def _search_slicer_comment_file(self, origin, path):
-        self._slicer_estimation = ""
+        self._slicer_estimation = None
         slicer_estimation_str = self._search_through_file(origin, path, self._search_pattern)
 
         if slicer_estimation_str:
@@ -266,6 +276,23 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._estimator.estimated_time = self._slicer_estimation
         else:
             self._logger.warning("Slicer-Comment not found. Please check if you selected the correct slicer.")
+
+
+    # file search - slicer auto selection
+    def _detect_slicer(self, origin, path):
+        line = self._search_through_file(origin, path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
+        if line:
+            if  "Cura_SteamEngine" in line:
+                self._logger.info("Detected Cura")
+                return 2
+            elif "PrusaSlicer" in line:
+                self._logger.info("Detected PrusaSlicer")
+                return 1
+            elif "Simplify3D" in line:
+                self._logger.info("Detected Simplify3D")
+                return 3
+        else:
+            self._logger.warning("Autoselection of slicer not successful!")
 
 
     # generic file search with RegEx
