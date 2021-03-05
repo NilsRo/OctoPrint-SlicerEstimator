@@ -11,6 +11,12 @@
         <div class="tab-content">
             <div id="SlicerEstimator_basic" class="tab-pane active">
                 <div class="control-group">
+                    <label class="control-label">{{ _('Auto-Detect slicer before printing') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('If you do want spend time about the settings or if you use diffrent slicers leave this setting active. The slicer will be detected automatically before printing. If the slicer is not found the manual slicer selection is used.') }}">
+                        <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.slicer_auto">                       
+                    </div>
+                </div>
+                <div class="control-group">
                     <label class="control-label">{{ _('Slicer') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Select slicer or custom for your own settings') }}">
                         <select data-bind="value: settings.plugins.SlicerEstimator.slicer">
@@ -24,7 +30,7 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{ _('Use average estimation before slicer') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints so it could be more accurate than the slicer estimation.') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints so it could be more accurate than the slicer estimation. It also includes the heatup time of the printer.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.average_prio">                       
                     </div>
                 </div>
