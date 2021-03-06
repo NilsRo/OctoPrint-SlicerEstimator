@@ -34,6 +34,12 @@
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.average_prio">                       
                     </div>
                 </div>
+                <div class="control-group">
+                    <label class="control-label">{{ _('Update estimation on file upload') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Update the estimation in Octoprints filebrowser after uploading a file.') }}">
+                        <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.estimate_upload">                       
+                    </div>
+                </div>
 
                 <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
                     <p>

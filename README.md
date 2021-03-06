@@ -13,6 +13,9 @@ You can see that Slicer Print Time Estimator detected the embedded remaining tim
 
 ![](images/OctoPrint-estimator_dot.png)
 
+Also the estimated time of an upload is updated if slicer informations are found. It is possible to deactivate this in the settings of perhaps another plugin is installed doing this.
+
+![](images/file_metadata1.png)![](images/file_metadata2.png)
 
 ## Slicers supported
 
@@ -36,6 +39,7 @@ Remaining time is read out of M73 commands added by PrusaSlicer. This will updat
  * GCODE files will be scanned in background so until the necessary information is found the Octoprint estimator is used. There is no delay in start printing but with files e.g. 150Mbyte in size the scan could take some seconds.
  * If you like to see information how often the estimation is done simply activate DEBUG mode in Octoprint logging for the plugin.
  * The slicer does not know the heatup time or if the printer is pre-heated. So the remaining time is valid after the heatup phase if the printer had started printing. Octoprints Average estimation does cover heatup time also from print time history. 
+ * Be aware that other plugins who changing the GCODE could interfer with Slicer Print Time Estimator if Cura M117 or PrusaSlicer is used. Both are reading GCODEs that perhaps been overwritten by e.g. an ETA plugin. You have to enable debug mode then to get the used GCODE format in the octoprint log and create a custom setting with that information.
 
 ## Custom Settings
 Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
