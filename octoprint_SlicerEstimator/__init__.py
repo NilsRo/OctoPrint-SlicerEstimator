@@ -172,7 +172,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         if self._search_mode == "GCODE" and gcode and gcode == self._slicer_gcode:
             self._logger.debug("SlicerEstimator: {} found - {}".format(gcode,cmd))
-            self._estimator.estimated_time = self._parseEstimation(cmd)
+            estimated_time = self._parseEstimation(cmd)
+            if estimated_time:
+                self._estimator.estimated_time = estimated_time
         else:
             return
 
@@ -205,11 +207,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                         self._search_slicer_comment_file, payload["origin"], payload["path"]
                     )
         if event == octoprint.events.Events.PRINT_CANCELLED or event == octoprint.events.Events.PRINT_FAILED or event == octoprint.events.Events.PRINT_DONE:
-                # Init of Class variables for new estimation
-                self._slicer_estimation = None
-                self._sliver_estimation_str = None
-                self._estimator.estimated_time = -1
-                self._logger.debug("Event received: {}".format(event))
+            # Init of Class variables for new estimation
+            self._slicer_estimation = None
+            self._sliver_estimation_str = None
+            self._estimator.estimated_time = -1
+            self._logger.debug("Event received: {}".format(event))
 
 
 # SECTION: Estimation helper
@@ -369,7 +371,6 @@ class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue):
         self._plugin = plugin    
 
     def _do_analysis(self, high_priority=False):
-        self._plugin._logger.debug("Analysis of {} started".format(self._current.name))
         try: # run a standard analysis and update estimation if found in GCODE
             result = super(SlicerEstimatorGcodeAnalysisQueue, self)._do_analysis(high_priority)
             if self._plugin.estimate_upload and not self._aborted:
