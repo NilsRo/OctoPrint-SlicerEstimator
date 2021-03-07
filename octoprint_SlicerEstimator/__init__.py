@@ -9,6 +9,8 @@ import re
 import sarge
 import io
 
+from octoprint.filemanager.analysis import AnalysisAborted
+from octoprint.filemanager.analysis import GcodeAnalysisQueue
 from octoprint.printer.estimation import PrintTimeEstimator
 
 
@@ -52,12 +54,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
                 "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
                 "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                1,1,1,2,3,"GCODE",""],
+                1,1,1,2,3,"GCODE","M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s"],
                 ["M73","","",
                 "",
                 "M73 P([0-9]+) R([0-9]+)",
                 "",
-                1,1,1,2,1,"GCODE",""],
+                1,1,1,2,1,"GCODE","M73 P([0-9]+) R([0-9]+)"],
                 ["","","",
                 "",
                 "",
@@ -93,7 +95,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     search_pattern="",
                     average_prio=False,
                     use_assets=True,
-                    slicer_auto=True)
+                    slicer_auto=True,
+                    estimate_upload=True)
 
 
     def on_settings_save(self, data):  
@@ -114,6 +117,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         self._slicer_auto = self._settings.get(["slicer_auto"])
         self._average_prio = self._settings.get(["average_prio"])
+        self.estimate_upload = self._settings.get(["estimate_upload"])
+
+        
         if self._estimator != None:
             self._estimator.average_prio = self._average_prio
 
@@ -166,7 +172,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         if self._search_mode == "GCODE" and gcode and gcode == self._slicer_gcode:
             self._logger.debug("SlicerEstimator: {} found - {}".format(gcode,cmd))
-            self._estimator.estimated_time = self._parseEstimation(cmd)
+            estimated_time = self._parseEstimation(cmd)
+            if estimated_time:
+                self._estimator.estimated_time = estimated_time
         else:
             return
 
@@ -192,28 +200,48 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     def on_event(self, event, payload):
         if event == octoprint.events.Events.PRINT_STARTED:
             if payload["origin"] == "local":
-                # detect the slicer before starting the print, fallback to config if fails
-                if self._slicer_auto:
-                    slicer_detected = self._detect_slicer(payload["origin"], payload["path"])
-                    if slicer_detected:
-                        self._set_slicer_settings(slicer_detected)
-                    else:
-                        self._set_slicer_settings(self._slicer_conf)
-
+                self._set_slicer(payload["origin"], payload["path"])
                 if self._search_mode == "COMMENT":
                     self._logger.debug("Search started in file {}".format(payload["path"]))
                     self._executor.submit(
                         self._search_slicer_comment_file, payload["origin"], payload["path"]
                     )
         if event == octoprint.events.Events.PRINT_CANCELLED or event == octoprint.events.Events.PRINT_FAILED or event == octoprint.events.Events.PRINT_DONE:
-                # Init of Class variables for new estimation
-                self._slicer_estimation = None
-                self._sliver_estimation_str = None
-                self._estimator.estimated_time = -1
-                self._logger.debug("Event received: {}".format(event))
+            # Init of Class variables for new estimation
+            self._slicer_estimation = None
+            self._sliver_estimation_str = None
+            self._estimator.estimated_time = -1
+            self._logger.debug("Event received: {}".format(event))
 
 
 # SECTION: Estimation helper
+    # set the slicer before starting the print, fallback to config if fails
+    def _set_slicer(self, origin, path):
+        if self._slicer_auto:
+            slicer_detected = self._detect_slicer(origin, path)
+            if slicer_detected:
+                self._set_slicer_settings(slicer_detected)
+            else:
+                self._set_slicer_settings(self._slicer_conf)
+
+
+   # slicer auto selection
+    def _detect_slicer(self, origin, path):
+        line = self._search_through_file(origin, path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
+        if line:
+            if  "Cura_SteamEngine" in line:
+                self._logger.info("Detected Cura")
+                return 2
+            elif "PrusaSlicer" in line:
+                self._logger.info("Detected PrusaSlicer")
+                return 1
+            elif "Simplify3D" in line:
+                self._logger.info("Detected Simplify3D")
+                return 3
+        else:
+            self._logger.warning("Autoselection of slicer not successful!")
+
+
     def _parseEstimation(self,cmd):
         if self._pw.pattern != "":
             mw = self._pw.match(cmd)
@@ -278,23 +306,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.warning("Slicer-Comment not found. Please check if you selected the correct slicer.")
 
 
-    # file search - slicer auto selection
-    def _detect_slicer(self, origin, path):
-        line = self._search_through_file(origin, path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
-        if line:
-            if  "Cura_SteamEngine" in line:
-                self._logger.info("Detected Cura")
-                return 2
-            elif "PrusaSlicer" in line:
-                self._logger.info("Detected PrusaSlicer")
-                return 1
-            elif "Simplify3D" in line:
-                self._logger.info("Detected Simplify3D")
-                return 3
-        else:
-            self._logger.warning("Autoselection of slicer not successful!")
-
-
     # generic file search with RegEx
     def _search_through_file(self, origin, path, pattern):
         path_on_disk = self._file_manager.path_on_disk(origin, path)
@@ -304,6 +315,22 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             for line in f:
                 if compiled.match(line):
                     return line
+
+
+# SECTION: Analysis Queue Estimation (file upload)
+    def analysis_queue_factory(self, *args, **kwargs):
+        return dict(gcode=lambda finished_callback: SlicerEstimatorGcodeAnalysisQueue(finished_callback, self))
+
+    def run_analysis(self, path):
+        self._set_slicer("local", path)
+        self._logger.debug("Search started in file {}".format(path))
+        slicer_estimation_str = self._search_through_file("local", path, self._search_pattern)
+        if slicer_estimation_str:
+            self._logger.debug("Slicer-Estimation {} found.".format(slicer_estimation_str))
+            return self._parseEstimation(slicer_estimation_str)
+        else:
+            self._logger.warning("Slicer-Estimation not found. Please check if you selected the correct slicer.")
+            
 
 
 # SECTION: Assets
@@ -337,11 +364,34 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         )
 
 
+# SECTION: Analysis Queue Class
+class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue): 
+    def __init__(self, finished_callback, plugin):
+        super(SlicerEstimatorGcodeAnalysisQueue, self).__init__(finished_callback)
+        self._plugin = plugin    
+
+    def _do_analysis(self, high_priority=False):
+        try: # run a standard analysis and update estimation if found in GCODE
+            result = super(SlicerEstimatorGcodeAnalysisQueue, self)._do_analysis(high_priority)
+            if self._plugin.estimate_upload and not self._aborted:
+                result_slicer = self._plugin.run_analysis(self._current.path)
+                self._plugin._logger.info("Found {}s from slicer for file {}".format(result_slicer, self._current.name))
+                if result_slicer:
+                    result["estimatedPrintTime"] = result_slicer
+            return result
+        except AnalysisAborted as _:
+            raise
+
+    def _do_abort(self, reenqueue=True):
+        super(SlicerEstimatorGcodeAnalysisQueue, self)._do_abort(reenqueue)  
+
+
 __plugin_name__ = "Slicer Print Time Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 __plugin_implementation__ = SlicerEstimatorPlugin()
 __plugin_hooks__ = {
     "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.updateGcodeEstimation,
     "octoprint.printer.estimation.factory": __plugin_implementation__.estimator_factory,
+    "octoprint.filemanager.analysis.factory": __plugin_implementation__.analysis_queue_factory,
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
 }
