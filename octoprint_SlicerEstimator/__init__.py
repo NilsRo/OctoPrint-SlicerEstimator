@@ -8,6 +8,7 @@ import octoprint.events
 import re
 import sarge
 import io
+import time
 
 from octoprint.filemanager.analysis import AnalysisAborted
 from octoprint.filemanager.analysis import GcodeAnalysisQueue
@@ -368,23 +369,34 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue): 
     def __init__(self, finished_callback, plugin):
         super(SlicerEstimatorGcodeAnalysisQueue, self).__init__(finished_callback)
-        self._plugin = plugin    
+        self._plugin = plugin
+        self._result_slicer = None
 
     def _do_analysis(self, high_priority=False):
         try: # run a standard analysis and update estimation if found in GCODE
             result = super(SlicerEstimatorGcodeAnalysisQueue, self)._do_analysis(high_priority)
             if self._plugin.estimate_upload and not self._aborted:
-                result_slicer = self._plugin.run_analysis(self._current.path)
-                self._plugin._logger.info("Found {}s from slicer for file {}".format(result_slicer, self._current.name))
-                if result_slicer:
-                    result["estimatedPrintTime"] = result_slicer
-            return result
+                future = self._plugin._executor.submit(
+                    self._run_analysis, self._current.path
+                )
+                # Break analysis of abort requested
+                while not future.done() and not self._aborted:
+                    time.sleep(1)
+                if future.done() and self._result_slicer:
+                    self._logger.info("Found {}s from slicer for file {}".format(self._result_slicer, self._current.name))
+                    result["estimatedPrintTime"] = self._result_slicer
+                    return result
+                elif not future.done():
+                    future.shutdown(wait=False)
+                    raise AnalysisAborted(reenqueue=self._reenqueue)
         except AnalysisAborted as _:
             raise
 
     def _do_abort(self, reenqueue=True):
         super(SlicerEstimatorGcodeAnalysisQueue, self)._do_abort(reenqueue)  
 
+    def _run_analysis(self, path):
+        self._result_slicer = self._plugin.run_analysis(path)
 
 __plugin_name__ = "Slicer Print Time Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
