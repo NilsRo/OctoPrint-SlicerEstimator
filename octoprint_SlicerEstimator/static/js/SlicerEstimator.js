@@ -3,7 +3,7 @@
 */
 
 $(function() {
-  function SlicerEstimatorViewModel(parameters) {
+  function slicerEstimatorViewModel(parameters) {
     var self = this;
 
     self.printerStateViewModel = parameters[0];
@@ -20,7 +20,7 @@ $(function() {
             return target();
           }
         }
-      })
+      });
       return result;
     };
 
@@ -43,22 +43,13 @@ $(function() {
       }
     });
     self.printerStateViewModel.printTimeLeftOrigin.valueHasMutated();
-
-
-      self.exactDurations.subscribe(function (newValue) {
-        self.printerStateViewModel.estimatedPrintTime.valueHasMutated();
-        self.printerStateViewModel.printTimeLeft.valueHasMutated();
-      });
-      // Force an update because this is called after the format function has already run.
-      self.exactDurations.valueHasMutated();
-    }
-
+  }
   /* view model class, parameters for constructor, container to bind to
    * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
    * and a full list of the available options.
    */
   OCTOPRINT_VIEWMODELS.push({
-    construct: SlicerEstimatorViewModel,
+    construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel"]
   });
 });
