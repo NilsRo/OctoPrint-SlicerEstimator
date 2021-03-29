@@ -35,7 +35,7 @@ Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.
  * In case SDCARD print is used the original estimator from OctoPrint will be used
- * Compared to slicer estimations the average estimation by OctoPrint (based on the average of the last real prints) could be more accurate. So you can change the settings if you like to use average estimation if available. It is not available for new GCODE files.
+ * Compared to slicer estimations the average estimation by OctoPrint (based on the average of the last real prints) could be more accurate. So you can change the settings if you like to use average estimation if available. It is not available for new GCODE files and could be slightly off if you preheat "sometimes". A green dot is shown if average estimation is used.
  * GCODE files are scanned in background so until the necessary information is found the OctoPrint estimator is used. There is no delay in start printing but with files of e.g. 150Mbyte in size the scan could take some seconds.
  * If you like to see more details what happens in the background simply activate DEBUG mode in OctoPrint logging for the plugin. If you want open a ticket please attach the log there.
  * Be aware that other plugins could change the GCODE. This could interfere with Slicer Print Time Estimator if Cura M117 or PrusaSlicer is used. Both reads GCODEs that perhaps will be overwritten by e.g. an ETA plugin.
