@@ -30,7 +30,7 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{ _('Use average estimation before slicer') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints so it could be more accurate than the slicer estimation. It also includes the heatup time of the printer.') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints (green dot is shown). It can be more accurate in the first minutes compared to the slicer estimation as it also includes the heatup time of the printer and is based on the print-history. After print-start slicer estimation is fine.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.average_prio">                       
                     </div>
                 </div>
