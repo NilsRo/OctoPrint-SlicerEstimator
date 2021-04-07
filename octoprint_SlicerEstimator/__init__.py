@@ -385,11 +385,12 @@ class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue):
                 if future.done() and self._result_slicer:
                     self._logger.info("Found {}s from slicer for file {}".format(self._result_slicer, self._current.name))
                     result["estimatedPrintTime"] = self._result_slicer
-                    return result
-                elif not future.done():
+                elif not future.done() and self._aborted:
                     future.shutdown(wait=False)
                     raise AnalysisAborted(reenqueue=self._reenqueue)
+                return result
         except AnalysisAborted as _:
+            self._logger.info("Probably starting printing, aborting analysis of file-upload.")
             raise
 
     def _do_abort(self, reenqueue=True):
