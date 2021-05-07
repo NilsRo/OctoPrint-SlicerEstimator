@@ -20,7 +20,6 @@ class SlicerEstimator(PrintTimeEstimator):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
         self.estimated_time = -1
-        self.estimated_time_total = -1
         self.average_prio = False
 
 
@@ -38,20 +37,7 @@ class SlicerEstimator(PrintTimeEstimator):
             return self.estimated_time, "slicerestimator"
 
 
-    def estimate_total(self, progress, printTime):
-        std_estimator = PrintTimeEstimator.estimate_total(self,  progress, printTime)
-
-        if self._job_type != "local" or self.estimated_time == -1:
-            # using standard estimator
-            return std_estimator
-        else:
-            # return "slicerestimator" total estimation if available
-            if self.estimated_time_total == -1:
-                self.estimated_time_total = self.estimated_time
-            return self.estimated_time_total
-
-
-class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
+class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin, 
                             octoprint.plugin.TemplatePlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
