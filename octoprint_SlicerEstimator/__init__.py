@@ -142,7 +142,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._psp = int(self._settings.get(["psp"]))
 
             self._search_mode = self._settings.get(["search_mode"])
-            self._search_mode = self._settings.get(["search_pattern"])
+            self._search_pattern = self._settings.get(["search_pattern"])
         else:
             self._set_slicer_settings(int(self._slicer_conf))
 
