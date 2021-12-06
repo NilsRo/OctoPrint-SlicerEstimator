@@ -48,8 +48,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_estimation = None
         self._executor = ThreadPoolExecutor()
 
-
-        #Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
+        # Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
         self._slicer_def = [
                 ["M117","","",
                 "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
