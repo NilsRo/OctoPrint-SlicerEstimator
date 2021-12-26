@@ -48,8 +48,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_estimation = None
         self._executor = ThreadPoolExecutor()
 
-
-        #Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
+        # Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
         self._slicer_def = [
                 ["M117","","",
                 "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
@@ -142,7 +141,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._psp = int(self._settings.get(["psp"]))
 
             self._search_mode = self._settings.get(["search_mode"])
-            self._search_mode = self._settings.get(["search_pattern"])
+            self._search_pattern = self._settings.get(["search_pattern"])
         else:
             self._set_slicer_settings(int(self._slicer_conf))
 
@@ -358,6 +357,22 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 user="NilsRo",
                 repo="OctoPrint-SlicerEstimator",
                 current=self._plugin_version,
+
+                # stable release
+                stable_branch=dict(
+                    name="Stable",
+                    branch="master",
+                    comittish=["master"]
+                ),
+
+                # release candidates
+                prerelease_branches=[
+                    dict(
+                        name="Development",
+                        branch="development",
+                        comittish=["development", "master"]
+                    )
+                ],
 
                 # update method: pip
                 pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
