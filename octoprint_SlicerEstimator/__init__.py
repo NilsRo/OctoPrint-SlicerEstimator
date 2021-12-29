@@ -5,6 +5,7 @@ from octoprint.printer.estimation import PrintTimeEstimator
 
 import octoprint.plugin
 import octoprint.events
+import octoprint.filemanager.storage
 import re
 import sarge
 import io
@@ -212,6 +213,26 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
             self._logger.debug("Event received: {}".format(event))
+        if event == octoprint.events.Events.FILE_ADDED:
+            if payload["storage"] == "local" and payload["type"][1] == "gcode":
+                self._logger.debug("File uploaded and will be scanned for Cura")
+                self._set_slicer(payload["storage"], payload["path"])
+                # If Cura is slicer
+                if self._slicer == 2:
+                    self._find_metadata(payload["storage"], payload["path"])
+           
+                    
+# SECTION: File metadata
+    # search for material data
+    def _find_metadata(self, origin, path):
+        filament = dict(
+            material_guid= self._search_through_file(origin, path, ";Material GUID: ", 1000).strip(";Material GUID: ").strip(),
+            material_id= self._search_through_file(origin, path, ";Material ID: ", 1000).strip(";Material ID: ").strip(),
+            material_brand= self._search_through_file(origin, path, ";Material Brand: ", 1000).strip(";Material Brand: ").strip(),
+            material_name= self._search_through_file(origin, path, ";Material Name: " , 1000).strip(";Material Name: ").strip()
+        )
+        self._file_manager._storage_managers[origin].set_additional_metadata(path, "filament", filament, overwrite=True)
+        self._logger.debug(self._file_manager._storage_managers[origin].get_additional_metadata(path,"filament"))
 
 
 # SECTION: Estimation helper
@@ -307,15 +328,21 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     # generic file search with RegEx
-    def _search_through_file(self, origin, path, pattern):
+    def _search_through_file(self, origin, path, pattern, rows = 0):
         path_on_disk = self._file_manager.path_on_disk(origin, path)
         self._logger.debug("Path on disc searched: {}".format(path_on_disk))
         compiled = re.compile(pattern)
+        steps = rows
         with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
             for line in f:
                 if compiled.match(line):
                     return line
-
+                
+                if rows > 0:
+                    steps -= 1
+                    if steps <= 0:
+                        break
+                    
 
 # SECTION: Analysis Queue Estimation (file upload)
     def analysis_queue_factory(self, *args, **kwargs):
@@ -339,9 +366,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # core UI here.
         self._logger.debug("Assets registered")
         return dict(
-        js=["js/SlicerEstimator.js"],
-        css=["css/SlicerEstimator.css"],
-        less=["less/SlicerEstimator.less"]
+            js=["js/SlicerEstimator.js"],
+            css=["css/SlicerEstimator.css"],
+            less=["less/SlicerEstimator.less"]
         )
 
 
