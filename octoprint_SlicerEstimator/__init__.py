@@ -43,7 +43,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
                             octoprint.plugin.ProgressPlugin,
-                            octoprint.plugin.AssetPlugin):
+                            octoprint.plugin.AssetPlugin,
+                            octoprint.plugin.SimpleApiPlugin):
     def __init__(self):
         self._estimator = None
         self._slicer_estimation = None
@@ -358,6 +359,29 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         else:
             self._logger.warning("Slicer-Estimation not found. Please check if you selected the correct slicer.")
             
+
+# SECTION: API
+    def get_api_commands(self):
+        return dict(get_filament_data = [])
+
+
+    def on_api_command(self, command, data):
+        import flask
+        import json
+        from octoprint.server import user_permission
+        if not user_permission.can():
+            return flask.make_response("Insufficient rights", 403)
+
+        if command == "get_filament_data":
+            FileList = self._file_manager.list_files(recursive=True)
+            self._logger.debug(FileList)
+            localfiles = FileList["local"]
+            results = filament_key = dict()
+            for key, file in localfiles.items():
+                if localfiles[key]["type"] == 'machinecode':
+                    filament_meta = self._file_manager._storage_managers['local'].get_additional_metadata(localfiles[key]["path"] ,"filament") 
+                    results[localfiles[key]["path"]] = filament_meta
+            return flask.jsonify(results)
 
 
 # SECTION: Assets
