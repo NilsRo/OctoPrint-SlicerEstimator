@@ -17,6 +17,19 @@ Also the estimated time of an upload is updated if slicer comments are found. It
 
 ![](images/file_metadata1.png)![](images/file_metadata2.png)
 
+# Support for Cura Filement Metadata
+With version 1.1.0 and Cura 4.12 Material Metadata is supported. This will be added to the filelist to know for which filament the GCODE was created and can be read out by other plugins using the get_addtiional_metadata function using "filament".
+
+For example: self._file_manager._storage_managers["local"].get_additional_metadata(<path of the file>,"filament");
+Result: {'material_guid': '7b25d5d0-10fe-4a8f-9f14-e96b937d10c5', 'material_id': 'generic_petg_175 #3', 'material_brand': 'Amazon Basics', 'material_name': 'PETG Blau'}
+
+
+The following has to be added in the Start G-Code. For Anycubic Mega S, Pro and X it is available by default.
+;Material GUID: {material_guid}
+;Material ID: {material_id}
+;Material Brand: {material_brand}
+;Material Name: {material_name}
+
 ## Slicers supported
 
 ### Cura
