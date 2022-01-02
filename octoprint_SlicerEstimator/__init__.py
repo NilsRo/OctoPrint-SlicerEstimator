@@ -224,9 +224,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
            
                     
 # SECTION: File metadata
-    # search for material dat
+    # search for material data
     def _find_metadata(self, origin, path):
-        # Format: ;Slicer Info;<key>;<Displayname>;<Value>
+        # Format: ;Slicer info:<key>;<Displayname>;<Value>
         results = self._search_in_file_start_all(origin, path, ";Slicer info:", 5000)
         if results is not None:
             filament = dict()
