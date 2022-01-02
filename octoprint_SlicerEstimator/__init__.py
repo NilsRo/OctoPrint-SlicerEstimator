@@ -441,10 +441,13 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 prerelease_branches=[
                     dict(
                         name="Development",
-                        branch="development",
-                        comittish=["development", "master"]
+                        branch="Development",
+                        comittish=["Development", "master"]
                     )
                 ],
+                
+                prerelease=True,
+                prerelease_channel="Development",
 
                 # update method: pip
                 pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
