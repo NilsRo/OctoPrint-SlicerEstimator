@@ -5,6 +5,7 @@ from octoprint.printer.estimation import PrintTimeEstimator
 
 import octoprint.plugin
 import octoprint.events
+import octoprint.filemanager.storage
 import re
 import sarge
 import io
@@ -42,7 +43,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
                             octoprint.plugin.ProgressPlugin,
-                            octoprint.plugin.AssetPlugin):
+                            octoprint.plugin.AssetPlugin,
+                            octoprint.plugin.SimpleApiPlugin):
     def __init__(self):
         self._estimator = None
         self._slicer_estimation = None
@@ -96,7 +98,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     average_prio=False,
                     use_assets=True,
                     slicer_auto=True,
-                    estimate_upload=True)
+                    estimate_upload=True,
+                    add_slicer_metadata=True)
 
 
     def on_settings_save(self, data):  
@@ -118,6 +121,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_auto = self._settings.get(["slicer_auto"])
         self._average_prio = self._settings.get(["average_prio"])
         self.estimate_upload = self._settings.get(["estimate_upload"])
+        self._add_slicer_metadata = self._settings.get(["add_slicer_metadata"])
+
 
         
         if self._estimator != None:
@@ -212,6 +217,25 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
             self._logger.debug("Event received: {}".format(event))
+        if event == octoprint.events.Events.FILE_ADDED and self._add_slicer_metadata:
+            if payload["storage"] == "local" and payload["type"][1] == "gcode":
+                self._logger.debug("File uploaded and will be scanned for Metadata")
+                self._find_metadata(payload["storage"], payload["path"])
+           
+                    
+# SECTION: File metadata
+    # search for material data
+    def _find_metadata(self, origin, path):
+        # Format: ;Slicer info:<key>;<Displayname>;<Value>
+        results = self._search_in_file_start_all(origin, path, ";Slicer info:", 5000)
+        if results is not None:
+            filament = dict()
+            for result in results:
+                slicer_info = result.lstrip(";Slicer info:").split(";")
+                filament[slicer_info[0]] = [slicer_info[1].strip(),slicer_info[2].strip()] 
+                
+        self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer", filament, overwrite=True)
+        self._logger.debug(self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer"))
 
 
 # SECTION: Estimation helper
@@ -227,7 +251,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
    # slicer auto selection
     def _detect_slicer(self, origin, path):
-        line = self._search_through_file(origin, path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
+        line = self._search_in_file_regex(origin, path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
         if line:
             if  "Cura_SteamEngine" in line:
                 self._logger.info("Detected Cura")
@@ -296,7 +320,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     # file search slicer comment
     def _search_slicer_comment_file(self, origin, path):
         self._slicer_estimation = None
-        slicer_estimation_str = self._search_through_file(origin, path, self._search_pattern)
+        slicer_estimation_str = self._search_in_file_regex(origin, path, self._search_pattern)
 
         if slicer_estimation_str:
             self._logger.debug("Slicer-Comment {} found.".format(slicer_estimation_str))
@@ -307,15 +331,40 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     # generic file search with RegEx
-    def _search_through_file(self, origin, path, pattern):
+    def _search_in_file_regex(self, origin, path, pattern, rows = 0):
         path_on_disk = self._file_manager.path_on_disk(origin, path)
         self._logger.debug("Path on disc searched: {}".format(path_on_disk))
         compiled = re.compile(pattern)
+        steps = rows
         with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
             for line in f:
                 if compiled.match(line):
                     return line
-
+                
+                if rows > 0:
+                    steps -= 1
+                    if steps <= 0:
+                        break
+    
+    
+    # generic file search and find all occurences beginning with
+    def _search_in_file_start_all(self, origin, path, pattern, rows = 0):
+        path_on_disk = self._file_manager.path_on_disk(origin, path)
+        self._logger.debug("Path on disc searched: {}".format(path_on_disk))
+        steps = rows
+        
+        return_arr = []
+        with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
+            for line in f:
+                if line[:len(pattern)] == pattern:
+                    return_arr.append(line)                        
+                if rows > 0:
+                    steps -= 1
+                    if steps <= 0:
+                        return return_arr
+        return return_arr
+    
+                    
 
 # SECTION: Analysis Queue Estimation (file upload)
     def analysis_queue_factory(self, *args, **kwargs):
@@ -324,13 +373,36 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     def run_analysis(self, path):
         self._set_slicer("local", path)
         self._logger.debug("Search started in file {}".format(path))
-        slicer_estimation_str = self._search_through_file("local", path, self._search_pattern)
+        slicer_estimation_str = self._search_in_file_regex("local", path, self._search_pattern)
         if slicer_estimation_str:
             self._logger.debug("Slicer-Estimation {} found.".format(slicer_estimation_str))
             return self._parseEstimation(slicer_estimation_str)
         else:
             self._logger.warning("Slicer-Estimation not found. Please check if you selected the correct slicer.")
             
+
+# SECTION: API
+    # def get_api_commands(self):
+    #     return dict(get_filament_data = [])
+
+
+    # def on_api_command(self, command, data):
+    #     import flask
+    #     import json
+    #     from octoprint.server import user_permission
+    #     if not user_permission.can():
+    #         return flask.make_response("Insufficient rights", 403)
+
+    #     if command == "get_filament_data":
+    #         FileList = self._file_manager.list_files(recursive=True)
+    #         self._logger.debug(FileList)
+    #         localfiles = FileList["local"]
+    #         results = filament_key = dict()
+    #         for key, file in localfiles.items():
+    #             if localfiles[key]["type"] == 'machinecode':
+    #                 filament_meta = self._file_manager._storage_managers['local'].get_additional_metadata(localfiles[key]["path"] ,"filament") 
+    #                 results[localfiles[key]["path"]] = filament_meta
+    #         return flask.jsonify(results)
 
 
 # SECTION: Assets
@@ -339,9 +411,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # core UI here.
         self._logger.debug("Assets registered")
         return dict(
-        js=["js/SlicerEstimator.js"],
-        css=["css/SlicerEstimator.css"],
-        less=["less/SlicerEstimator.less"]
+            js=["js/SlicerEstimator.js"],
+            css=["css/SlicerEstimator.css"],
+            less=["less/SlicerEstimator.less"]
         )
 
 
@@ -357,6 +429,25 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 user="NilsRo",
                 repo="OctoPrint-SlicerEstimator",
                 current=self._plugin_version,
+
+                # stable release
+                stable_branch=dict(
+                    name="Stable",
+                    branch="master",
+                    comittish=["master"]
+                ),
+
+                # release candidates
+                prerelease_branches=[
+                    dict(
+                        name="Development",
+                        branch="Development",
+                        comittish=["Development", "master"]
+                    )
+                ],
+                
+                prerelease=True,
+                prerelease_channel="Development",
 
                 # update method: pip
                 pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
