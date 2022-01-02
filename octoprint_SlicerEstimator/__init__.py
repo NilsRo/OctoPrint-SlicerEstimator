@@ -98,7 +98,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     average_prio=False,
                     use_assets=True,
                     slicer_auto=True,
-                    estimate_upload=True)
+                    estimate_upload=True,
+                    add_slicer_metadata=True)
 
 
     def on_settings_save(self, data):  
@@ -120,6 +121,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_auto = self._settings.get(["slicer_auto"])
         self._average_prio = self._settings.get(["average_prio"])
         self.estimate_upload = self._settings.get(["estimate_upload"])
+        self._add_slicer_metadata = self._settings.get(["add_slicer_metadata"])
+
 
         
         if self._estimator != None:
@@ -214,28 +217,25 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
             self._logger.debug("Event received: {}".format(event))
-        if event == octoprint.events.Events.FILE_ADDED:
+        if event == octoprint.events.Events.FILE_ADDED and self._add_slicer_metadata:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
-                self._logger.debug("File uploaded and will be scanned for Cura")
-                self._set_slicer(payload["storage"], payload["path"])
-                # If Cura is slicer
-                if self._slicer == 2:
-                    self._find_metadata(payload["storage"], payload["path"])
+                self._logger.debug("File uploaded and will be scanned for Metadata")
+                self._find_metadata(payload["storage"], payload["path"])
            
                     
 # SECTION: File metadata
     # search for material dat
     def _find_metadata(self, origin, path):
         # Format: ;Slicer Info;<key>;<Displayname>;<Value>
-        results = self._search_in_file_start_all(origin, path, ";Slicer Info;")
+        results = self._search_in_file_start_all(origin, path, ";Slicer info:", 5000)
         if results is not None:
             filament = dict()
             for result in results:
-                slicer_info = result.lstrip(";Slicer Info;").split(";")
+                slicer_info = result.lstrip(";Slicer info:").split(";")
                 filament[slicer_info[0]] = [slicer_info[1].strip(),slicer_info[2].strip()] 
                 
-        self._file_manager._storage_managers[origin].set_additional_metadata(path, "filament", filament, overwrite=True)
-        self._logger.debug(self._file_manager._storage_managers[origin].get_additional_metadata(path,"filament"))
+        self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer", filament, overwrite=True)
+        self._logger.debug(self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer"))
 
 
 # SECTION: Estimation helper

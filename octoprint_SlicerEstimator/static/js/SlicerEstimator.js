@@ -71,8 +71,8 @@ $(function() {
     
     self.filesViewModel.get_slicer_data = function(data) {  
       let return_value = "";
-      if (data.filament != null) {
-        for (const [key, value] of Object.entries(data.filament)) {
+      if (data.slicer != null) {
+        for (const [key, value] of Object.entries(data.slicer)) {
           return_value += value[0] + ": " + value[1] + "<br>";
         }
       }
