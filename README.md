@@ -47,6 +47,8 @@ For example:
 ### Cura
 With Cura native no changes has to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
 
+Custom metadata: http://files.fieldofview.com/cura/Replacement_Patterns.html
+
 ### Cura M117
 Remaining time is read out of M117 commands added by Cura if the Post-Processing actions are activated. The slicer will update the remaining print time continuously.
 ![](images/Cura.png)
