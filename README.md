@@ -30,7 +30,7 @@ Example for Cura 4.12 and newer:
     ;Slicer info:material_brand;Material Brand;{material_brand}
     ;Slicer info:material_name;Material Name;{material_name}
 
-![](images/Filelist.png)
+![](images/file_custom_metadata.png)
 
 For Anycubic Mega S, Pro and X it is available by default in newest Cura Release.
 
