@@ -71,9 +71,21 @@ $(function() {
     //   })
     // };
     
+
+
+    // Overwrite the enableAdditionalData function to handle available metadata
+    self.filesViewModel.slicerEnableAdditionalData = function(data) {
+      debugger;
+      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
+          return true;
+      } else {
+          return self.filesViewModel.enableAdditionalData(data);
+      }
+    };
+
     self.filesViewModel.get_slicer_data = function(data) {
       let return_value = "";
-      if (data.slicer != null) {
+      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
         for (const [key, value] of Object.entries(data.slicer)) {
           return_value += value[0] + ": " + value[1] + "<br>";
         }
@@ -85,16 +97,15 @@ $(function() {
     self.onBeforeBinding = function() {
       // inject filament metadate into template
       if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
-        let regex = /<div class="additionalInfo hide"/mi;
-
         $("#files_template_machinecode").text(function () {
           let return_value = $(this).text();
+          let regex = /<div class="additionalInfo hide"/mi;
           return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.get_slicer_data($data)"></div> <div class="additionalInfo hide"');
+          return_value = return_value.replaceAll("$root.enableAdditionalData($data)", "$root.slicerEnableAdditionalData($data)");
           return return_value
         });
       }
     };
-  
   }
   /* view model class, parameters for constructor, container to bind to
    * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
@@ -105,4 +116,4 @@ $(function() {
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
     elements: ['#get_slicer_data']
   });
-});0
+});
