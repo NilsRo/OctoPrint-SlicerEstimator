@@ -8,6 +8,8 @@ $(function() {
 
     self.printerStateViewModel = parameters[0];
     self.filesViewModel = parameters[1];
+    self.settingsViewModel = parameters[2];
+
 
     
     // Overwrite the printTimeLeftOriginString function
@@ -69,30 +71,28 @@ $(function() {
     //   })
     // };
     
-    self.filesViewModel.get_slicer_data = function(data) {  
+    self.filesViewModel.get_slicer_data = function(data) {
       let return_value = "";
       if (data.slicer != null) {
         for (const [key, value] of Object.entries(data.slicer)) {
           return_value += value[0] + ": " + value[1] + "<br>";
         }
       }
-
       return return_value;
     };
 
 
     self.onBeforeBinding = function() {
       // inject filament metadate into template
-      // self.get_slicer_data();
-      //var = $("#files_template_machinecode").parseHTML();
-      //alert($("#files_template_machinecode").children.length);
-      let regex = /<div class="additionalInfo hide"/mi;
+      if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
+        let regex = /<div class="additionalInfo hide"/mi;
 
-      $("#files_template_machinecode").text(function () {
-        let return_value = $(this).text();
-        return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.get_slicer_data($data);"></div> <div class="additionalInfo hide"');
-        return return_value
-      });
+        $("#files_template_machinecode").text(function () {
+          let return_value = $(this).text();
+          return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.get_slicer_data($data)"></div> <div class="additionalInfo hide"');
+          return return_value
+        });
+      }
     };
   
   }
@@ -102,7 +102,7 @@ $(function() {
    */
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
-    dependencies: ["printerStateViewModel", "filesViewModel"],
+    dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
     elements: ['#get_slicer_data']
   });
 });0
