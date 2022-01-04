@@ -85,7 +85,7 @@ $(function() {
     //Add the slicer metadata to "additionalMetadata"
     self.filesViewModel.getSlicerData = function(data) {
       let return_value = "";
-      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
+      if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
         for (const [key, value] of Object.entries(data.slicer)) {
           return_value += value[0] + ": " + value[1] + "<br>";
         }
