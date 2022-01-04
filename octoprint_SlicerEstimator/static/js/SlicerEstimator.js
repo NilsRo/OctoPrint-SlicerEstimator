@@ -73,14 +73,13 @@ $(function() {
     
     // Overwrite the enableAdditionalData function to handle available metadata
     self.filesViewModel.slicerEnableAdditionalData = function(data) {      
-      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
+      if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
           return true;
       } else {
           return self.filesViewModel.enableAdditionalData(data);
       }
-    };  
+    };
     self.filesViewModel.enableAdditionalData = self.filesViewModel.slicerEnableAdditionalData;
-
 
     //Add the slicer metadata array to HTML DOM
     self.filesViewModel.get_slicer_data = function(data) {
@@ -95,13 +94,12 @@ $(function() {
 
 
     self.onBeforeBinding = function() {
-      // inject filament metadate into template
+      // inject filament metadata into template
       if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
         $("#files_template_machinecode").text(function () {
           let return_value = $(this).text();
           let regex = /<div class="additionalInfo hide"/mi;
           return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.get_slicer_data($data)"></div> <div class="additionalInfo hide"');
-          // return_value = return_value.replaceAll("$root.enableAdditionalData($data)", "$root.slicerEnableAdditionalData($data)");
           return return_value
         });
       }
