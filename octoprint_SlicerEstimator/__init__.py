@@ -100,7 +100,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     use_assets=True,
                     slicer_auto=True,
                     estimate_upload=True,
-                    add_slicer_metadata=True)
+                    add_slicer_metadata=True,
+                    useDevChannel=False)
 
 
     def on_settings_save(self, data):  
@@ -123,8 +124,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._average_prio = self._settings.get(["average_prio"])
         self.estimate_upload = self._settings.get(["estimate_upload"])
         self._add_slicer_metadata = self._settings.get(["add_slicer_metadata"])
-
-
+        self._useDevChannel = self._settings.get(["useDevChannel"])
         
         if self._estimator != None:
             self._estimator.average_prio = self._average_prio
@@ -420,39 +420,46 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 # SECTION: software update hook
     def get_update_information(self):
-        return dict(
-            SlicerEstimator=dict(
-                displayName=self._plugin_name,
-                displayVersion=self._plugin_version,
+        
+        if self._settings.get_boolean(["useDevChannel"]):
+            return dict(
+                SlicerEstimator=dict(
+                    displayName=self._plugin_name + " (Development Branch)",
+                    displayVersion=self._plugin_version,
 
-                # version check: github repository
-                type="github_release",
-                user="NilsRo",
-                repo="OctoPrint-SlicerEstimator",
-                current=self._plugin_version,
+                    # version check: github repository
+                    type="github_commit",
+                    user="NilsRo",
+                    repo="OctoPrint-SlicerEstimator",
+                    current=self._plugin_version,
+                    branch="Development",
 
-                # stable release
-                stable_branch=dict(
-                    name="Stable",
-                    branch="master",
-                    comittish=["master"]
-                ),
-
-                # release candidates
-                prerelease_branches=[
-                    dict(
-                        name="Development",
-                        branch="Development",
-                        comittish=["Development", "master"]
-                    )
-                ],
-                
-                prerelease=True,
-                prerelease_channel="Development",
-
-                # update method: pip
-                pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
+                    # update method: pip
+                    pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
+                )
             )
+        else:
+            return dict(
+                SlicerEstimator=dict(
+                    displayName=self._plugin_name,
+                    displayVersion=self._plugin_version,
+
+                    # version check: github repository
+                    type="github_release",
+                    user="NilsRo",
+                    repo="OctoPrint-SlicerEstimator",
+                    current=self._plugin_version,
+
+                    # stable release
+                    stable_branch=dict(
+                        name="Stable",
+                        branch="master",
+                        comittish=["master"]
+                    ),
+
+                    # update method: pip
+                    pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
+                )
         )
 
 

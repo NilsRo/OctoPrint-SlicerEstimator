@@ -2,10 +2,10 @@
 	<div class="tabbable">
         <h4>{{ _('Read estimation from slicer') }}</h4>
         
-
         <ul class="nav nav-tabs" id="SlicerEstimator_tabs">
             <li class="active"><a data-toggle="tab" href="#SlicerEstimator_basic">Basic</a></li>
             <li><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
+            <li><a data-toggle="tab" href="#SlicerEstimator_development">Development</a></li>
         </ul>
 
         <div class="tab-content">
@@ -44,7 +44,7 @@
                     <label class="control-label">{{ _('Add custom slicer metadata in filelist') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, naterial,... in Octoprints filebrowser after uploading a file. Has to be included in the GCODE in the fdormat: ;Slicer info:<key>;<Displayname>;<Value>') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.add_slicer_metadata">
-                        <p>How to add custom Metadata see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
+                        <p>How to add custom metadata see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
                     </div>
                 </div>
 
@@ -175,6 +175,15 @@
                 </div>
                 <div class="help-block">{{ _('All not matching components are ignored so the remaining time calculation will be wrong in case of a mistake. 
                 Initial settings are fine with Cura for example.') }}</div> 
+            </div>
+            <div id="SlicerEstimator_development" class="tab-pane">
+                <div class="help-block">{{ _('Developer') }}</div>
+             	<div class="control-group">
+                    <label class="control-label">{{ _('Update from developer branch') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Update from developer branch') }}">
+						<input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.useDevChannel">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
