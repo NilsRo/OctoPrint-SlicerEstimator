@@ -71,23 +71,6 @@ $(function() {
     //   })
     // };
     
-    // Extend the printTimeLeftOriginString function
-    // ko.extenders.slicerEnableAdditionalData = function(target, option) {
-    //   let result = ko.pureComputed(function () {
-    //      return target();
-    //   });
-    //   return result;
-    // };
-
-
-    // // Add the new extend
-    // self.filesViewModel.enableAdditionalData =
-    // self.filesViewModel.enableAdditionalData.extend({
-    //   slicerEnableAdditionalData: gettext("Based on information added by the slicer.")});
-
-    self.filesViewModel.enableAdditionalData = self.filesViewModel.slicerEnableAdditionalData;
-
-
     // Overwrite the enableAdditionalData function to handle available metadata
     self.filesViewModel.slicerEnableAdditionalData = function(data) {      
       if (data.slicer != null && Object.keys(data.slicer).length > 0) {
