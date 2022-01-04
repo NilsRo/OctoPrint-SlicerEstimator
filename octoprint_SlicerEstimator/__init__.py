@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from concurrent.futures import ThreadPoolExecutor
 from octoprint.printer.estimation import PrintTimeEstimator
 
+
 import octoprint.plugin
 import octoprint.events
 import octoprint.filemanager.storage
@@ -232,7 +233,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             filament = dict()
             for result in results:
                 slicer_info = result.lstrip(";Slicer info:").split(";")
-                filament[slicer_info[0]] = [slicer_info[1].strip(),slicer_info[2].strip()] 
+                filament[slicer_info[0]] = [slicer_info[1].strip(), slicer_info[2].strip()] 
                 
         self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer", filament, overwrite=True)
         self._logger.debug(self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer"))

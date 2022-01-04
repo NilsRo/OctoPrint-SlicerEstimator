@@ -58,7 +58,7 @@ $(function() {
     //     type: "POST",
     //     dataType: "json",
     //     data: JSON.stringify({
-    //       command: "get_slicer_data"
+    //       command: "getSlicerData"
     //     }),
     //     contentType: "application/json; charset=UTF-8"
     //   }).done(function(data){
@@ -76,34 +76,38 @@ $(function() {
       if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
           return true;
       } else {
-          return self.filesViewModel.enableAdditionalData(data);
+          return self.filesViewModel.originalEnableAdditionalData(data);
       }
     };
+    self.filesViewModel.originalEnableAdditionalData = self.filesViewModel.enableAdditionalData;
     self.filesViewModel.enableAdditionalData = self.filesViewModel.slicerEnableAdditionalData;
 
-    //Add the slicer metadata array to HTML DOM
-    self.filesViewModel.get_slicer_data = function(data) {
+    //Add the slicer metadata to "additionalMetadata"
+    self.filesViewModel.getSlicerData = function(data) {
       let return_value = "";
       if (data.slicer != null && Object.keys(data.slicer).length > 0) {
         for (const [key, value] of Object.entries(data.slicer)) {
           return_value += value[0] + ": " + value[1] + "<br>";
         }
       }
+      return_value += self.filesViewModel.originalGetAdditionalData(data);
       return return_value;
     };
+    self.filesViewModel.originalGetAdditionalData = self.filesViewModel.getAdditionalData;
+    self.filesViewModel.getAdditionalData = self.filesViewModel.getSlicerData;
 
-
-    self.onBeforeBinding = function() {
-      // inject filament metadata into template
-      if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
-        $("#files_template_machinecode").text(function () {
-          let return_value = $(this).text();
-          let regex = /<div class="additionalInfo hide"/mi;
-          return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.get_slicer_data($data)"></div> <div class="additionalInfo hide"');
-          return return_value
-        });
-      }
-    };
+    //Old: Add the slicer metadata array to HTML DOM
+    // self.onBeforeBinding = function() {
+    //   // inject filament metadata into template
+    //   if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
+    //     $("#files_template_machinecode").text(function () {
+    //       let return_value = $(this).text();
+    //       let regex = /<div class="additionalInfo hide"/mi;
+    //       return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.getSlicerData($data)"></div> <div class="additionalInfo hide"');
+    //       return return_value
+    //     });
+    //   }
+    // };
   }
   /* view model class, parameters for constructor, container to bind to
    * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
@@ -112,6 +116,6 @@ $(function() {
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
-    elements: ['#get_slicer_data']
+    elements: ['#getSlicerData']
   });
 });
