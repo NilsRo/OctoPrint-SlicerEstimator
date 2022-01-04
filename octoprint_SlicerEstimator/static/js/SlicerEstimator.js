@@ -85,6 +85,8 @@ $(function() {
     // self.filesViewModel.enableAdditionalData.extend({
     //   slicerEnableAdditionalData: gettext("Based on information added by the slicer.")});
 
+    self.filesViewModel.enableAdditionalData = self.filesViewModel.slicerEnableAdditionalData;
+
 
     // Overwrite the enableAdditionalData function to handle available metadata
     self.filesViewModel.slicerEnableAdditionalData = function(data) {      
@@ -94,6 +96,8 @@ $(function() {
           return self.filesViewModel.enableAdditionalData(data);
       }
     };  
+    self.filesViewModel.enableAdditionalData = self.filesViewModel.slicerEnableAdditionalData;
+
 
     //Add the slicer metadata array to HTML DOM
     self.filesViewModel.get_slicer_data = function(data) {
@@ -114,7 +118,7 @@ $(function() {
           let return_value = $(this).text();
           let regex = /<div class="additionalInfo hide"/mi;
           return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.get_slicer_data($data)"></div> <div class="additionalInfo hide"');
-          return_value = return_value.replaceAll("$root.enableAdditionalData($data)", "$root.slicerEnableAdditionalData($data)");
+          // return_value = return_value.replaceAll("$root.enableAdditionalData($data)", "$root.slicerEnableAdditionalData($data)");
           return return_value
         });
       }
