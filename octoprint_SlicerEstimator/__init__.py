@@ -11,6 +11,8 @@ import re
 import sarge
 import io
 import time
+import os
+import sys
 
 from octoprint.filemanager.analysis import AnalysisAborted
 from octoprint.filemanager.analysis import GcodeAnalysisQueue
@@ -434,9 +436,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     branch="Development",
 
                     # update method: pip
-                    pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip --force-reinstall"
-                    # method="update_script",
-                    # update_script="{python} -m pip --disable-pip-version-check install https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip --ignore-installed --force-reinstall --no-deps --no-cache-dir" 
+                    # pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
+                    method="update_script",
+                    update_script="{python} -m pip --disable-pip-version-check install https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/refs/heads/Development.zip --ignore-installed --force-reinstall --no-deps --no-cache-dir",
+                    checkout_folder = os.path.dirname(os.path.realpath(sys.executable))
                 )
             )
         else:
