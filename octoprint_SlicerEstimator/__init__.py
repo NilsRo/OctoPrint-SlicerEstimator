@@ -431,11 +431,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     type="github_commit",
                     user="NilsRo",
                     repo="OctoPrint-SlicerEstimator",
-                    current=self._plugin_version,
                     branch="Development",
 
                     # update method: pip
-                    pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
+                    # pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
+                    method="update_script",
+                    update_script="{python} -m pip --disable-pip-version-check install https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip --ignore-installed --force-reinstall --no-deps --no-cache-dir" 
                 )
             )
         else:
