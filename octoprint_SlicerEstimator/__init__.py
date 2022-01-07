@@ -438,8 +438,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     # update method: pip
                     # pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
                     method="update_script",
-                    update_script="{python} -m pip --disable-pip-version-check install https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/refs/heads/Development.zip --ignore-installed --force-reinstall --no-deps --no-cache-dir",
-                    checkout_folder = os.path.dirname(os.path.realpath(sys.executable))
+                    update_script="{python} -m pip --disable-pip-version-check install https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/refs/heads/Development.zip --force-reinstall --no-cache-dir",
+                    checkout_folder = os.path.dirname(os.path.realpath(sys.executable)),
+                    restart = "octoprint"
                 )
             )
         else:
