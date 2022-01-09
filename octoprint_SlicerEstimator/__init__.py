@@ -3,7 +3,6 @@ from __future__ import absolute_import, unicode_literals
 from concurrent.futures import ThreadPoolExecutor
 from octoprint.printer.estimation import PrintTimeEstimator
 
-
 import octoprint.plugin
 import octoprint.events
 import octoprint.filemanager.storage
@@ -46,8 +45,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
                             octoprint.plugin.ProgressPlugin,
-                            octoprint.plugin.AssetPlugin,
-                            octoprint.plugin.SimpleApiPlugin):
+                            octoprint.plugin.AssetPlugin):
     def __init__(self):
         self._estimator = None
         self._slicer_estimation = None
@@ -502,7 +500,7 @@ class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue):
     def _run_analysis(self, path):
         self._result_slicer = self._plugin.run_analysis(path)
 
-__plugin_name__ = "Slicer Print Time Estimator"
+__plugin_name__ = "Slicer Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 __plugin_implementation__ = SlicerEstimatorPlugin()
 __plugin_hooks__ = {

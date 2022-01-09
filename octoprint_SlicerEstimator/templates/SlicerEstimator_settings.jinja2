@@ -1,15 +1,16 @@
 <form class="form-horizontal">
 	<div class="tabbable">
-        <h4>{{ _('Read estimation from slicer') }}</h4>
+        <h3>{{ _('Slicer Estimator') }}</h3>
         
         <ul class="nav nav-tabs" id="SlicerEstimator_tabs">
-            <li class="active"><a data-toggle="tab" href="#SlicerEstimator_basic">Basic</a></li>
-            <li><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
+            <li class="active"><a data-toggle="tab" href="#SlicerEstimator_basic">Main</a></li>
+            <li data-bind="class: customTabCss" ><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
             <li><a data-toggle="tab" href="#SlicerEstimator_development">Development</a></li>
         </ul>
 
         <div class="tab-content">
             <div id="SlicerEstimator_basic" class="tab-pane active">
+                <h4>General</h4>
                 <div class="control-group">
                     <label class="control-label">{{ _('Auto-Detect slicer before printing') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('If you do want spend time about the settings or if you use diffrent slicers leave this setting active. The slicer will be detected automatically before printing. If the slicer is not found the manual slicer selection is used.') }}">
@@ -28,6 +29,7 @@
                         </select>
                     </div>
                 </div>
+                <h4>Print time estimation</h4>
                 <div class="control-group">
                     <label class="control-label">{{ _('Use average estimation before slicer') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints (green dot is shown). It can be more accurate in the first minutes compared to the slicer estimation as it also includes the heatup time of the printer and is based on the print-history. After print-start slicer estimation is fine.') }}">
@@ -40,11 +42,16 @@
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.estimate_upload">                       
                     </div>
                 </div>
-               <div class="control-group">
+                <h4>Metadata in filelist</h4>
+                <div class="control-group">
                     <label class="control-label">{{ _('Add custom slicer metadata in filelist') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, naterial,... in Octoprints filebrowser after uploading a file. Has to be included in the GCODE in the fdormat: ;Slicer info:<key>;<Displayname>;<Value>') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, naterial,... in Octoprints filebrowser after uploading a file. Has to be included in the GCODE in the format: ;Slicer info:<key>;<Displayname>;<Value>') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.add_slicer_metadata">
-                        <p>How to add custom metadata see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
+                        <p>How to add custom metadata to Octoprints filelist see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
+                    </div>
+                    <div class="alert alert-info" data-bind="visible: gpio_mode_disabled">
+                        <i class="fas fa-info icon-info-sign iconRight"></i>
+                        {{ _('The following has to be added in the Start G-Code (;Slicer info:<key>;<Displayname>;<Value>). You can add as much metadata as you like. Actually only the first 5000 rows are read after upload.') }}
                     </div>
                 </div>
 
@@ -57,7 +64,7 @@
                         <li><b>PrusaSlicer</b>: Remaining time is read out of M73 commands added by PrusaSlicer. This will update continuously the remaining print time.</li>
                     </ul>
                     <p>
-                    Additional support or a manual is available on <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator">Github</a>.  
+                    Additional support or a manual is available on <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">Github</a>.  
                 </div>   
             </div>
             <div id="SlicerEstimator_custom" class="tab-pane">

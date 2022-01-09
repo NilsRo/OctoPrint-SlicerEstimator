@@ -108,11 +108,21 @@ $(function() {
     //     });
     //   }
     // };
+
+    self.settingsViewModel.customTabCss = ko.pureComputed(function() {
+      if (self.settingsViewModel.settings.plugins.SlicerEstimator.slicer() === "c") {
+        return "show";
+      } else {
+        return "hide";
+      }
+    });
   }
   /* view model class, parameters for constructor, container to bind to
    * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
    * and a full list of the available options.
    */
+
+  
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
