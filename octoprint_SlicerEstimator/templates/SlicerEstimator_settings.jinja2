@@ -4,7 +4,7 @@
         
         <ul class="nav nav-tabs" id="SlicerEstimator_tabs">
             <li class="active"><a data-toggle="tab" href="#SlicerEstimator_basic">Main</a></li>
-            <li data-bind="class: customTabCss" ><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
+            <li data-bind="class: customTabCss()" ><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
             <li><a data-toggle="tab" href="#SlicerEstimator_development">Development</a></li>
         </ul>
 
@@ -49,9 +49,9 @@
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.add_slicer_metadata">
                         <p>How to add custom metadata to Octoprints filelist see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
                     </div>
-                    <div class="alert alert-info" data-bind="visible: gpio_mode_disabled">
+                    <div class="alert alert-info">
                         <i class="fas fa-info icon-info-sign iconRight"></i>
-                        {{ _('The following has to be added in the Start G-Code (;Slicer info:<key>;<Displayname>;<Value>). You can add as much metadata as you like. Actually only the first 5000 rows are read after upload.') }}
+                        {{ _('Metadata has to be added in the Start G-Code in this format: (;Slicer info:&lt;key&gt;;&lt;Displayname&gt;;&lt;Value&gt;). You can add as much metadata as you like. Actually only the first 5000 rows are read after upload.') }}
                     </div>
                 </div>
 
