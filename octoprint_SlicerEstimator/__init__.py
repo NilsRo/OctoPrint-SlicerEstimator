@@ -101,6 +101,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     slicer_auto=True,
                     estimate_upload=True,
                     add_slicer_metadata=True,
+                    metadata_orientation="top",
                     useDevChannel=False)
 
 

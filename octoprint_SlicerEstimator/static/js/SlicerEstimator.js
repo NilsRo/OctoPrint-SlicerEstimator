@@ -90,7 +90,11 @@ $(function() {
           return_value += value[0] + ": " + value[1] + "<br>";
         }
       }
-      return_value += self.filesViewModel.originalGetAdditionalData(data);
+      if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_orientation() === "top") {
+        return_value += self.filesViewModel.originalGetAdditionalData(data);
+      } else {
+        return_value = self.filesViewModel.originalGetAdditionalData(data) + return_value;
+      }
       return return_value;
     };
     self.filesViewModel.originalGetAdditionalData = self.filesViewModel.getAdditionalData;

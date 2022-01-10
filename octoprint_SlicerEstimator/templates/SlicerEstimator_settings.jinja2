@@ -4,7 +4,7 @@
         
         <ul class="nav nav-tabs" id="SlicerEstimator_tabs">
             <li class="active"><a data-toggle="tab" href="#SlicerEstimator_basic">Main</a></li>
-            <li data-bind="class: customTabCss()" ><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
+            <li data-bind="class: customTabCss()"><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
             <li><a data-toggle="tab" href="#SlicerEstimator_development">Development</a></li>
         </ul>
 
@@ -51,10 +51,16 @@
                     </div>
                     <div class="alert alert-info">
                         <i class="fas fa-info icon-info-sign iconRight"></i>
-                        {{ _('Metadata has to be added in the Start G-Code in this format: (;Slicer info:&lt;key&gt;;&lt;Displayname&gt;;&lt;Value&gt;). You can add as much metadata as you like. Actually only the first 5000 rows are read after upload.') }}
+                        {{ _('Metadata has to be added in the Start GCODE in this format: (;Slicer info:&lt;key&gt;;&lt;Displayname&gt;;&lt;Value&gt;). You can add as much metadata as you like. Actually only the first 5000 rows are read after upload.') }}
+                    </div>
+                    <label class="control-label">{{ _('Orientation in filelist') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Change the orientation in the filelist above or below the standard metadata.') }}">                        
+                        <select data-bind="value: settings.plugins.SlicerEstimator.metadata_orientation">
+                            <option value="top">Top</option>
+                            <option value="bottom">Bottom</option>
+                        </select>
                     </div>
                 </div>
-
                 <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
                     <p>
                     <ul>
