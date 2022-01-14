@@ -10,8 +10,8 @@ $(function() {
     self.filesViewModel = parameters[1];
     self.settingsViewModel = parameters[2];
 
+    // --- Estimator 
 
-    
     // Overwrite the printTimeLeftOriginString function
     ko.extenders.addSlicerEstimator = function(target, option) {
       let result = ko.pureComputed(function () {
@@ -71,6 +71,8 @@ $(function() {
     //   })
     // };
     
+    //--- Additional Metadata filelist
+
     // Overwrite the enableAdditionalData function to handle available metadata
     self.filesViewModel.slicerEnableAdditionalData = function(data) {      
       if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
@@ -100,6 +102,38 @@ $(function() {
     self.filesViewModel.originalGetAdditionalData = self.filesViewModel.getAdditionalData;
     self.filesViewModel.getAdditionalData = self.filesViewModel.getSlicerData;
 
+
+    //--- Additional Metadata current print
+
+    // self.metadata_list = [];
+
+    // self.onBeforeBinding = function () {
+    //   self.settingsViewModel.metadata_list = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.extend({ rateLimit: 50});
+    // };
+
+    self.settingsViewModel.addNewMeta = function() {
+      alert("Bla");
+      // var meta = {
+      //     id: ko.observable('').extend({ stripQuotes: true}),
+      //     desc: ko.observable('').extend({ stripQuotes: true}),
+      //     enabled: ko.observable(true),          
+      // };
+      // // self._subscribeToDictValues(meta, 'metadata', self.onIconChange);
+      // self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
+       debugger;
+    };
+
+    // self.onIconDelete = function(icon) {
+    //   self.restoreTabs();
+    //   self.tabIcons.tabs.remove(icon);
+    //   self.setupIcons();    
+    // };
+
+
+    // self.onRuleToggle = function(rule) {
+    //   rule.enabled(!rule.enabled());
+    // };
+
     //Old: Add the slicer metadata array to HTML DOM
     // self.onBeforeBinding = function() {
     //   // inject filament metadata into template
@@ -121,10 +155,7 @@ $(function() {
       }
     });
   }
-  /* view model class, parameters for constructor, container to bind to
-   * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
-   * and a full list of the available options.
-   */
+
 
   
   OCTOPRINT_VIEWMODELS.push({
