@@ -120,7 +120,6 @@ $(function() {
       // };
       // // self._subscribeToDictValues(meta, 'metadata', self.onIconChange);
       // self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
-       debugger;
     };
 
     // self.onIconDelete = function(icon) {
