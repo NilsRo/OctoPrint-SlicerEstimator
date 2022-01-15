@@ -1,5 +1,5 @@
 # Slicer Estimator is a generic implementation to read remaining time to print and custom metadata embedded in the GCODE file by the slicer
-With this plugin you can use the more accurate estimation of time remaining of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
+With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
 Also you can add custom metadata that will be added to the filebrowser to get e.g. the material the GCODE was created for.
 
 The slicer is detected automatically, the default configurations supports the following slicers. Also you can add custom settings according your needs for other slicers or requirements. 
