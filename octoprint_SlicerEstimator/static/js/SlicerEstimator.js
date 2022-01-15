@@ -73,9 +73,19 @@ $(function() {
     
     //--- Additional Metadata filelist
 
+    //Activate flag filelist
+    self.filelistEnabled = ko.pureComputed(function() {
+      return self.settingsViewModel.settings.plugins.SlicerEstimator.metadata() && self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_filelist()
+    });
+
+    //Activate flag printer
+    self.printerEnabled = ko.pureComputed(function() {
+      return self.settingsViewModel.settings.plugins.SlicerEstimator.metadata() && self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_printer()
+    });
+
     // Overwrite the enableAdditionalData function to handle available metadata
-    self.filesViewModel.slicerEnableAdditionalData = function(data) {      
-      if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
+    self.filesViewModel.slicerEnableAdditionalData = function(data) {            
+      if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
           return true;
       } else {
           return self.filesViewModel.originalEnableAdditionalData(data);
@@ -87,12 +97,17 @@ $(function() {
     //Add the slicer metadata to "additionalMetadata"
     self.filesViewModel.getSlicerData = function(data) {
       let return_value = "";
-      if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
+      if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
         for (const [key, value] of Object.entries(data.slicer)) {
-          return_value += value[0] + ": " + value[1] + "<br>";
+          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.printer());
+          let description = "No description";
+          if (meta != null) {
+            description = meta.description();
+            return_value += description + ": " + value + "<br>";
+          }
         }
       }
-      if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_orientation() === "top") {
+      if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_filelist_align() === "top") {
         return_value += self.filesViewModel.originalGetAdditionalData(data);
       } else {
         return_value = self.filesViewModel.originalGetAdditionalData(data) + return_value;
@@ -112,14 +127,15 @@ $(function() {
     };
 
     // Update available metadata from files in the settings
-    self.settingsViewModel.crawlMetadata = function() {
+    self.settingsViewModel.crawlMetadata = function() {      
       self.filesViewModel.filesOnlyList().forEach(function (data) {
         Object.keys(data.slicer).forEach(function (slicerData) {
           if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
             var meta = {
                 id: ko.observable(slicerData).extend({ stripQuotes: true}),
-                desc: ko.observable(data.slicer[slicerData][0]).extend({ stripQuotes: true}),
-                enabled: ko.observable(false)
+                description: ko.observable(slicerData).extend({ stripQuotes: true}),
+                filelist: ko.observable(false),
+                printer: ko.observable(false)                
             };
             self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
           }
@@ -131,16 +147,17 @@ $(function() {
     self.currentMetadata = ko.pureComputed(function() {
       var returnMeta = [];
       if (typeof self.printerStateViewModel.filepath() !== 'undefined') {
-        let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.enabled() === true);
+        let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.printer() === true);
         let actualFile = self.filesViewModel.filesOnlyList().find(elem => elem.path === self.printerStateViewModel.filepath() && elem.slicer != null);
         if (typeof actualFile !== 'undefined') {        
-
-
           enabledMeta.forEach(function(data) {                     
             if (actualFile.slicer != null && Object.keys(actualFile.slicer).length > 0) {
-              item = actualFile.slicer[data.id()];
-              if (item != null) {                
-                returnMeta.push(item);
+              item = actualFile.slicer[data.id()];              
+              if (item != null) {
+                let returnArr = [];
+                returnArr["description"] = data.description;
+                returnArr["value"] = item;
+                returnMeta.push(returnArr);
               }            
             }
           })
@@ -152,14 +169,15 @@ $(function() {
     //enhance printerViewModel
     self.onBeforeBinding = function() {
       // inject filament metadata into template
-      if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_current()) {
+      if (self.printerEnabled()) {
         var element = $("#state").find(".accordion-inner .progress");
         if (element.length) {
-          element.before("<div id='metadata_list' data-bind='foreach: currentMetadata'><span data-bind='text: $data[0]'></span>: <strong data-bind='text: $data[1]'> - </strong><br></div>");
+          element.before("<div id='metadata_list' data-bind='foreach: currentMetadata'><span data-bind='text: description'></span>: <strong data-bind='text: value'> - </strong><br></div>");
         }
       }
     };
 
+    //Switch tab in settings on/off
     self.settingsViewModel.customTabCss = ko.pureComputed(function() {
       if (self.settingsViewModel.settings.plugins.SlicerEstimator.slicer() === "c") {
         return "show";
@@ -168,8 +186,9 @@ $(function() {
       }
     });
 
+    //Switch tab in settings on/off
     self.settingsViewModel.metadataTabCss = ko.pureComputed(function() {
-      if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_current()) {
+      if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata()) {
         return "show";
       } else {
         return "hide";

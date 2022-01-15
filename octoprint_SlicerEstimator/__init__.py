@@ -45,7 +45,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
                             octoprint.plugin.ProgressPlugin,
-                            octoprint.plugin.AssetPlugin):
+                            octoprint.plugin.AssetPlugin,
+                            octoprint.plugin.ReloadNeedingPlugin):
     def __init__(self):
         self._estimator = None
         self._slicer_estimation = None
@@ -78,6 +79,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 # SECTION: Settings
     def on_after_startup(self):
         self._logger.info("Started up SlicerEstimator")
+        # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
 
 
@@ -99,14 +101,22 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     average_prio=False,
                     use_assets=True,
                     slicer_auto=True,
-                    estimate_upload=True,
-                    
-                    add_slicer_metadata=True,
-                    metadata_orientation="top",
-                    metadata_list=[],
-                    add_slicer_current=False, 
+                    estimate_upload=True,                    
+                    metadata=False,
+                    metadata_filelist=True,                    
+                    metadata_filelist_align="top",
+                    metadata_printer=False,
+                    metadata_list=[],                    
                     useDevChannel=False)
 
+
+    def get_settings_version(self):
+        return 1
+    
+    
+    def on_settings_migrate(self, target, current):
+        self._logger.info("SlicerEstimator: Setting migration from version {}".format(current))
+        self._update_metadata_in_files()
 
 
     def on_settings_save(self, data):  
@@ -128,7 +138,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_auto = self._settings.get(["slicer_auto"])
         self._average_prio = self._settings.get(["average_prio"])
         self.estimate_upload = self._settings.get(["estimate_upload"])
-        self._add_slicer_metadata = self._settings.get(["add_slicer_metadata"])
+        self._slicer_metadata = self._settings.get(["slicer_metadata"])
         self._useDevChannel = self._settings.get(["useDevChannel"])
         
         if self._estimator != None:
@@ -223,7 +233,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
             self._logger.debug("Event received: {}".format(event))
-        if event == octoprint.events.Events.FILE_ADDED and self._add_slicer_metadata:
+        if event == octoprint.events.Events.FILE_ADDED and self._slicer_metadata:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
                 self._logger.debug("File uploaded and will be scanned for Metadata")
                 self._find_metadata(payload["storage"], payload["path"])
@@ -238,10 +248,28 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             filament = dict()
             for result in results:
                 slicer_info = result.lstrip(";Slicer info:").split(";")
-                filament[slicer_info[0]] = [slicer_info[1].strip(), slicer_info[2].strip()] 
+                if len(slicer_info) == 3:
+                    # old format
+                    filament[slicer_info[0]] = slicer_info[2].strip()
+                else:
+                    filament[slicer_info[0]] = slicer_info[1].strip()
                 
         self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer", filament, overwrite=True)
         self._logger.debug(self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer"))
+
+    # filter for storage manager
+    def filter_machinecode(self, node):
+        return node["type"] == "machinecode"
+
+
+    # Update all metadata in files
+    def _update_metadata_in_files(self):        
+        results = self._file_manager._storage_managers["local"].list_files(filter=self.filter_machinecode)
+        if results is not None:
+            for resultKey in results:
+                path = results[resultKey]["path"]
+                self._file_manager._storage_managers["local"].remove_additional_metadata(path, "slicer")
+                self._find_metadata("local", path)
 
 
 # SECTION: Estimation helper
