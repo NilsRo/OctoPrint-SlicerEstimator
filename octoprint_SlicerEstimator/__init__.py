@@ -100,13 +100,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     use_assets=True,
                     slicer_auto=True,
                     estimate_upload=True,
+                    
                     add_slicer_metadata=True,
                     metadata_orientation="top",
-                    metadata_list=[dict(
-                        id="TestID",
-                        desc="Test Desc",
-                        enabled=True 
-                    )], 
+                    metadata_list=[],
+                    add_slicer_current=False, 
                     useDevChannel=False)
 
 

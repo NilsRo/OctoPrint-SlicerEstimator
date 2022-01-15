@@ -105,46 +105,60 @@ $(function() {
 
     //--- Additional Metadata current print
 
-    // self.metadata_list = [];
-
-    // self.onBeforeBinding = function () {
-    //   self.settingsViewModel.metadata_list = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.extend({ rateLimit: 50});
-    // };
-
-    self.settingsViewModel.addNewMeta = function() {
-      alert("Bla");
-      // var meta = {
-      //     id: ko.observable('').extend({ stripQuotes: true}),
-      //     desc: ko.observable('').extend({ stripQuotes: true}),
-      //     enabled: ko.observable(true),          
-      // };
-      // // self._subscribeToDictValues(meta, 'metadata', self.onIconChange);
-      // self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
+    //Delete an entry in the settings
+    self.settingsViewModel.deleteMeta = function(data) {
+      let delIndex = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().findIndex(elem => elem.id() === data.id());
+      self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.splice(delIndex,1);
     };
 
-    // self.onIconDelete = function(icon) {
-    //   self.restoreTabs();
-    //   self.tabIcons.tabs.remove(icon);
-    //   self.setupIcons();    
-    // };
+    // Update available metadata from files in the settings
+    self.settingsViewModel.crawlMetadata = function() {
+      self.filesViewModel.filesOnlyList().forEach(function (data) {
+        Object.keys(data.slicer).forEach(function (slicerData) {
+          if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
+            var meta = {
+                id: ko.observable(slicerData).extend({ stripQuotes: true}),
+                desc: ko.observable(data.slicer[slicerData][0]).extend({ stripQuotes: true}),
+                enabled: ko.observable(false)
+            };
+            self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
+          }
+        });
+      });
+    };
+
+    //get list of enabled metadata
+    self.currentMetadata = ko.pureComputed(function() {
+      var returnMeta = [];
+      if (typeof self.printerStateViewModel.filepath() !== 'undefined') {
+        let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.enabled() === true);
+        let actualFile = self.filesViewModel.filesOnlyList().find(elem => elem.path === self.printerStateViewModel.filepath() && elem.slicer != null);
+        if (typeof actualFile !== 'undefined') {        
 
 
-    // self.onRuleToggle = function(rule) {
-    //   rule.enabled(!rule.enabled());
-    // };
+          enabledMeta.forEach(function(data) {                     
+            if (actualFile.slicer != null && Object.keys(actualFile.slicer).length > 0) {
+              item = actualFile.slicer[data.id()];
+              if (item != null) {                
+                returnMeta.push(item);
+              }            
+            }
+          })
+        }
+      }      
+      return returnMeta;
+    });    
 
-    //Old: Add the slicer metadata array to HTML DOM
-    // self.onBeforeBinding = function() {
-    //   // inject filament metadata into template
-    //   if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_metadata() == true) {
-    //     $("#files_template_machinecode").text(function () {
-    //       let return_value = $(this).text();
-    //       let regex = /<div class="additionalInfo hide"/mi;
-    //       return_value = return_value.replace(regex, '<div class="additionalInfo hide" data-bind="html: $root.getSlicerData($data)"></div> <div class="additionalInfo hide"');
-    //       return return_value
-    //     });
-    //   }
-    // };
+    //enhance printerViewModel
+    self.onBeforeBinding = function() {
+      // inject filament metadata into template
+      if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_current()) {
+        var element = $("#state").find(".accordion-inner .progress");
+        if (element.length) {
+          element.before("<div id='metadata_list' data-bind='foreach: currentMetadata'><span data-bind='text: $data[0]'></span>: <strong data-bind='text: $data[1]'> - </strong><br></div>");
+        }
+      }
+    };
 
     self.settingsViewModel.customTabCss = ko.pureComputed(function() {
       if (self.settingsViewModel.settings.plugins.SlicerEstimator.slicer() === "c") {
@@ -153,13 +167,20 @@ $(function() {
         return "hide";
       }
     });
-  }
 
+    self.settingsViewModel.metadataTabCss = ko.pureComputed(function() {
+      if (self.settingsViewModel.settings.plugins.SlicerEstimator.add_slicer_current()) {
+        return "show";
+      } else {
+        return "hide";
+      }
+    });
+  }
 
   
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
-    elements: ['#getSlicerData']
+    elements: ['#metadata_list']
   });
 });

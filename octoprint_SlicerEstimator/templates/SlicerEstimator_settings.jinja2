@@ -4,7 +4,7 @@
         
         <ul class="nav nav-tabs" id="SlicerEstimator_tabs">
             <li class="active"><a data-toggle="tab" href="#SlicerEstimator_basic">Main</a></li>
-            <li><a data-toggle="tab" href="#SlicerEstimator_meta">Metadata</a></li>
+            <li data-bind="class: metadataTabCss()"><a data-toggle="tab" href="#SlicerEstimator_meta">Metadata</a></li>
             <li data-bind="class: customTabCss()"><a data-toggle="tab" href="#SlicerEstimator_custom">Custom</a></li>
             <li><a data-toggle="tab" href="#SlicerEstimator_development">Development</a></li>
         </ul>
@@ -45,8 +45,14 @@
                 </div>
                 <h4>Metadata in filelist</h4>
                 <div class="control-group">
+                    <label class="control-label">{{ _('Add custom slicer metadata to current print') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprints current print view.') }}">
+                        <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.add_slicer_current">
+                    </div>
+                </div>
+                <div class="control-group">
                     <label class="control-label">{{ _('Add custom slicer metadata in filelist') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, naterial,... in Octoprints filebrowser after uploading a file. Has to be included in the GCODE in the format: ;Slicer info:<key>;<Displayname>;<Value>') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprints filebrowser after uploading a file.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.add_slicer_metadata">
                         <p>How to add custom metadata to Octoprints filelist see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
                     </div>
@@ -88,6 +94,8 @@
                                 <th>
                                     Enabled
                                 </th>                                
+                                <th>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="control-group" data-bind="foreach: settings.plugins.SlicerEstimator.metadata_list">
@@ -101,11 +109,18 @@
                                 <td>
                                     <input type="checkbox" data-bind="checked: enabled">
                                 </td>
+                                <td>
+                                   <i class="fa fa-trash-o" data-bind="click: function() {$parent.deleteMeta($data)}"></i>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                     <div class="control">
-                        <button class="btn" data-bind="click: addNewMeta">Refresh Metadata</button>
+                        <button class="btn" data-bind="click: crawlMetadata">Refresh Metadata</button>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info icon-info-sign iconRight"></i>
+                        {{ _('Use Refresh to read used metadata from files. It will not delete detected selections...') }}
                     </div>
                 </div>
             </div>
