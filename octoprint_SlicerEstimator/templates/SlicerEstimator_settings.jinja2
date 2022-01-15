@@ -39,16 +39,16 @@
                 </div>
                 <div class="control-group">
                     <label class="control-label">{{ _('Update estimation on file upload') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Update the estimation in Octoprints filebrowser after uploading a file.') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Update the estimation in OctoPrints filebrowser after uploading a file.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.estimate_upload">                       
                     </div>
                 </div>
                 <h4>Metadata</h4>
                 <div class="control-group">
                     <label class="control-label">{{ _('Activate parsing of slicer metadata') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprint') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in OctoPrint') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.metadata">
-                        <p>How to add custom metadata to Octoprints filelist see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
+                        <p>How to add custom metadata to OctoPrints filelist see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!</p>        
                         <div class="alert alert-info">
                             <i class="fas fa-info icon-info-sign iconRight"></i>
                             {{ _('Metadata has to be added in the Start GCODE in this format: (;Slicer info:&lt;key&gt;;&lt;value&gt;). You can add as much metadata as you like. Actually only the first 5000 rows are read after upload.') }}
@@ -58,9 +58,9 @@
                 <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
                     <p>
                     <ul>
-                        <li><b>Cura</b>: With Cura native no changes have to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall print time available.</li>
+                        <li><b>Cura</b>: With Cura native no changes have to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.</li>
                         <li><b>Cura M117</b>: M117 is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will continuously update the remaining printing time</li> 
-                        <li><b>Simply3D</b>: With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation Octoprints percentage done is used as there is only the overall print time available.</li>
+                        <li><b>Simply3D</b>: With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.</li>
                         <li><b>PrusaSlicer</b>: Remaining time is read out of M73 commands added by PrusaSlicer. This will update continuously the remaining print time.</li>
                     </ul>
                     <p>
@@ -71,7 +71,7 @@
                 <h4>Filelist</h4>                
                 <div class="control-group">
                     <label class="control-label">{{ _('Add metadata') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprints filebrowser after uploading a file.') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in OctoPrints filebrowser after uploading a file.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.metadata_filelist">
                     </div>                 
                 </div>                
@@ -87,7 +87,7 @@
                 <h4>Current print</h4>
                 <div class="control-group">
                     <label class="control-label">{{ _('Add metadata') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprints current print view.') }}">
+                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in OctoPrints current print view.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.metadata_printer">
                          (restart of GUI - Browsersession - required)
                     </div>
@@ -270,7 +270,7 @@
              	<div class="control-group">
                     <label class="control-label">{{ _('Use development branch') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Update from development branch') }}">
-						<input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.useDevChannel"> <b>Restart of Octoprint required</b>
+						<input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.useDevChannel"> <b>Restart of OctoPrint required</b>
                     </div>
                 </div>
             </div>
