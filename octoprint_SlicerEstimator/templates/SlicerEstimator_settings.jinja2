@@ -86,15 +86,22 @@
                 </div>
                 <h4>Current print</h4>
                 <div class="control-group">
-                    <label class="control-label">{{ _('Add custom slicer metadata to current print (restart of GUI - Browsersession - required)') }}</label>
+                    <label class="control-label">{{ _('Add custom slicer metadata to current print') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprints current print view.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.metadata_printer">
-
+                         (restart of GUI - Browsersession - required)
                     </div>
                 </div>
                 <h4>Metadata to show</h4>
                 <div>
                     <table class="table table-striped table-condensed">
+                        <colgroup>
+                            <col span="1">
+                            <col span="1">
+                            <col span="1" style="width: 70px;">
+                            <col span="1" style="width: 70px;">
+                            <col span="1" style="width: 40px;">                                                   
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th>
