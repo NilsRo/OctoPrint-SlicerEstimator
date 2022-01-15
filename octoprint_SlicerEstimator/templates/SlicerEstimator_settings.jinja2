@@ -70,13 +70,13 @@
             <div id="SlicerEstimator_meta" class="tab-pane">
                 <h4>Filelist</h4>                
                 <div class="control-group">
-                    <label class="control-label">{{ _('Add custom slicer metadata in filelist') }}</label>
+                    <label class="control-label">{{ _('Add metadata') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprints filebrowser after uploading a file.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.metadata_filelist">
                     </div>                 
                 </div>                
                 <div class="control-group">   
-                    <label class="control-label">{{ _('Orientation in filelist') }}</label>
+                    <label class="control-label">{{ _('Orientation') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Change the orientation in the filelist above or below the standard metadata.') }}">                        
                         <select data-bind="value: settings.plugins.SlicerEstimator.metadata_filelist_align, enabled: settings.plugins.SlicerEstimator.metadata">
                             <option value="top">Top</option>
@@ -86,13 +86,13 @@
                 </div>
                 <h4>Current print</h4>
                 <div class="control-group">
-                    <label class="control-label">{{ _('Add custom slicer metadata to current print') }}</label>
+                    <label class="control-label">{{ _('Add metadata') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in Octoprints current print view.') }}">
                         <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.metadata_printer">
                          (restart of GUI - Browsersession - required)
                     </div>
                 </div>
-                <h4>Metadata to show</h4>
+                <h4>Metadata</h4>
                 <div>
                     <table class="table table-striped table-condensed">
                         <colgroup>
@@ -145,7 +145,7 @@
                     <p>
                     <div class="alert alert-info">
                         <i class="fas fa-info icon-info-sign iconRight"></i>
-                        {{ _('Use Refresh to read used metadata from files. It will not delete detected selections...') }}
+                        {{ _('Use Refresh to read metadata from files. It will not delete entries...') }}
                     </div>
                 </div>
             </div>
