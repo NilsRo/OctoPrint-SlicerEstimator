@@ -138,7 +138,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_auto = self._settings.get(["slicer_auto"])
         self._average_prio = self._settings.get(["average_prio"])
         self.estimate_upload = self._settings.get(["estimate_upload"])
-        self._slicer_metadata = self._settings.get(["slicer_metadata"])
+        self._metadata = self._settings.get(["metadata"])
         self._useDevChannel = self._settings.get(["useDevChannel"])
         
         if self._estimator != None:
@@ -233,7 +233,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
             self._logger.debug("Event received: {}".format(event))
-        if event == octoprint.events.Events.FILE_ADDED and self._slicer_metadata:
+        if event == octoprint.events.Events.FILE_ADDED and self._metadata:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
                 self._logger.debug("File uploaded and will be scanned for Metadata")
                 self._find_metadata(payload["storage"], payload["path"])
