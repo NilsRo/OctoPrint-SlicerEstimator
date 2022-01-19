@@ -247,7 +247,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if results is not None:
             filament = dict()
             for result in results:
-                slicer_info = result.lstrip(";Slicer info:").split(";")
+                slicer_info = result[13:].rstrip("\n").split(";")
                 if len(slicer_info) == 3:
                     # old format
                     filament[slicer_info[0]] = slicer_info[2].strip()
