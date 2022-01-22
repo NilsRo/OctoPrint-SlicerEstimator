@@ -21,7 +21,7 @@ From version 1.1.0 custom metadata is supported. Comments in GCODE that can be g
 
 The following has to be added in the Start GCODE (`;Slicer info:<key>;<value>`). You can add as much metadata as you like and decide to view the metadata in the filelist or printer state. **Systax changed from version 1.3.0 as the description  is maintanined in settings now but old styles are sill supported.**
 
-Example for Cura 4.12 and newer (For Anycubic Mega S, Pro and X it is available by default in the default Start GCODE.)
+Example for Cura 4.12 and newer (For Anycubic Mega S, Pro and X it is available by default in the default Start GCODE. You can download an actual [printer profile here](github.com/NilsRo/Cura_Anycubic_MegaS_Profile))
 
     ;Slicer info:material_guid;{material_guid}
     ;Slicer info:material_id;{material_id}
