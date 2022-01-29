@@ -194,6 +194,46 @@ $(function() {
         return "hide";
       }
     });
+
+
+    // --- Settings Report Bug
+    self.settingsViewModel.createIssue = function() {
+      // Send the bug report      
+      url = 'https://github.com/NilsRo/OctoPrint-SlicerEstimator/issues/new';
+      var body = "## Description\n**ENTER DESCRIPTION HERE\nDescribe your problem?\nWhat is the problem?\nCan you recreate it?\nDid you try disabling plugins?\nDid you remember to update the subject?**\n\n\n**Plugins installed**\n";
+      
+      // Get plugin info
+      OctoPrint.coreui.viewmodels.pluginManagerViewModel.plugins.allItems.forEach(function(item) {
+        if (item.enabled && item.bundled == false){
+          var version = "";
+          if (item.version != null){
+            version = " v"+ item.version;
+          }
+          body += '- ' + item.name +"["+item.key+"]" + version + "\n";
+          }
+      });      
+      
+      // Settings
+      body += "\n\n**Settings**\n";      
+      Object.entries(self.settingsViewModel.settings.plugins.SlicerEstimator).forEach(function(item) {
+        if (item[0] == 'metadata_list') {
+          body += '- ' + item[0] + ": ";
+          item[1]().forEach(function(meta_item) {
+            body += ' (id: ' + meta_item["id"](); 
+            body += ', description: ' + meta_item["description"](); 
+            body += ', printer: ' + meta_item["printer"](); 
+            body += ', filelist: ' + meta_item["filelist"]() + '); '; 
+          });
+          body += "\n";
+        } else {
+          body += '- ' + item[0] + ": " +item[1]() + "\n";
+        }
+
+      });
+      body += "\n\n**Software versions**\n- "+$('#footer_version li').map(function(){return $(this).text()}).get().join("\n- ");
+      body += "\n\n\n**Browser**\n- "+navigator.userAgent
+      window.open(url+'?body='+encodeURIComponent(body));      
+    };
   }
 
   
