@@ -99,7 +99,7 @@ $(function() {
       let return_value = "";
       if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
         for (const [key, value] of Object.entries(data.slicer)) {
-          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.printer());
+          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.filelist());
           let description = "No description";
           if (meta != null) {
             description = meta.description();

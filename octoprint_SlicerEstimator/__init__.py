@@ -7,7 +7,6 @@ import octoprint.plugin
 import octoprint.events
 import octoprint.filemanager.storage
 import re
-import sarge
 import io
 import time
 import os
