@@ -10,6 +10,29 @@ $(function() {
     self.filesViewModel = parameters[1];
     self.settingsViewModel = parameters[2];
 
+    //Helpers
+    self.mapDictionaryToArray = function(dictionary) {
+      var result = [];
+      for (var key in dictionary) {
+          if (dictionary.hasOwnProperty(key)) {
+              result.push({ key: key, value: dictionary[key] }); 
+          }  
+      }  
+      return result;
+    };
+
+    //Helpers
+    self.mapKoDictionaryToArray = function(dictionary) {
+      var result = [];
+      for (var key in dictionary) {
+          if (dictionary.hasOwnProperty(key)) {
+              result.push({ key: key, value: dictionary[key]() }); 
+          }  
+      }  
+      return result;
+    };
+
+
     // --- Estimator 
 
     // Overwrite the printTimeLeftOriginString function
@@ -99,7 +122,7 @@ $(function() {
       let return_value = "";
       if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
         for (const [key, value] of Object.entries(data.slicer)) {
-          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.filelist());
+          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["slicer_estimator"]["filelist"]);
           let description = "No description";
           if (meta != null) {
             description = meta.description();
@@ -120,34 +143,11 @@ $(function() {
 
     //--- Additional Metadata current print
 
-    //Delete an entry in the settings
-    self.settingsViewModel.deleteMeta = function(data) {
-      let delIndex = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().findIndex(elem => elem.id() === data.id());
-      self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.splice(delIndex,1);
-    };
-
-    // Update available metadata from files in the settings
-    self.settingsViewModel.crawlMetadata = function() {      
-      self.filesViewModel.filesOnlyList().forEach(function (data) {
-        Object.keys(data.slicer).forEach(function (slicerData) {
-          if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
-            var meta = {
-                id: ko.observable(slicerData).extend({ stripQuotes: true}),
-                description: ko.observable(slicerData).extend({ stripQuotes: true}),
-                filelist: ko.observable(false),
-                printer: ko.observable(false)                
-            };
-            self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
-          }
-        });
-      });
-    };
-
     //get list of enabled metadata
     self.currentMetadata = ko.pureComputed(function() {
       var returnMeta = [];
       if (typeof self.printerStateViewModel.filepath() !== 'undefined') {
-        let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.printer() === true);
+        let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.targets["slicer_estimator"]["printer"]() === true);
         let actualFile = self.filesViewModel.filesOnlyList().find(elem => elem.path === self.printerStateViewModel.filepath() && elem.slicer != null);
         if (typeof actualFile !== 'undefined') {        
           enabledMeta.forEach(function(data) {                     
@@ -177,6 +177,63 @@ $(function() {
       }
     };
 
+
+    //--- Settings
+    self.settingsViewModel.selectedPlugin = ko.observable();
+
+    //Delete an entry in the settings
+    self.settingsViewModel.deleteMeta = function(data) {
+      let delIndex = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().findIndex(elem => elem.id() === data.id());
+      self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.splice(delIndex,1);
+    };
+
+    self.getActivePlugins = function() {
+      return Object.entries(self.settingsViewModel.settings.plugins.SlicerEstimator.plugins).filter(elem => elem[1]["targets"] != null);
+    };
+
+    // Update available metadata from files in the settings
+    self.settingsViewModel.crawlMetadata = function() {      
+      self.filesViewModel.filesOnlyList().forEach(function (data) {
+        Object.keys(data.slicer).forEach(function (slicerData) {
+          if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
+            targets = {};            
+            for (plugin of self.getActivePlugins()) {
+              targets[plugin[0]] = {};              
+              for (const key in Object.keys(plugin[1]["targets"])) {
+                targets[plugin[0]][key] = ko.observable(false);
+              }
+            }
+            var meta = {
+                id: ko.observable(slicerData).extend({stripQuotes: true}),
+                description: ko.observable(slicerData).extend({stripQuotes: true}),                
+                targets: targets
+            };
+            self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
+          }
+        });
+      });
+    };
+
+    self.settingsViewModel.pluginsSelection = function() {   
+      var returnArr = [];
+      for (plugin of self.getActivePlugins()) {
+        let plugin_identifier = plugin[0];
+        let targets = plugin[1]["targets"];
+        for (const key of Object.keys(targets)) {
+          returnArr.push({plugin_identifier: plugin_identifier, target: key, target_name: targets[key]});
+        }
+      }
+      return returnArr;
+    };
+
+    self.settingsViewModel.selectedPluginId = ko.pureComputed(function () { 
+      return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().plugin_identifier; 
+    });
+
+    self.settingsViewModel.selectedPluginTarget = ko.pureComputed(function () { 
+      return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().target; 
+    });
+
     //Switch tab in settings on/off
     self.settingsViewModel.customTabCss = ko.pureComputed(function() {
       if (self.settingsViewModel.settings.plugins.SlicerEstimator.slicer() === "c") {
@@ -195,8 +252,7 @@ $(function() {
       }
     });
 
-
-    // --- Settings Report Bug
+    //Settings Report Bug
     self.settingsViewModel.createIssue = function() {
       // Send the bug report      
       url = 'https://github.com/NilsRo/OctoPrint-SlicerEstimator/issues/new';

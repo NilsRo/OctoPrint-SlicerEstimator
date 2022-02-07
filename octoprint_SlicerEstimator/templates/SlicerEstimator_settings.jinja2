@@ -99,40 +99,30 @@
                         <colgroup>
                             <col span="1">
                             <col span="1">
-                            <col span="1" style="width: 70px;">
-                            <col span="1" style="width: 70px;">
+                            <col span="1" style="width: 100px;">
                             <col span="1" style="width: 40px;">                                                   
                         </colgroup>
-                        <thead>
+                        <thead>                        
                             <tr>
-                                <th>
-                                    Metadata ID
+                                <th>Metadata ID</th>
+                                <th>Description</th>
+                                <th>                                    
+                                    <select data-bind="options: pluginsSelection(), optionsText: 'target_name', value: selectedPlugin"></select>
                                 </th>
                                 <th>
-                                    Description
-                                </th>
-                                <th>
-                                    Filelist
-                                </th>                                
-                                <th>
-                                    Printer
-                                </th>
-                                <th></th>
+                                </th>                                                                
                             </tr>
                         </thead>
                         <tbody class="control-group" data-bind="foreach: settings.plugins.SlicerEstimator.metadata_list">
                             <tr>
                                 <td>
-                                    <span type="text" value="Selector" data-bind="text: id"></span>
+                                    <span type="text" value="Selector" data-bind="text: id, attr: {title: id}"></span>
                                 </td>
                                 <td>
-                                    <input type="text" value="Selector" data-bind="value: description">
+                                    <input type="text" value="Selector" data-bind="value: description, attr: {title: description}">
                                 </td>
                                 <td>
-                                    <input type="checkbox" data-bind="checked: filelist">
-                                </td>
-                                <td>
-                                    <input type="checkbox" data-bind="checked: printer">
+                                    <input type="checkbox" data-bind="checked: targets[$parent.selectedPluginId()][$parent.selectedPluginTarget()]">
                                 </td>
                                 <td>
                                    <i class="fa fa-trash-o" data-bind="click: function() {$parent.deleteMeta($data)}"></i>

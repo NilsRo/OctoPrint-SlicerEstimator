@@ -11,6 +11,7 @@ import io
 import time
 import os
 import sys
+import collections
 
 from octoprint.filemanager.analysis import AnalysisAborted
 from octoprint.filemanager.analysis import GcodeAnalysisQueue
@@ -50,6 +51,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._estimator = None
         self._slicer_estimation = None
         self._executor = ThreadPoolExecutor()
+        self._plugins = dict()
 
         # Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
         self._slicer_def = [
@@ -80,42 +82,69 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Started up SlicerEstimator")
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
-
+        
+        self.register_plugin("Blabla","Blupp",["dialog","Dialogfeld"])
+        
 
     def get_settings_defaults(self):
-        return dict(slicer="2",
-                    slicer_gcode="M117",
-                    pw="",
-                    pd="",
-                    ph="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                    pm="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                    ps="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                    pwp=1,
-                    pdp=1,
-                    php=1,
-                    pmp=2,
-                    psp=3,
-                    search_mode="GCODE",
-                    search_pattern="",
-                    average_prio=False,
-                    use_assets=True,
-                    slicer_auto=True,
-                    estimate_upload=True,                    
-                    metadata=False,
-                    metadata_filelist=True,                    
-                    metadata_filelist_align="top",
-                    metadata_printer=False,
-                    metadata_list=[],                    
-                    useDevChannel=False)
-
+        plugins = dict()
+        plugins["slicer_estimator"] = dict()
+        plugins["slicer_estimator"]["name"] = self._plugin_name,
+        plugins["slicer_estimator"]["targets"] = dict(printer= "Printer", filelist= "Filelist")        
+        
+        return dict(
+            slicer="2",
+            slicer_gcode="M117",
+            pw="",
+            pd="",
+            ph="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+            pm="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+            ps="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
+            pwp=1,
+            pdp=1,
+            php=1,
+            pmp=2,
+            psp=3,
+            search_mode="GCODE",
+            search_pattern="",
+            average_prio=False,
+            use_assets=True,
+            slicer_auto=True,
+            estimate_upload=True,                    
+            metadata=False,
+            metadata_filelist=True,                    
+            metadata_filelist_align="top",
+            metadata_printer=False,
+            metadata_list=[],                    
+            useDevChannel=False,
+            plugins=plugins
+            )
+        
 
     def get_settings_version(self):
-        return 1
+        return 2
     
     
     def on_settings_migrate(self, target, current):
-        self._logger.info("SlicerEstimator: Setting migration from version {}".format(current))
-        self._update_metadata_in_files()
+        if current is not None:
+            self._logger.info("SlicerEstimator: Setting migration from version {}".format(current))
+            self._update_metadata_in_files()
+            
+            if current < 2:
+                # Move settings to a dynamic dict to support other plugins
+                metadata_list = self._settings.get(["metadata_list"])
+                for meta_items in metadata_list:
+                    meta_items["targets"] = collections.defaultdict(dict)
+                    meta_items["targets"][self.plugin_identifier]["printer"] = meta_items["printer"]
+                    meta_items["targets"][self.plugin_identifier]["filelist"] = meta_items["filelist"]
+                    del meta_items["printer"]
+                    del meta_items["filelist"]
+                self._settings.set(["metadata_list"] ,metadata_list)
+                plugins = dict()
+                plugins["slicer_estimator"] = dict()
+                plugins["slicer_estimator"]["name"] = self._plugin_name,
+                plugins["slicer_estimator"]["targets"] = dict(printer= "Printer", filelist= "Filelist")    
+                self._settings.set(["plugins"], plugins)
 
 
     def on_settings_save(self, data):  
@@ -138,7 +167,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._average_prio = self._settings.get(["average_prio"])
         self.estimate_upload = self._settings.get(["estimate_upload"])
         self._metadata = self._settings.get(["metadata"])
-        self._useDevChannel = self._settings.get(["useDevChannel"])
+        self._metadata_list = self._settings.get(["metadata_list"])
+        self._useDevChannel = self._settings.get(["useDevChannel"])        
+        self._plugins = self._settings.get(["plugins"])
         
         if self._estimator != None:
             self._estimator.average_prio = self._average_prio
@@ -415,6 +446,58 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             
 
 # SECTION: API
+    def register_plugin(self, plugin_identifier, plugin_name, targets):
+        if plugin_identifier in self._plugins:
+            self._logger.debug("Plugin {} already registered".format(plugin_identifier))
+        else:           
+            self._logger.debug("Plugin {} registered".format(plugin_identifier))
+        self._plugins[plugin_identifier] = dict()
+        self._plugins[plugin_identifier]["name"] = plugin_name
+        self._settings.set(["plugins"], self._plugins)
+    
+    
+    def register_plugin_target(self, plugin_identifier, target, target_name):
+        self._plugins[plugin_identifier]["targets"] = dict(target= target, target_name= target_name)                       
+        for meta_items in self._metadata_list:
+            meta_items["targets"][plugin_identifier] = dict()
+            meta_items["targets"][plugin_identifier][target] = False
+            self._settings.set(["metadata_list"], self._metadata_list)
+    
+        
+    def unregister_plugin(self, plugin_identifier):
+        if self._plugins[plugin_identifier].pop() is None:
+            self._logger.info("Plugin {} not found to unregister".format(plugin_identifier))
+        else:
+            for meta_items in self._metadata_list:
+                meta_items["targets"][plugin_identifier].pop()
+                self._settings.set(["metadata_list"], self._metadata_list)
+            self._logger.info("Plugin {} unregistered".format(plugin_identifier))
+    
+    
+    def unregister_target(self, plugin_identifier, target):    
+        for meta_items in self._metadata_list:
+            if meta_items["targets"][plugin_identifier][target].pop() is None:
+                self._logger.error("Could not unregister plugins {} target {}!".format(plugin_identifier, target))
+            self._settings.set(["metadata_list"], self._metadata_list)
+        self._logger.info("Plugin {} unregistered target {}".format())
+    
+       
+    def get_registered_plugins(self):        
+        return self._plugins.keys()
+    
+    
+    def get_registered_targets(self, plugin_identifier):
+        return self._plugins[plugin_identifier].targets.keys()
+    
+    
+    def get_metadata_file(self, origin, path, plugin_identifier):
+        if origin != "local":
+            self._logger.error("Only local origin supported!")
+        if plugin_identifier in self._plugins:
+            return "bla"
+        else:
+            self._logger.error("Plugin {} not registered.".format(plugin_identifier))
+        
     # def get_api_commands(self):
     #     return dict(get_filament_data = [])
 
