@@ -122,7 +122,7 @@ $(function() {
       let return_value = "";
       if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
         for (const [key, value] of Object.entries(data.slicer)) {
-          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["slicer_estimator"]["filelist"]);
+          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["slicer_estimator"]["filelist"]() === true);
           let description = "No description";
           if (meta != null) {
             description = meta.description();
@@ -196,10 +196,10 @@ $(function() {
       self.filesViewModel.filesOnlyList().forEach(function (data) {
         Object.keys(data.slicer).forEach(function (slicerData) {
           if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
-            targets = {};            
+            let targets = {};            
             for (plugin of self.getActivePlugins()) {
               targets[plugin[0]] = {};              
-              for (const key in Object.keys(plugin[1]["targets"])) {
+              for (key of Object.keys(plugin[1]["targets"])) {
                 targets[plugin[0]][key] = ko.observable(false);
               }
             }

@@ -83,7 +83,18 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
         
-        self.register_plugin("Blabla","Blupp",["dialog","Dialogfeld"])
+        #TODO: Bereinigungsprogramm für nicht mehr installierte Plugins
+        
+        # if "slicer_estimator" not in self.get_registered_plugins():
+        #     self.register_plugin("slicer_estimator", "Slicer Estimator")
+        # if "filelist" not in self.get_registered_plugin_targets("slicer_estimator"):
+        #     self.register_plugin_target("slicer_estimator", "filelist", "Filelist")
+        # if "printer" not in self.get_registered_plugin_targets("slicer_estimator"):
+        #     self.register_plugin_target("slicer_estimator", "printer", "Printer")
+        
+        self.register_plugin("Blabla","Blupp")
+        self.register_plugin_target("Blabla","Blupp_target","die ist das Target")
+        self._logger.debug(self.get_metadata_file("local", "Wanderstöcke Halterung.gcode", "Blabla","Blupp_target"))
         
 
     def get_settings_defaults(self):
@@ -446,22 +457,29 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             
 
 # SECTION: API
-    def register_plugin(self, plugin_identifier, plugin_name, targets):
+    def register_plugin(self, plugin_identifier, plugin_name):
         if plugin_identifier in self._plugins:
             self._logger.debug("Plugin {} already registered".format(plugin_identifier))
         else:           
             self._logger.debug("Plugin {} registered".format(plugin_identifier))
-        self._plugins[plugin_identifier] = dict()
-        self._plugins[plugin_identifier]["name"] = plugin_name
-        self._settings.set(["plugins"], self._plugins)
+            self._plugins[plugin_identifier] = dict()
+            self._plugins[plugin_identifier]["name"] = plugin_name
+            self._plugins[plugin_identifier]["targets"] = dict()     
+            self._settings.set(["plugins"], self._plugins)
     
     
     def register_plugin_target(self, plugin_identifier, target, target_name):
-        self._plugins[plugin_identifier]["targets"] = dict(target= target, target_name= target_name)                       
-        for meta_items in self._metadata_list:
-            meta_items["targets"][plugin_identifier] = dict()
-            meta_items["targets"][plugin_identifier][target] = False
-            self._settings.set(["metadata_list"], self._metadata_list)
+        if target in self._plugins[plugin_identifier]["targets"].keys():
+            self._logger.debug("Plugins {} target {} already registered".format(plugin_identifier, target))
+        else:
+            self._plugins[plugin_identifier]["targets"][target] = target_name
+            self._settings.set(["plugins"], self._plugins)                  
+            for meta_items in self._metadata_list:
+                meta_items["targets"][plugin_identifier] = dict()
+                meta_items["targets"][plugin_identifier][target] = False
+                self._settings.set(["metadata_list"], self._metadata_list)
+            self._logger.debug("Plugins {} target {} registered".format(plugin_identifier, target))
+
     
         
     def unregister_plugin(self, plugin_identifier):
@@ -474,7 +492,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.info("Plugin {} unregistered".format(plugin_identifier))
     
     
-    def unregister_target(self, plugin_identifier, target):    
+    def unregister_plugin_target(self, plugin_identifier, target):    
         for meta_items in self._metadata_list:
             if meta_items["targets"][plugin_identifier][target].pop() is None:
                 self._logger.error("Could not unregister plugins {} target {}!".format(plugin_identifier, target))
@@ -486,17 +504,29 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         return self._plugins.keys()
     
     
-    def get_registered_targets(self, plugin_identifier):
-        return self._plugins[plugin_identifier].targets.keys()
+    def get_registered_plugin_targets(self, plugin_identifier):
+        return self._plugins[plugin_identifier]["targets"].keys()
     
     
-    def get_metadata_file(self, origin, path, plugin_identifier):
+    def get_metadata_file(self, origin, path, plugin_identifier, target):
         if origin != "local":
             self._logger.error("Only local origin supported!")
         if plugin_identifier in self._plugins:
-            return "bla"
+            if target in self._plugins[plugin_identifier]["targets"].keys():
+                return_list = []
+                meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target] == True, self._metadata_list)
+                for meta_item in meta_selected:                    
+                    return_item = [meta_item["id"], meta_item["description"], self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer")[meta_item["id"]]]
+                    return_list.append(return_item)
+                return return_list
+            else:
+                self._logger.error("Target {} of plugin {} not registered.".format(target, plugin_identifier))
         else:
             self._logger.error("Plugin {} not registered.".format(plugin_identifier))
+            
+            
+    def get_metadata_print(self, plugin_identifier, target):
+        return "bla"
         
     # def get_api_commands(self):
     #     return dict(get_filament_data = [])
