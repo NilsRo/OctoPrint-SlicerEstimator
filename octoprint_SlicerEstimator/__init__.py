@@ -565,8 +565,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 # SECTION: software update hook
     def get_update_information(self):
+        if hasattr(self, "_settings"):
+            DevChannel = self._settings.get_boolean(["useDevChannel"])
+        else:
+            DevChannel = False
         
-        if self._settings.get_boolean(["useDevChannel"]):
+        if DevChannel:
             return dict(
                 SlicerEstimator=dict(
                     displayName=self._plugin_name + " (Development Branch)",
@@ -654,3 +658,19 @@ __plugin_hooks__ = {
     "octoprint.filemanager.analysis.factory": __plugin_implementation__.analysis_queue_factory,
     "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
 }
+
+# SECTION: Register API for other plugins
+# def __plugin_load__():
+#     plugin = SlicerEstimatorPlugin()
+    
+#     global __plugin_implementation__
+#     __plugin_implementation__ = plugin 
+    
+#     global __plugin_helpers__
+#     __plugin_helpers__ = dict(
+#         register_plugin=plugin.register_plugin,
+#         register_plugin_target = plugin.register_plugin_target,
+#         unregister_plugin=plugin.unregister_plugin,
+#         unregister_plugin_target=plugin.unregister_plugin_target,
+#         get_metadata_file=plugin.get_metadata_file
+#     )
