@@ -83,18 +83,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
         
-        #TODO: Bereinigungsprogramm für nicht mehr installierte Plugins
-        
-        # if "slicer_estimator" not in self.get_registered_plugins():
-        #     self.register_plugin("slicer_estimator", "Slicer Estimator")
-        # if "filelist" not in self.get_registered_plugin_targets("slicer_estimator"):
-        #     self.register_plugin_target("slicer_estimator", "filelist", "Filelist")
-        # if "printer" not in self.get_registered_plugin_targets("slicer_estimator"):
-        #     self.register_plugin_target("slicer_estimator", "printer", "Printer")
-        
-        self.register_plugin("Blabla","Blupp")
-        self.register_plugin_target("Blabla","Blupp_target","die ist das Target")
-        self._logger.debug(self.get_metadata_file("local", "Wanderstöcke Halterung.gcode", "Blabla","Blupp_target"))
+        # TODO API hier testen
+        # self.register_plugin("Blabla","Blupp")
+        # self.register_plugin_target("Blabla","Blupp_target","die ist das Target")
+        # self._logger.debug(self.get_metadata_file("local", "Wanderstöcke Halterung.gcode", "Blabla","Blupp_target"))
         
 
     def get_settings_defaults(self):
@@ -138,19 +130,20 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     
     def on_settings_migrate(self, target, current):
         if current is not None:
-            self._logger.info("SlicerEstimator: Setting migration from version {}".format(current))
+            self._logger.info("SlicerEstimator: Setting migration from version {} to {}".format(current, target))
             self._update_metadata_in_files()
             
             if current < 2:
                 # Move settings to a dynamic dict to support other plugins
                 metadata_list = self._settings.get(["metadata_list"])
                 for meta_items in metadata_list:
-                    meta_items["targets"] = collections.defaultdict(dict)
-                    meta_items["targets"][self.plugin_identifier]["printer"] = meta_items["printer"]
-                    meta_items["targets"][self.plugin_identifier]["filelist"] = meta_items["filelist"]
+                    meta_items["targets"] = dict()
+                    meta_items["targets"]["slicer_estimator"] = dict()
+                    meta_items["targets"]["slicer_estimator"]["printer"] = meta_items["printer"]
+                    meta_items["targets"]["slicer_estimator"]["filelist"] = meta_items["filelist"]
                     del meta_items["printer"]
                     del meta_items["filelist"]
-                self._settings.set(["metadata_list"] ,metadata_list)
+                self._settings.set(["metadata_list"], metadata_list)
                 plugins = dict()
                 plugins["slicer_estimator"] = dict()
                 plugins["slicer_estimator"]["name"] = self._plugin_name,
