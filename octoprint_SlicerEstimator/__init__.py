@@ -699,19 +699,17 @@ __plugin_name__ = "Slicer Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 
 # SECTION: Register API for other plugins
-def __plugin_load__():
-    plugin = SlicerEstimatorPlugin()
-    
+def __plugin_load__():  
     global __plugin_implementation__
-    __plugin_implementation__ = plugin
+    __plugin_implementation__ = SlicerEstimatorPlugin()
 
     global __plugin_helpers__
     __plugin_helpers__ = dict(
-        register_plugin=plugin.register_plugin,
-        register_plugin_target = plugin.register_plugin_target,
-        unregister_plugin=plugin.unregister_plugin,
-        unregister_plugin_target=plugin.unregister_plugin_target,
-        get_metadata_file=plugin.get_metadata_file
+        register_plugin=__plugin_implementation__.register_plugin,
+        register_plugin_target = __plugin_implementation__.register_plugin_target,
+        unregister_plugin=__plugin_implementation__.unregister_plugin,
+        unregister_plugin_target=__plugin_implementation__.unregister_plugin_target,
+        get_metadata_file=__plugin_implementation__.get_metadata_file
     )
     
     global __plugin_hooks__
