@@ -700,8 +700,10 @@ __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 
 # SECTION: Register API for other plugins
 def __plugin_load__():
+    plugin = SlicerEstimatorPlugin()
+    
     global __plugin_implementation__
-    __plugin_implementation__ = SlicerEstimatorPlugin()
+    __plugin_implementation__ = plugin
 
     global __plugin_helpers__
     __plugin_helpers__ = dict(
