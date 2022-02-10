@@ -122,7 +122,7 @@ $(function() {
       let return_value = "";
       if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
         for (const [key, value] of Object.entries(data.slicer)) {
-          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["slicer_estimator"]["filelist"]() === true);
+          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["SlicerEstimator"]["filelist"]() === true);
           let description = "No description";
           if (meta != null) {
             description = meta.description();
@@ -147,7 +147,7 @@ $(function() {
     self.currentMetadata = ko.pureComputed(function() {
       var returnMeta = [];
       if (typeof self.printerStateViewModel.filepath() !== 'undefined') {
-        let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.targets["slicer_estimator"]["printer"]() === true);
+        let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.targets["SlicerEstimator"]["printer"]() === true);
         let actualFile = self.filesViewModel.filesOnlyList().find(elem => elem.path === self.printerStateViewModel.filepath() && elem.slicer != null);
         if (typeof actualFile !== 'undefined') {        
           enabledMeta.forEach(function(data) {                     
