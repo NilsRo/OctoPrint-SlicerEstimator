@@ -262,7 +262,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             origin = payload["origin"]
             path = payload["path"]
             if origin == "local":
-                self._send_metadata_print_event(origin, path)
+                if self._metadata:
+                    self._send_metadata_print_event(origin, path)
                 self._set_slicer(origin, path)
                 if self._search_mode == "COMMENT":
                     self._logger.debug("Search started in file {}".format(path))
