@@ -84,7 +84,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
         # TODO ausbauen
-        # self._update_metadata_in_files()
+        self._update_metadata_in_files()
         
         # TODO: Aufräumfunktion für nicht mehr installierte Plugins
 
@@ -320,13 +320,26 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     # Update all metadata in files
     def _update_metadata_in_files(self):
         results =  self._file_manager._storage_managers["local"].list_files(recursive=True)
-        # TODO: Verzeichnisse werden nicht verarbeitet.
+        filelist = dict()
         if results is not None:
             for resultKey in results:
                 if results[resultKey]["type"] == "machinecode":
-                    path = results[resultKey]["path"]
-                    self._file_manager._storage_managers["local"].remove_additional_metadata(path, "slicer")
-                    self._find_metadata("local", path)
+                    filelist[results[resultKey]["path"]] =  results[resultKey]
+                if results[resultKey]["type"] == "folder":
+                    self._flatten_files(results[resultKey], filelist) 
+            for path in filelist:        
+                self._file_manager._storage_managers["local"].remove_additional_metadata(path, "slicer")
+                self._find_metadata("local", path)
+
+
+    # recursive function to flatten the filelist hierarchy
+    def _flatten_files(self, folder, filelist = dict()):
+        for fileKey in folder["children"]:
+            if folder["children"][fileKey]["type"] == "machinecode":
+                filelist[folder["children"][fileKey]["path"]] = folder["children"][fileKey]
+            if folder["children"][fileKey]["type"] == "folder":
+               self._flatten_files(folder["children"][fileKey], filelist)
+ 
 
 
 # SECTION: Estimation helper
