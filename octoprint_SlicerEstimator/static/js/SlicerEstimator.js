@@ -219,8 +219,9 @@ $(function() {
       for (plugin of self.getActivePlugins()) {
         let plugin_identifier = plugin[0];
         let targets = plugin[1]["targets"];
+        let plugin_name = plugin[1]["name"];
         for (const key of Object.keys(targets)) {
-          returnArr.push({plugin_identifier: plugin_identifier, target: key, target_name: targets[key]});
+          returnArr.push({plugin_identifier: plugin_identifier, plugin_name: plugin_name, target: key, target_name: targets[key]});
         }
       }
       return returnArr;

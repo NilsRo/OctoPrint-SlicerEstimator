@@ -84,7 +84,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
         # TODO ausbauen
-        self._update_metadata_in_files()
+        # self._update_metadata_in_files()
+        
+        # TODO: Aufräumfunktion für nicht mehr installierte Plugins
 
         # Example for API calls
         # helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
@@ -478,6 +480,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             plugin_identifier (String): OctoPrint Plugin Identifier
             plugin_name (String): OctoPrints plugins name (or any other name you like to use)
         """
+        
+        # TODO: Exception, wenn plugin_identifier nicht in OctoPrint gefunden wird.
         if plugin_identifier in self._plugins:
             self._logger.debug("Plugin {} already registered".format(plugin_identifier))
         else:
@@ -602,6 +606,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     def register_custom_events(*args, **kwargs):
         return ["metadata_print"]
+    
 
 
     # def get_api_commands(self):
