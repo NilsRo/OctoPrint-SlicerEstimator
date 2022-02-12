@@ -37,11 +37,7 @@ Settings for metadata configuration
 ![](images/Settings_Metadata.png)
 
 ## API - for other plugin developers
-Metadata stored can be easily used by other plugins calling get_addtional_metadata function. A dictionary with key "slicer" is added to the file metadata containing a simple dictionary.
-
-For example:
-
-    self._file_manager._storage_managers["local"].get_additional_metadata(<path of the file>,"slicer");
+Metadata stored can be easily used by other plugins. [An API description is available here](API_DOC.md).
 
 ## Slicers supported
 

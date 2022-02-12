@@ -83,15 +83,29 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Started up SlicerEstimator")
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
+        # TODO ausbauen
+        self._update_metadata_in_files()
 
-
-        # helpers = self._plugin_manager.get_helpers("SlicerEstimator", "register_plugin")
-        # self.test_api = helpers["register_plugin"]
-        # self.test_api("Bla", "BlaBlaBla")
-        # TODO API hier testen
-        # self.register_plugin("Blabla","Blupp")
-        # self.register_plugin_target("Blabla","Blupp_target","die ist das Target")
-        # self._logger.debug(self.get_metadata_file("local", "Wanderstöcke Halterung.gcode", "Blabla","Blupp_target"))
+        # Example for API calls
+        # helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
+        #                                            "register_plugin", 
+        #                                            "register_plugin_target",
+        #                                            "unregister_plugin",
+        #                                            "unregister_plugin_target",
+        #                                            "get_metadata_api"
+        #                                            )
+        # if helpers is None:
+        #     self._logger.info("Slicer Estimator not installed")
+        # else:            
+        #     self.se_register_plugin = helpers["register_plugin"]
+        #     self.se_register_plugin = helpers["register_plugin_target"]
+        #     self.se_register_plugin = helpers["unregister_plugin"]
+        #     self.se_register_plugin = helpers["unregister_plugin_target"]
+        #     self.se_register_plugin = helpers["get_metadata_api"]
+            
+        #     self.se_register_plugin(self._identifier, self._plugin_name)
+        #     self.se_register_plugin_target(self._identifier, "filelist_mobile_id","Filelist in Mobile")
+        #     metadata = self.get_metadata_file(self._identifier,"Blupp_target", "local", "Wanderstöcke Halterung.gcode")
 
 
     def get_settings_defaults(self):
@@ -303,7 +317,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # Update all metadata in files
     def _update_metadata_in_files(self):
-        results =  self._file_manager._storage_managers["local"].list_files()
+        results =  self._file_manager._storage_managers["local"].list_files(recursive=True)
+        # TODO: Verzeichnisse werden nicht verarbeitet.
         if results is not None:
             for resultKey in results:
                 if results[resultKey]["type"] == "machinecode":
@@ -493,7 +508,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.debug("Plugins {} target {} registered".format(plugin_identifier, target))
 
 
-
     def unregister_plugin(self, plugin_identifier):
         """Unrgister a plugin if you like to remove all settings
 
@@ -524,21 +538,37 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     def get_registered_plugins(self):
+        """Return list of plugins registered
+
+        Returns:
+            array of strings: List of plugin identifiers registered
+        """
         return self._plugins.keys()
 
 
     def get_registered_plugin_targets(self, plugin_identifier):
-        return self._plugins[plugin_identifier]["targets"].keys()
+        """Returns list of targets registered for a plugin
+
+        Args:
+            plugin_identifier (String)): plugin_identifier to check
+
+        Returns:
+            array of strings: List of targets registered for a plugin
+        """
+        if self._plugins[plugin_identifier] is None:
+            return None
+        else:
+            return self._plugins[plugin_identifier]["targets"].keys()
 
 
-    def get_metadata_file(self, origin, path, plugin_identifier, target):
+    def get_metadata_file(self, plugin_identifier, target, origin, path):
         """Get the Metadata to a file in an Array containing a tripple array
 
         Args:
-            origin (String): only "local" supported actually
-            path (String): Path to the file
             plugin_identifier (String): OctoPrint Plugin Identifier
             target (String): ID of a target (you can choose)
+            origin (String): only "local" supported actually
+            path (String): Path to the file
 
         Returns:
             [Array]: Array of metadata in metadata_id, description and value
