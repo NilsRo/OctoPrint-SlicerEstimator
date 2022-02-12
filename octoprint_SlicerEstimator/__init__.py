@@ -603,12 +603,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Send Metadata Print Event for file {}".format(path))       
         self._event_bus.fire(event, payload=custom_payload)
 
-
-    def register_custom_events(*args, **kwargs):
-        return ["metadata_print"]
-    
-
-
     # def get_api_commands(self):
     #     return dict(get_filament_data = [])
 
@@ -735,6 +729,9 @@ class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue):
 __plugin_name__ = "Slicer Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 
+def _register_custom_events(*args, **kwargs):
+    return ["metadata_print"]
+
 # SECTION: Register API for other plugins
 def __plugin_load__():  
     global __plugin_implementation__
@@ -755,5 +752,5 @@ def __plugin_load__():
         "octoprint.printer.estimation.factory": __plugin_implementation__.estimator_factory,
         "octoprint.filemanager.analysis.factory": __plugin_implementation__.analysis_queue_factory,
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
-        "octoprint.events.register_custom_events": __plugin_implementation__.register_custom_events
+        "octoprint.events.register_custom_events": _register_custom_events
     }

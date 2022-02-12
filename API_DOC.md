@@ -114,7 +114,7 @@ Get the Metadata to a file in an Array containing a tripple array
 Slicer Estimator send a custom Event to the Event bus if a print is triggered and metadata handling is enabled. It contains a payload the metadata for all plugins registered in the same format as the get_metadata_file method.
 
 
-Event: PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT
+Event: Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT or "plugin_SlicerEstimator_metadata_print"
 
 Payload: Payload[plugin_identifier][target]
 
