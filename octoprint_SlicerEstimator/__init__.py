@@ -83,8 +83,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Started up SlicerEstimator")
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
-        # TODO ausbauen
-        self._update_metadata_in_files()
+        
+        self._cleanup_uninstalled_plugins()
         
         # TODO: Aufräumfunktion für nicht mehr installierte Plugins
 
@@ -606,6 +606,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.error("Plugin {} not registered.".format(plugin_identifier))
 
 
+    # send the event on printing
     def _send_metadata_print_event(self, origin, path):
         event = Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT
         custom_payload = dict()
@@ -615,6 +616,14 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 custom_payload[plugin][target] = self.get_metadata_file(plugin, target, origin, path)
         self._logger.info("Send Metadata Print Event for file {}".format(path))       
         self._event_bus.fire(event, payload=custom_payload)
+        
+    
+    # Cleanup uninstalled registered plugins    
+    def _cleanup_uninstalled_plugins(self):
+        for plugin in self._plugins:
+            if plugin not in self._plugin_manager.plugins:
+                self.unregister_plugin(plugin)
+    
 
     # def get_api_commands(self):
     #     return dict(get_filament_data = [])
