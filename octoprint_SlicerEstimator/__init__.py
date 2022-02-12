@@ -612,7 +612,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         for plugin in self._plugins:
             custom_payload[plugin] = dict()
             for target in self._plugins[plugin]["targets"]:
-                custom_payload[plugin][target] = self.get_metadata_file(origin, path, plugin, target)
+                custom_payload[plugin][target] = self.get_metadata_file(plugin, target, origin, path)
         self._logger.info("Send Metadata Print Event for file {}".format(path))       
         self._event_bus.fire(event, payload=custom_payload)
 
@@ -701,6 +701,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     pip="https://github.com/NilsRo/OctoPrint-SlicerEstimator/archive/{target_version}.zip"
                 )
         )
+
 
 
 # SECTION: Analysis Queue Class
