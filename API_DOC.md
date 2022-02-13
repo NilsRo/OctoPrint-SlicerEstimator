@@ -116,6 +116,12 @@ Slicer Estimator send a custom Event to the Event bus if a print is triggered an
 
 Event: Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT or "plugin_SlicerEstimator_metadata_print"
 
+There is a possible bug in OctoPrint so you should use the string comparison. [Details available here](https://github.com/OctoPrint/OctoPrint/issues/4417).
+
 Payload: Payload[plugin_identifier][target]
 
-e.g. Payload[self._identifier]["filelist_mobile_id"]
+```python
+   def on_event(self, event, payload):
+        if event == "plugin_SlicerEstimator_metadata_print":
+            metadata_list = payload[self._identifier]["filelist_mobile_id"]
+```
