@@ -511,17 +511,20 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             target (String): ID of a target (you can choose)
             target_name (String): Name of a target to use in the dropdown
         """
-        if target in self._plugins[plugin_identifier]["targets"].keys():
-            self._logger.debug("Plugins {} target {} already registered".format(plugin_identifier, target))
+        if plugin_identifier in self._plugins:
+            if target in self._plugins[plugin_identifier]["targets"].keys():
+                self._logger.debug("Plugins {} target {} already registered".format(plugin_identifier, target))
+            else:
+                self._plugins[plugin_identifier]["targets"][target] = target_name
+                self._settings.set(["plugins"], self._plugins)
+                for meta_items in self._metadata_list:
+                    meta_items["targets"][plugin_identifier] = dict()
+                    meta_items["targets"][plugin_identifier][target] = False
+                    self._settings.set(["metadata_list"], self._metadata_list)
+                self._logger.debug("Plugins {} target {} registered".format(plugin_identifier, target))
         else:
-            self._plugins[plugin_identifier]["targets"][target] = target_name
-            self._settings.set(["plugins"], self._plugins)
-            for meta_items in self._metadata_list:
-                meta_items["targets"][plugin_identifier] = dict()
-                meta_items["targets"][plugin_identifier][target] = False
-                self._settings.set(["metadata_list"], self._metadata_list)
-            self._logger.debug("Plugins {} target {} registered".format(plugin_identifier, target))
-
+            self._logger.error("Plugin {} tried to register target {} but not found in registry".format(plugin_identifier, target))
+            
 
     def unregister_plugin(self, plugin_identifier):
         """Unrgister a plugin if you like to remove all settings
