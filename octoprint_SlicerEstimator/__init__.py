@@ -83,10 +83,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Started up SlicerEstimator")
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
-        
         self._cleanup_uninstalled_plugins()
-        
-        # TODO: Aufräumfunktion für nicht mehr installierte Plugins
 
         # Example for API calls
         # helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
@@ -94,20 +91,20 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         #                                            "register_plugin_target",
         #                                            "unregister_plugin",
         #                                            "unregister_plugin_target",
-        #                                            "get_metadata_api"
+        #                                            "get_metadata_file"
         #                                            )
         # if helpers is None:
         #     self._logger.info("Slicer Estimator not installed")
         # else:            
         #     self.se_register_plugin = helpers["register_plugin"]
-        #     self.se_register_plugin = helpers["register_plugin_target"]
-        #     self.se_register_plugin = helpers["unregister_plugin"]
-        #     self.se_register_plugin = helpers["unregister_plugin_target"]
-        #     self.se_register_plugin = helpers["get_metadata_api"]
+        #     self.se_register_plugin_target = helpers["register_plugin_target"]
+        #     self.se_unregister_plugin = helpers["unregister_plugin"]
+        #     self.se_unregister_plugin_target = helpers["unregister_plugin_target"]
+        #     self.se_get_metadata_file = helpers["get_metadata_file"]
             
         #     self.se_register_plugin(self._identifier, self._plugin_name)
         #     self.se_register_plugin_target(self._identifier, "filelist_mobile_id","Filelist in Mobile")
-        #     metadata = self.get_metadata_file(self._identifier,"Blupp_target", "local", "Wanderstöcke Halterung.gcode")
+        #     metadata = self.se_get_metadata_file(self._identifier,"filelist_mobile_id", "local", "Wanderstöcke Halterung.gcode")
 
 
     def get_settings_defaults(self):
@@ -493,16 +490,17 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             plugin_identifier (String): OctoPrint Plugin Identifier
             plugin_name (String): OctoPrints plugins name (or any other name you like to use)
         """
-        
-        # TODO: Exception, wenn plugin_identifier nicht in OctoPrint gefunden wird.
-        if plugin_identifier in self._plugins:
-            self._logger.debug("Plugin {} already registered".format(plugin_identifier))
+        if plugin_identifier in self._plugin_manager.plugins.keys():    
+            if plugin_identifier in self._plugins:
+                self._logger.debug("Plugin {} already registered".format(plugin_identifier))
+            else:
+                self._logger.debug("Plugin {} registered".format(plugin_identifier))
+                self._plugins[plugin_identifier] = dict()
+                self._plugins[plugin_identifier]["name"] = plugin_name
+                self._plugins[plugin_identifier]["targets"] = dict()
+                self._settings.set(["plugins"], self._plugins)
         else:
-            self._logger.debug("Plugin {} registered".format(plugin_identifier))
-            self._plugins[plugin_identifier] = dict()
-            self._plugins[plugin_identifier]["name"] = plugin_name
-            self._plugins[plugin_identifier]["targets"] = dict()
-            self._settings.set(["plugins"], self._plugins)
+            self._logger.error("Plugin {} tried to register but not found in OctoPrint's Plugin Manager".format(plugin_identifier))
 
 
     def register_plugin_target(self, plugin_identifier, target, target_name):
@@ -567,7 +565,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         """Returns list of targets registered for a plugin
 
         Args:
-            plugin_identifier (String)): plugin_identifier to check
+            plugin_identifier (String): plugin_identifier to check
 
         Returns:
             array of strings: List of targets registered for a plugin
@@ -577,7 +575,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         else:
             return self._plugins[plugin_identifier]["targets"].keys()
 
-
+            
     def get_metadata_file(self, plugin_identifier, target, origin, path):
         """Get the Metadata to a file in an Array containing a tripple array
 
@@ -620,8 +618,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     
     # Cleanup uninstalled registered plugins    
     def _cleanup_uninstalled_plugins(self):
-        for plugin in self._plugins:
-            if plugin not in self._plugin_manager.plugins:
+        for plugin in self._plugins.keys():
+            if plugin not in self._plugin_manager.plugins.keys():
                 self.unregister_plugin(plugin)
     
 

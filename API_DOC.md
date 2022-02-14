@@ -22,24 +22,26 @@ The following commands are exposed:
 
 To integrate the API here an example that could be called on_after_startup():
 ```python
-        helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
+        # Example for API calls
+         helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
                                                    "register_plugin", 
                                                    "register_plugin_target",
                                                    "unregister_plugin",
                                                    "unregister_plugin_target",
-                                                   "get_metadata_api"
+                                                   "get_metadata_file"
                                                    )
         if helpers is None:
             self._logger.info("Slicer Estimator not installed")
         else:            
             self.se_register_plugin = helpers["register_plugin"]
-            self.se_register_plugin = helpers["register_plugin_target"]
-            self.se_register_plugin = helpers["unregister_plugin"]
-            self.se_register_plugin = helpers["unregister_plugin_target"]
-            self.se_register_plugin = helpers["get_metadata_api"]
+            self.se_register_plugin_target = helpers["register_plugin_target"]
+            self.se_unregister_plugin = helpers["unregister_plugin"]
+            self.se_unregister_plugin_target = helpers["unregister_plugin_target"]
+            self.se_get_metadata_file = helpers["get_metadata_file"]
             
             self.se_register_plugin(self._identifier, self._plugin_name)
             self.se_register_plugin_target(self._identifier, "filelist_mobile_id","Filelist in Mobile")
+            metadata = self.se_get_metadata_file(self._identifier,"filelist_mobile_id", "local", "Wanderstöcke Halterung.gcode")
 
 ```
 You can enhance the logic like checking if a plugin is still registered. But anyhow, there will be a log info if a plugin is still registered only.
