@@ -84,7 +84,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
         self._cleanup_uninstalled_plugins()
-
+        
         # Example for API calls
         # helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
         #                                            "register_plugin", 
@@ -548,12 +548,15 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             plugin_identifier (String): OctoPrint Plugin Identifier
             target (String): ID of a target (you can choose)
         """
-        for meta_items in self._metadata_list:
-            if meta_items["targets"][plugin_identifier][target].pop() is None:
-                self._logger.error("Could not unregister plugins {} target {}!".format(plugin_identifier, target))
-            self._settings.set(["metadata_list"], self._metadata_list)
-        self._logger.info("Plugin {} unregistered target {}".format())
-
+        if plugin_identifier in self._plugins:
+            for meta_items in self._metadata_list:
+                if meta_items["targets"][plugin_identifier][target].pop() is None:
+                    self._logger.error("Could not unregister plugins {} target {}!".format(plugin_identifier, target))
+                self._settings.set(["metadata_list"], self._metadata_list)
+            self._logger.info("Plugin {} unregistered target {}".format())
+        else:
+            self._logger.error("Plugin {} tried to unregister target {} but not found in registry".format(plugin_identifier, target))
+            
 
     def get_registered_plugins(self):
         """Return list of plugins registered
@@ -573,10 +576,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         Returns:
             array of strings: List of targets registered for a plugin
         """
-        if self._plugins[plugin_identifier] is None:
-            return None
-        else:
+        if plugin_identifier in self._plugins.keys():
             return self._plugins[plugin_identifier]["targets"].keys()
+        else:
+            self._logger.error("Plugin {} tried to gets targets but not found in registry".format(plugin_identifier))
 
             
     def get_metadata_file(self, plugin_identifier, target, origin, path):
