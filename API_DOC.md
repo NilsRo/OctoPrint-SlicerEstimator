@@ -1,4 +1,4 @@
-# API Documentation for other Plugin developers
+# API documentation for other developers
 I implemented an API that the functionallity of Slicer Estimator can also be used by other plugins. This avoids the need to build a separate configuration page and also to set everything again for every plugin.
 
 If your plugin is registered it will be added to the configuration dropdown like it is a function of Slicer Estimator.
@@ -10,18 +10,19 @@ If your plugin is registered it will be added to the configuration dropdown like
 You can find the official API documentation in the helpers section of OctoPrints documentation: https://docs.octoprint.org/en/master/plugins/helpers.html
 
 The following commands are exposed:
-* register_plugin: Used to register a plugin to the API.
-* register_plugin_target: Used to specify different target to show the metadata like the Filelist and the Printer View in Slicer Estimator Plugin
-* unregister_plugin: To delete all setting. Helpful to reset the registration during development. Uninstalled plugins will be cleansed automatically
-* unregister_plugin_target: If a target should not be used anymore. This have to be used of a external plugin is changed that perhaps a target is not used anymore. It will also delete all settings of the target.
-* get_registered_plugins: Lists the registered Plugins for checks
-* get_registered_plugin_targets: Listes the registered targets for a plugin.
-* get_metadata_file: return the formatted metadata for a file for a specific target.
+* **register_plugin**: Used to register a plugin to the API.
+* **register_plugin_target**: Used to specify different target to show the metadata like the Filelist and the Printer View in Slicer Estimator Plugin
+* **unregister_plugin**: To delete all setting. Helpful to reset the registration during development. Uninstalled plugins will be cleansed automatically
+* **unregister_plugin_target**: If a target should not be used anymore. This have to be used of a external plugin is changed that perhaps a target is not used anymore. It will also delete all settings of the target.
+* **get_registered_plugins**: Lists the registered Plugins for checks
+* **get_registered_plugin_targets**: Listes the registered targets for a plugin.
+* **get_metadata_file**: return the formatted metadata for a file for a specific target.
 
 
 
-To integrate the API here an example that could be called on_after_startup():
+To integrate the API it can be called in on_after_startup():
 ```python
+    def on_after_startup(self):
         # Example for API calls
          helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
                                                    "register_plugin", 
@@ -113,12 +114,12 @@ Get the Metadata to a file in an Array containing a tripple array
         [Array]: Array of metadata in metadata_id, description and value
 
 ## Events
-Slicer Estimator send a custom Event to the Event bus if a print is triggered and metadata handling is enabled. It contains a payload the metadata for all plugins registered in the same format as the get_metadata_file method.
+Slicer Estimator sends a custom event to the event bus if a print starts and metadata handling is enabled in settings. The event contains the metadata for all plugins registered as payload in same format returned from get_metadata_file method.
 
 
 Event: Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT or "plugin_SlicerEstimator_metadata_print"
 
-There is a possible bug in OctoPrint so you should use the string comparison. [Details available here](https://github.com/OctoPrint/OctoPrint/issues/4417).
+There is a bug in OctoPrint < 1.80. You should use the string comparison: [Details available here](https://github.com/OctoPrint/OctoPrint/issues/4417).
 
 Payload: Payload[plugin_identifier][target]
 
