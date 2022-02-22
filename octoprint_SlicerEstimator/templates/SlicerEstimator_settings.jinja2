@@ -151,8 +151,8 @@
             <div id="SlicerEstimator_custom" class="tab-pane">
                 <div class="help-block">{{ _('For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>') }}</div>
              	<div class="control-group">
-                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">
-                        <label class="control-label">{{ _('RegEx Week') }}</label>
+                    <label class="control-label">{{ _('RegEx Week') }}</label>
+                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">                        
                         <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pw">
                         <select data-bind="value: settings.plugins.SlicerEstimator.pwp">
                             <option value="1">Match 1</option>
@@ -169,8 +169,8 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label">{{ _('RegEx Day') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Days') }}">
-                        <label class="control-label">{{ _('RegEx Day') }}</label>
                         <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pd">
                         <select data-bind="value: settings.plugins.SlicerEstimator.pdp">
                             <option value="1">Match 1</option>
@@ -187,8 +187,8 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label">{{ _('RegEx Hour') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Hours') }}">
-                        <label class="control-label">{{ _('RegEx Hour') }}</label>
                         <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ph">
                         <select data-bind="value: settings.plugins.SlicerEstimator.php">
                             <option value="1">Match 1</option>
@@ -205,8 +205,8 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label">{{ _('RegEx Minute') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Minutes') }}">
-                        <label class="control-label">{{ _('RegEx Minute') }}</label>
                         <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pm">
                         <select data-bind="value: settings.plugins.SlicerEstimator.pmp">
                             <option value="1">Match 1</option>
@@ -223,8 +223,8 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label class="control-label">{{ _('RegEx Second') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Seconds') }}">
-                        <label class="control-label">{{ _('RegEx Second') }}</label>
                         <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ps">
                         <select data-bind="value: settings.plugins.SlicerEstimator.psp">
                             <option value="1">Match 1</option>
@@ -241,8 +241,8 @@
                     </div>
                 </div>
   				<div class="control-group">
+                    <label class="control-label">{{ _('GCODE or Slicer Comment Search') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Defindes if the Plugin should look for GCODE during print or scan the file once for a slicer comment.') }}">
-                        <label class="control-label">{{ _('GCODE or Slicer Comment Search') }}</label>
                         <select data-bind="value: settings.plugins.SlicerEstimator.search_mode">
                             <option value="GCODE">GCODE</option>
                             <option value="COMMENT">Comment</option>
@@ -250,14 +250,14 @@
                     </div>
                 </div>
              	<div class="control-group">
+                    <label class="control-label">{{ _('GCODE') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('GCODE to watch') }}">
-                        <label class="control-label">{{ _('GCODE') }}</label>
                         <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.slicer_gcode">
                     </div>
                 </div>
         		<div class="control-group">
+                    <label class="control-label">{{ _('RegEx Comment') }}</label>
                     <div class="controls" data-toggle="tooltip" title="{{ _('Comment to look for') }}">
-                        <label class="control-label">{{ _('RegEx Comment') }}</label>
                         <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.search_pattern">
                     </div>
                 </div>
@@ -268,8 +268,10 @@
                 <div class="help-block">{{ _('Developer settings - use at your own risk / enable it on request only') }}</div>
              	<div class="control-group">
                     <div class="controls" data-toggle="tooltip" title="{{ _('Update from development branch') }}">
-                        <label class="control-label">{{ _('Use development branch') }}</label>
-						<input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.useDevChannel"> <b>Restart of OctoPrint required</b>
+                        <label class="checkbox">
+						    <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.useDevChannel">
+                            {{ _('Use development branch') }} <b>Restart of OctoPrint required</b>
+                        </label>
                     </div>
                 </div>
             </div>
