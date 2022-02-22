@@ -277,12 +277,16 @@ $(function() {
           body += '- ' + item[0] + ": ";
           item[1]().forEach(function(meta_item) {
             body += ' (id: ' + meta_item["id"](); 
-            body += ', description: ' + meta_item["description"](); 
-            body += ', printer: ' + meta_item["printer"](); 
-            body += ', filelist: ' + meta_item["filelist"]() + '); '; 
+            body += ', description: ' + meta_item["description"]() + ')';            
           });
           body += "\n";
-        } else {
+        } else if (item[0] == 'plugins') {
+          body += 'Installed plugins: '
+          Object.entries(item[1]).forEach(function (plugin) {
+            body += '(' + plugin[0] + ')'
+          })
+          body += "\n";
+        } else {          
           body += '- ' + item[0] + ": " +item[1]() + "\n";
         }
 
