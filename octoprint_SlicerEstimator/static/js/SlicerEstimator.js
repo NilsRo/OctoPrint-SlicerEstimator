@@ -15,9 +15,9 @@ $(function() {
       var result = [];
       for (var key in dictionary) {
           if (dictionary.hasOwnProperty(key)) {
-              result.push({ key: key, value: dictionary[key] }); 
-          }  
-      }  
+              result.push({ key: key, value: dictionary[key] });
+          }
+      }
       return result;
     };
 
@@ -26,14 +26,14 @@ $(function() {
       var result = [];
       for (var key in dictionary) {
           if (dictionary.hasOwnProperty(key)) {
-              result.push({ key: key, value: dictionary[key]() }); 
-          }  
-      }  
+              result.push({ key: key, value: dictionary[key]() });
+          }
+      }
       return result;
     };
 
 
-    // --- Estimator 
+    // --- Estimator
 
     // Overwrite the printTimeLeftOriginString function
     ko.extenders.addSlicerEstimator = function(target, option) {
@@ -93,7 +93,7 @@ $(function() {
     //     self.filesViewModel.requestData({force: true});
     //   })
     // };
-    
+
     //--- Additional Metadata filelist
 
     //Activate flag filelist
@@ -107,7 +107,7 @@ $(function() {
     });
 
     // Overwrite the enableAdditionalData function to handle available metadata
-    self.filesViewModel.slicerEnableAdditionalData = function(data) {            
+    self.filesViewModel.slicerEnableAdditionalData = function(data) {
       if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
           return true;
       } else {
@@ -149,22 +149,22 @@ $(function() {
       if (typeof self.printerStateViewModel.filepath() !== 'undefined') {
         let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.targets["SlicerEstimator"]["printer"]() === true);
         let actualFile = self.filesViewModel.filesOnlyList().find(elem => elem.path === self.printerStateViewModel.filepath() && elem.slicer != null);
-        if (typeof actualFile !== 'undefined') {        
-          enabledMeta.forEach(function(data) {                     
+        if (typeof actualFile !== 'undefined') {
+          enabledMeta.forEach(function(data) {
             if (actualFile.slicer != null && Object.keys(actualFile.slicer).length > 0) {
-              item = actualFile.slicer[data.id()];              
+              item = actualFile.slicer[data.id()];
               if (item != null) {
                 let returnArr = [];
                 returnArr["description"] = data.description;
                 returnArr["value"] = item;
                 returnMeta.push(returnArr);
-              }            
+              }
             }
           })
         }
-      }      
+      }
       return returnMeta;
-    });    
+    });
 
     //enhance printerViewModel
     self.onBeforeBinding = function() {
@@ -192,20 +192,20 @@ $(function() {
     };
 
     // Update available metadata from files in the settings
-    self.settingsViewModel.crawlMetadata = function() {      
+    self.settingsViewModel.crawlMetadata = function() {
       self.filesViewModel.filesOnlyList().forEach(function (data) {
         Object.keys(data.slicer).forEach(function (slicerData) {
           if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
-            let targets = {};            
+            let targets = {};
             for (plugin of self.getActivePlugins()) {
-              targets[plugin[0]] = {};              
+              targets[plugin[0]] = {};
               for (key of Object.keys(plugin[1]["targets"])) {
                 targets[plugin[0]][key] = ko.observable(false);
               }
             }
             var meta = {
                 id: ko.observable(slicerData).extend({stripQuotes: true}),
-                description: ko.observable(slicerData).extend({stripQuotes: true}),                
+                description: ko.observable(slicerData).extend({stripQuotes: true}),
                 targets: targets
             };
             self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
@@ -214,7 +214,7 @@ $(function() {
       });
     };
 
-    self.settingsViewModel.pluginsSelection = function() {   
+    self.settingsViewModel.pluginsSelection = function() {
       var returnArr = [];
       for (plugin of self.getActivePlugins()) {
         let plugin_identifier = plugin[0];
@@ -227,12 +227,12 @@ $(function() {
       return returnArr;
     };
 
-    self.settingsViewModel.selectedPluginId = ko.pureComputed(function () { 
-      return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().plugin_identifier; 
+    self.settingsViewModel.selectedPluginId = ko.pureComputed(function () {
+      return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().plugin_identifier;
     });
 
-    self.settingsViewModel.selectedPluginTarget = ko.pureComputed(function () { 
-      return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().target; 
+    self.settingsViewModel.selectedPluginTarget = ko.pureComputed(function () {
+      return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().target;
     });
 
     //Switch tab in settings on/off
@@ -255,10 +255,10 @@ $(function() {
 
     //Settings Report Bug
     self.settingsViewModel.createIssue = function() {
-      // Send the bug report      
+      // Send the bug report
       url = 'https://github.com/NilsRo/OctoPrint-SlicerEstimator/issues/new';
       var body = "## Description\n**ENTER DESCRIPTION HERE\nDescribe your problem?\nWhat is the problem?\nCan you recreate it?\nDid you try disabling plugins?\nDid you remember to update the subject?**\n\n\n**Plugins installed**\n";
-      
+
       // Get plugin info
       OctoPrint.coreui.viewmodels.pluginManagerViewModel.plugins.allItems.forEach(function(item) {
         if (item.enabled && item.bundled == false){
@@ -268,16 +268,16 @@ $(function() {
           }
           body += '- ' + item.name +"["+item.key+"]" + version + "\n";
           }
-      });      
-      
+      });
+
       // Settings
-      body += "\n\n**Settings**\n";      
+      body += "\n\n**Settings**\n";
       Object.entries(self.settingsViewModel.settings.plugins.SlicerEstimator).forEach(function(item) {
         if (item[0] == 'metadata_list') {
           body += '- ' + item[0] + ": ";
           item[1]().forEach(function(meta_item) {
-            body += ' (id: ' + meta_item["id"](); 
-            body += ', description: ' + meta_item["description"]() + ')';            
+            body += ' (id: ' + meta_item["id"]();
+            body += ', description: ' + meta_item["description"]() + ')';
           });
           body += "\n";
         } else if (item[0] == 'plugins') {
@@ -286,18 +286,18 @@ $(function() {
             body += '(' + plugin[0] + ')'
           })
           body += "\n";
-        } else {          
+        } else {
           body += '- ' + item[0] + ": " +item[1]() + "\n";
         }
 
       });
       body += "\n\n**Software versions**\n- "+$('#footer_version li').map(function(){return $(this).text()}).get().join("\n- ");
       body += "\n\n\n**Browser**\n- "+navigator.userAgent
-      window.open(url+'?body='+encodeURIComponent(body));      
+      window.open(url+'?body='+encodeURIComponent(body));
     };
   }
 
-  
+
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
