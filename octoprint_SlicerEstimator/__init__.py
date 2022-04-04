@@ -24,13 +24,14 @@ class SlicerEstimator(PrintTimeEstimator):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
         self.estimated_time = -1
+        self.direct_time = False
         self.average_prio = False
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
 
-        if self._job_type != "local" or self.estimated_time == -1:
+        if self._job_type != "local" or self.estimated_time == -1 or cleanedPrintTime is None:
             # using standard estimator
             return std_estimator
         elif std_estimator[1] == "average" and self.average_prio:
@@ -38,7 +39,13 @@ class SlicerEstimator(PrintTimeEstimator):
             return std_estimator
         else:
             # return "slicerestimator" as Origin of estimation
-            return self.estimated_time, "slicerestimator"
+            if self.direct_time:
+                return self.estimated_time, "slicerestimator"
+            else:
+                if progress > 0.97:
+                    return self.estimated_time - (self.estimated_time * progress * 0.01), "slicerestimator"
+                else:
+                    return self.estimated_time - cleanedPrintTime, "slicerestimator"
 
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
@@ -252,12 +259,13 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             return
 
 
-    # calculate estimation on print progress
-    def on_print_progress(self, storage, path, progress):
-        if self._search_mode == "COMMENT":
-            if self._slicer_estimation:
-                self._estimator.estimated_time = self._slicer_estimation - (self._slicer_estimation * progress * 0.01)
-                self._logger.debug("SlicerEstimator: {}sec".format(self._estimator.estimated_time))
+    # calculate estimation on print progress  
+    
+    # def on_print_progress(self, storage, path, progress):
+    #     if self._search_mode == "COMMENT":
+    #         if self._slicer_estimation:
+    #             self._estimator.estimated_time = self._slicer_estimation - (self._slicer_estimation * progress * 0.01)
+    #             self._logger.debug("SlicerEstimator: {}sec".format(self._estimator.estimated_time))
 
 
     # estimator factory hook
@@ -265,6 +273,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         def factory(*args, **kwargs):
             self._estimator = SlicerEstimator(*args, **kwargs)
             self._estimator.average_prio = self._average_prio
+            self._estimator.direct_time = self._search_mode == "GCODE"
             return self._estimator
         return factory
 
@@ -275,6 +284,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             origin = payload["origin"]
             path = payload["path"]
             if origin == "local":
+                self._estimator.direct_time = self._search_mode == "GCODE"
                 if self._metadata:
                     self._send_metadata_print_event(origin, path)
                 self._set_slicer(origin, path)
@@ -612,7 +622,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # send the event on printing
     def _send_metadata_print_event(self, origin, path):
-        event = Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT
+        event = "plugin_SlicerEstimator_metadata_print"
         custom_payload = dict()
         for plugin in self._plugins:
             custom_payload[plugin] = dict()
