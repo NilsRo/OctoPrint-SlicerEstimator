@@ -610,9 +610,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             if target in self._plugins[plugin_identifier]["targets"].keys():
                 return_list = []
                 meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target] == True, self._metadata_list)
+                additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer")
                 for meta_item in meta_selected:
                     additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer")
-                    if additional_metadata in meta_item:
+                    if meta_item["id"] in additional_metadata:
                         return_item = [meta_item["id"], meta_item["description"], additional_metadata[meta_item["id"]]]
                         return_list.append(return_item)
                 return return_list
