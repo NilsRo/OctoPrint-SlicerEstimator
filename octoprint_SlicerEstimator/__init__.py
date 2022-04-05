@@ -42,7 +42,7 @@ class SlicerEstimator(PrintTimeEstimator):
             if self.direct_time:
                 return self.estimated_time, "slicerestimator"
             else:
-                if progress > 0.97:
+                if progress > 0.98 or self.estimated_time - cleanedPrintTime < 300.0:
                     return self.estimated_time - (self.estimated_time * progress * 0.01), "slicerestimator"
                 else:
                     return self.estimated_time - cleanedPrintTime, "slicerestimator"
