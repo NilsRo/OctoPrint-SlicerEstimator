@@ -27,7 +27,7 @@ class SlicerEstimator(PrintTimeEstimator):
         self.estimated_time = -1
         self.direct_time = False
         self.average_prio = False
-        self._time_left = -1
+        self.time_left = -1
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
@@ -42,14 +42,14 @@ class SlicerEstimator(PrintTimeEstimator):
         else:
             # return "slicerestimator" as Origin of estimation
             if self.direct_time:
-                self._time_left = self.estimated_time                
+                self.time_left = self.estimated_time                
             else:
                 if progress >= 0.98 or (self.estimated_time - cleanedPrintTime) < 300.0:
-                    self._time_left = self.estimated_time - (self.estimated_time * progress * 0.01)
+                    self.time_left = self.estimated_time - (self.estimated_time * progress * 0.01)
                 else:
-                    self._time_left = self.estimated_time - cleanedPrintTime                    
-            logger.debug("SlicerEstimator: Estimation Reported {}".format(self._time_left))
-            return self._time_left, "slicerestimator"
+                    self.time_left = self.estimated_time - cleanedPrintTime                    
+            logger.debug("SlicerEstimator: Estimation Reported {}".format(self.time_left))
+            return self.time_left, "slicerestimator"
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
@@ -262,13 +262,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             return
 
 
-    # calculate estimation on print progress  
-    
-    # def on_print_progress(self, storage, path, progress):
-    #     if self._search_mode == "COMMENT":
-    #         if self._slicer_estimation:
-    #             self._estimator.estimated_time = self._slicer_estimation - (self._slicer_estimation * progress * 0.01)
-    #             self._logger.debug("SlicerEstimator: {}sec".format(self._estimator.estimated_time))
+    # logs estimation on print progress      
+    def on_print_progress(self, storage, path, progress):
+        self._logger.debug("SlicerEstimator: Estimator {}sec".format(self._estimator.time_left))
 
 
     # estimator factory hook
