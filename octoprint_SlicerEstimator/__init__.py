@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import absolute_import, unicode_literals
+from asyncio.log import logger
 from concurrent.futures import ThreadPoolExecutor
 from octoprint.printer.estimation import PrintTimeEstimator
 
@@ -26,12 +27,13 @@ class SlicerEstimator(PrintTimeEstimator):
         self.estimated_time = -1
         self.direct_time = False
         self.average_prio = False
+        self._time_left = -1
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
 
-        if self._job_type != "local" or self.estimated_time == -1 or cleanedPrintTime is None:
+        if self._job_type != "local" or self.estimated_time == -1 or cleanedPrintTime is None or progress is None:
             # using standard estimator
             return std_estimator
         elif std_estimator[1] == "average" and self.average_prio:
@@ -40,13 +42,14 @@ class SlicerEstimator(PrintTimeEstimator):
         else:
             # return "slicerestimator" as Origin of estimation
             if self.direct_time:
-                return self.estimated_time, "slicerestimator"
+                self._time_left = self.estimated_time                
             else:
-                if progress > 0.98 or self.estimated_time - cleanedPrintTime < 300.0:
-                    return self.estimated_time - (self.estimated_time * progress * 0.01), "slicerestimator"
+                if progress >= 0.98 or (self.estimated_time - cleanedPrintTime) < 300.0:
+                    self._time_left = self.estimated_time - (self.estimated_time * progress * 0.01)
                 else:
-                    return self.estimated_time - cleanedPrintTime, "slicerestimator"
-
+                    self._time_left = self.estimated_time - cleanedPrintTime                    
+            logger.debug("SlicerEstimator: Estimation Reported {}".format(self._time_left))
+            return self._time_left, "slicerestimator"
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
@@ -283,16 +286,18 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if event == Events.PRINT_STARTED:
             origin = payload["origin"]
             path = payload["path"]
-            if origin == "local":
-                self._estimator.direct_time = self._search_mode == "GCODE"
+            if origin == "local":                
                 if self._metadata:
                     self._send_metadata_print_event(origin, path)
                 self._set_slicer(origin, path)
                 if self._search_mode == "COMMENT":
+                    self._estimator.direct_time = False
                     self._logger.debug("Search started in file {}".format(path))
                     self._executor.submit(
                         self._search_slicer_comment_file, origin, path
                     )
+                else:
+                    self._estimator.direct_time = True
         if event == Events.PRINT_CANCELLED or event == Events.PRINT_FAILED or event == Events.PRINT_DONE:
             # Init of Class variables for new estimation
             self._slicer_estimation = None
