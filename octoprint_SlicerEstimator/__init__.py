@@ -24,18 +24,18 @@ class SlicerEstimator(PrintTimeEstimator):
     def __init__(self, job_type):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
-        self.estimated_time = -1
+        self.estimated_time = -1.0
         self.direct_time = False
         self.average_prio = False
-        self.time_left = -1
-        self.cleaned_print_time = -1
+        self.time_left = -1.0
+        self.cleaned_print_time = -1.0
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
         self.cleaned_print_time = cleanedPrintTime
 
-        if self._job_type != "local" or self.estimated_time == -1 or cleanedPrintTime is None or progress is None:
+        if self._job_type != "local" or self.estimated_time == -1.0 or cleanedPrintTime is None or progress is None:
             # using standard estimator
             return std_estimator
         elif std_estimator[1] == "average" and self.average_prio:
@@ -47,7 +47,7 @@ class SlicerEstimator(PrintTimeEstimator):
                 self.time_left = self.estimated_time                
             else:
                 if progress >= 0.98 or (self.estimated_time - cleanedPrintTime) < 300.0:
-                    self.time_left = self.estimated_time - (self.estimated_time * progress * 0.01)
+                    self.time_left = self.estimated_time - (self.estimated_time * progress)
                 else:
                     self.time_left = self.estimated_time - cleanedPrintTime                    
             logger.debug("SlicerEstimator: Estimation Reported {}".format(self.time_left))
@@ -140,7 +140,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             psp=3,
             search_mode="GCODE",
             search_pattern="",
-            average_prio=False,
+            average_prio=True,
             use_assets=True,
             slicer_auto=True,
             estimate_upload=True,
