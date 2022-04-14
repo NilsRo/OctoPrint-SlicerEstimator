@@ -28,10 +28,12 @@ class SlicerEstimator(PrintTimeEstimator):
         self.direct_time = False
         self.average_prio = False
         self.time_left = -1
+        self.cleaned_print_time = -1
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
+        self.cleaned_print_time = cleanedPrintTime
 
         if self._job_type != "local" or self.estimated_time == -1 or cleanedPrintTime is None or progress is None:
             # using standard estimator
@@ -264,7 +266,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # logs estimation on print progress      
     def on_print_progress(self, storage, path, progress):
-        self._logger.debug("SlicerEstimator: Estimator {}sec".format(self._estimator.time_left))
+        self._logger.debug("SlicerEstimator: Estimator {}sec, CleanedPrintTime".format(self._estimator.time_left, self._estimator.cleaned_print_time))
 
 
     # estimator factory hook
