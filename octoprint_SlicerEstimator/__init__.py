@@ -266,7 +266,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # logs estimation on print progress      
     def on_print_progress(self, storage, path, progress):
-        self._logger.debug("SlicerEstimator: Estimator {}sec, CleanedPrintTime".format(self._estimator.time_left, self._estimator.cleaned_print_time))
+        self._logger.debug("SlicerEstimator: Estimator {}sec, CleanedPrintTime {}sec".format(self._estimator.time_left, self._estimator.cleaned_print_time))
 
 
     # estimator factory hook
@@ -365,6 +365,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
    # slicer auto selection
     def _detect_slicer(self, origin, path):
+        #TODO: Add saving information in metadata
         line = self._search_in_file_regex(origin, path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
         if line:
             if  "Cura_SteamEngine" in line:
@@ -485,6 +486,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         return dict(gcode=lambda finished_callback: SlicerEstimatorGcodeAnalysisQueue(finished_callback, self))
 
     def run_analysis(self, path):
+        #TODO: Add saving information in metadata
         self._set_slicer("local", path)
         self._logger.debug("Search started in file {}".format(path))
         slicer_estimation_str = self._search_in_file_regex("local", path, self._search_pattern)
