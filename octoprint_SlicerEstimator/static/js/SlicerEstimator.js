@@ -166,13 +166,57 @@ $(function() {
       return returnMeta;
     });
 
+    self.filamentChangeTimeFormat = function (changeTime) {
+      let fmt = self.settingsViewModel.appearance_fuzzyTimes()
+      ? formatFuzzyPrintTime
+      : formatDuration;
+      return fmt(changeTime);
+    }; 
+
+    //get list of filament changes
+    self.filamentChange = ko.pureComputed(function() {
+      var returnChange = [];
+      if (typeof self.printerStateViewModel.filepath() !== 'undefined' && typeof self.printerStateViewModel.printTimeLeft() !== 'undefined') { 
+        // if (!self.printerStateViewModel.printTime() || !(self.printerStateViewModel.isPrinting() || self.printerStateViewModel.isPaused())) {
+          let actualFile = self.filesViewModel.filesOnlyList().find(elem => elem.path === self.printerStateViewModel.filepath() && elem.slicer != null);
+          if (typeof actualFile !== 'undefined') {
+            if (actualFile.slicer_M600 != null && Object.keys(actualFile.slicer_M600).length > 0) {
+              M600List = actualFile.slicer_M600;
+              if (M600List != null) {
+                let cnt = 0
+                M600List.forEach(function(item) {
+                  let returnArr = [];
+                  cnt += 1;
+                  returnArr["description"] = cnt + ". " + gettext("change");
+                  if (self.printerStateViewModel.printTimeLeft() === null) {
+                    changeTime = self.printerStateViewModel.estimatedPrintTime() - item;
+                  } else {
+                  changeTime = (self.printerStateViewModel.estimatedPrintTime() - item) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
+                  }
+                  if (changeTime < 0) {changeTime = 0}
+                  changeTimeString = self.filamentChangeTimeFormat(changeTime);
+                  returnArr["value"] = changeTimeString;
+                  returnChange.push(returnArr);
+                })
+              }
+            }
+          }
+        // }
+      }
+      return returnChange;
+    });
+
+
     //enhance printerViewModel
     self.onBeforeBinding = function() {
       // inject filament metadata into template
       if (self.printerEnabled()) {
         var element = $("#state").find(".accordion-inner .progress");
         if (element.length) {
-          element.before("<div id='metadata_list' data-bind='foreach: currentMetadata'><span data-bind='text: description'></span>: <strong data-bind='text: value'> - </strong><br></div>");
+          element.before(
+              "<div id='filamentChange_list' data-bind='foreach: filamentChange'><span data-bind='text: description'></span>: <strong data-bind='text: value'> - </strong><br></div>"
+              + "<div id='metadata_list' data-bind='foreach: currentMetadata'><span data-bind='text: description'></span>: <strong data-bind='text: value'> - </strong><br></div>"
+          );
         }
       }
     };
@@ -301,6 +345,6 @@ $(function() {
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
-    elements: ['#metadata_list']
+    elements: ['#metadata_list', '#filamentChange_list']
   });
 });

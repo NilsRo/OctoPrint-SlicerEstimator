@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 from asyncio.log import logger
 from concurrent.futures import ThreadPoolExecutor
+from gettext import find
 from octoprint.printer.estimation import PrintTimeEstimator
 
 import octoprint.plugin
@@ -306,9 +307,13 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
                 self._logger.debug("File uploaded and will be scanned for Metadata")
                 self._find_metadata(payload["storage"], payload["path"])
+            if self._slicer == 0 or self._slicer == 1:
+                self._update_M600_metadata(payload["storage"], payload["path"])
 
 
 # SECTION: File metadata
+
+#TODO: Verschieben von GCODE Files in Ordner anhand ihrer Metadaten
     # search for material data
     def _find_metadata(self, origin, path):
         # Format: ;Slicer info:<key>;<Displayname>;<Value>
@@ -350,6 +355,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             if folder["children"][fileKey]["type"] == "folder":
                self._flatten_files(folder["children"][fileKey], filelist)
  
+ 
+    def _update_M600_metadata(self, origin, path):
+        filament_changes_arr = self._search_filament_changes(origin, path)
+        self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer_M600", filament_changes_arr, overwrite=True)
+        self._logger.debug("M600 changes found: " + self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_M600"))
+
 
 
 # SECTION: Estimation helper
@@ -446,20 +457,25 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     # generic file search with RegEx
-    def _search_in_file_regex(self, origin, path, pattern, rows = 0):
+    def _search_in_file_regex(self, origin, path, pattern, maxrows = 0, multiple = False):
         path_on_disk = self._file_manager.path_on_disk(origin, path)
         self._logger.debug("Path on disc searched: {}".format(path_on_disk))
         compiled = re.compile(pattern)
-        steps = rows
+        rownumber = 0        
+        return_arr = []
+        
         with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
             for line in f:
+                rownumber += 1
                 if compiled.match(line):
-                    return line
-
-                if rows > 0:
-                    steps -= 1
-                    if steps <= 0:
-                        break
+                    if multiple:
+                       return_arr.append([rownumber, line])
+                    else:                        
+                        return line
+                if maxrows != 0 and rownumber >= maxrows:
+                    break
+            if multiple:
+                return return_arr
 
 
     # generic file search and find all occurences beginning with
@@ -467,8 +483,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         path_on_disk = self._file_manager.path_on_disk(origin, path)
         self._logger.debug("Path on disc searched: {}".format(path_on_disk))
         steps = rows
-
         return_arr = []
+        
         with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
             for line in f:
                 if line[:len(pattern)] == pattern:
@@ -478,8 +494,25 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     if steps <= 0:
                         return return_arr
         return return_arr
+    
+    
+    # scan for filament changes (M600)
+    def _search_filament_changes(self, origin, path):
+        if origin == "local":
+            regexStr = "^(M600 |" + self._slicer_gcode + " )"
+            commands = self._search_in_file_regex(origin, path, regexStr, 0, True)        
+            M600List = list(filter(lambda p: p[1][:4] == "M600", commands))
+            TimeList = list(filter(lambda p: p[1][:len(self._slicer_gcode)] == self._slicer_gcode, commands))
+            return_arr = []
 
-
+            if len(M600List) > 0 and len(TimeList) > 0:
+                for M600 in M600List:
+                    TimeLine = min(TimeList, key=lambda x:abs(x[0]-M600[0]))
+                    self._logger.debug("Slicer-Comment {} found for M600.".format(TimeLine[1]))
+                    slicer_estimation = self._parseEstimation(TimeLine[1])
+                    return_arr.append(slicer_estimation)
+                return return_arr
+            
 
 # SECTION: Analysis Queue Estimation (file upload)
     def analysis_queue_factory(self, *args, **kwargs):
