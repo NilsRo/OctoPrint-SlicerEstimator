@@ -64,6 +64,8 @@ Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will
  * GCODE files are scanned in background so until the necessary information is found the OctoPrint estimator is used. There is no delay in start printing but with files of e.g. 150Mbyte in size the scan could take some seconds.
  * If you like to see more details what happens in the background simply activate DEBUG mode in OctoPrint logging for the plugin. If you want open a ticket please attach the log there.
  * Be aware that other plugins could change the GCODE. This could interfere with Slicer Estimator if Cura M117 or PrusaSlicer is used. Both reads GCODEs that perhaps will be overwritten by e.g. an ETA plugin.
+ * Also adding e.g. linear advance to Cura in post processing will lead to a lower estimation as Cura does not know the changes done.
+ * Filament change time is supported with M117 or M73 commands only as actually it is not possible to derive the correct progress the M600 command is found in the GCODE.
 
 ## Custom Settings
 Example: For the following command "M117 100% Remaining 1 weeks 6 days ( 07:54:19 )" you can use RegEx "M117 .+ Remaining ([0-9]+) weeks.+" with Match 1 to get the weeks. To get the minutes you should use "M117 .+ Remaining .+\( ([0-9]+):([0-9]+):([0-9]+) \)" and Match 2 to avoid an issue if weeks are not shown. 
