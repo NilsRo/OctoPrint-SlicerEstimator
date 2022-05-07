@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from asyncio.log import logger
 from concurrent.futures import ThreadPoolExecutor
 from gettext import find
+from attr import NOTHING
 from octoprint.printer.estimation import PrintTimeEstimator
 
 import octoprint.plugin
@@ -288,6 +289,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             if origin == "local":                
                 if self._metadata:
                     self._send_metadata_print_event(origin, path)
+                    self._send_filament_change_event(origin, path)
                 self._set_slicer(origin, path)
                 if self._search_mode == "COMMENT":
                     self._estimator.direct_time = False
@@ -677,13 +679,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         
     def _send_filament_change_event(self, origin, path):
         event = "plugin_SlicerEstimator_filament_change"
-        custom_payload = dict()
-        for plugin in self._plugins:
-            custom_payload[plugin] = dict()
-            for target in self._plugins[plugin]["targets"]:
-                custom_payload[plugin][target] = self.get_metadata_file(plugin, target, origin, path)
-        self._logger.info("Send Metadata Print Event for file {}".format(path))       
-        self._event_bus.fire(event, payload=custom_payload)
+        custom_payload = self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_M600")
+        if custom_payload:
+            self._logger.info("Send Filament Change Event for file {}".format(path))
+            self._event_bus.fire(event, payload=custom_payload)
 
     
     # Cleanup uninstalled registered plugins    

@@ -47,7 +47,7 @@ With Cura native no changes has to be applied to Cura. The overall print time is
 Custom metadata: http://files.fieldofview.com/cura/Replacement_Patterns.html
 
 ### Cura M117
-Remaining time is read out of M117 commands added by Cura if the Post-Processing actions are activated. The slicer will update the remaining print time continuously.
+Remaining time is read out of M117 commands added by Cura if the Post-Processing actions are activated. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
 
 ![](images/Cura.png)
 
@@ -55,7 +55,7 @@ Remaining time is read out of M117 commands added by Cura if the Post-Processing
 With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
 
 ### PrusaSlicer
-Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will update the remaining print time continuously.
+Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
 
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.

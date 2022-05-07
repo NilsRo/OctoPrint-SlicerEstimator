@@ -1,7 +1,7 @@
 # API documentation for other developers
 I implemented an API that the functionallity of Slicer Estimator can also be used by other plugins. This avoids the need to build a separate configuration page and also to set everything again for every plugin.
 
-If your plugin is registered it will be added to the configuration dropdown like it is a function of Slicer Estimator.
+If your plugin is registered it will be added to the configuration dropdown like it is a function of Slicer Estimator. Also some [generic events](#events) are send to the event bus of OctoPrint.
 
 ![](images/Plugin_API_Settings.png)
 
@@ -116,10 +116,10 @@ Get the Metadata to a file in an Array containing a tripple array
 ## Events
 Slicer Estimator sends a custom event to the event bus if a print starts and metadata handling is enabled in settings. The event contains the metadata for all plugins registered as payload in same format returned from get_metadata_file method.
 
-
-Event: Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT or "plugin_SlicerEstimator_metadata_print"
-
 There is a bug in OctoPrint < 1.80. You should use the string comparison: [Details available here](https://github.com/OctoPrint/OctoPrint/issues/4417).
+
+### Metadata
+Event: Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT or "plugin_SlicerEstimator_metadata_print"
 
 Payload: Payload[plugin_identifier][target]
 
@@ -128,3 +128,10 @@ Payload: Payload[plugin_identifier][target]
         if event == "plugin_SlicerEstimator_metadata_print":
             metadata_list = payload[self._identifier]["filelist_mobile_id"]
 ```
+
+### Time to filament change
+Also it sends after start of the print the remaining time to the filament chnages that other plugins can show this as well. Actually it is a single event only.
+
+Event: Events.PLUGIN__SLICER_ESTIMATOR_FILAMENT_CHANGE or plugin_SlicerEstimator_filament_change
+
+Payload: Dict of seconds the filament has to be changed
