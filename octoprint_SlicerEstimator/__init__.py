@@ -354,8 +354,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 filelist[folder["children"][fileKey]["path"]] = folder["children"][fileKey]
             if folder["children"][fileKey]["type"] == "folder":
                self._flatten_files(folder["children"][fileKey], filelist)
+
  
- 
+    # read filament change from GCODE and save to file metadata
     def _update_M600_metadata(self, origin, path):
         filament_changes_arr = self._search_filament_changes(origin, path)
         self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer_M600", filament_changes_arr, overwrite=True)
@@ -518,6 +519,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     def analysis_queue_factory(self, *args, **kwargs):
         return dict(gcode=lambda finished_callback: SlicerEstimatorGcodeAnalysisQueue(finished_callback, self))
 
+
     def run_analysis(self, path):
         #TODO: Add saving information in metadata
         self._set_slicer("local", path)
@@ -671,7 +673,18 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 custom_payload[plugin][target] = self.get_metadata_file(plugin, target, origin, path)
         self._logger.info("Send Metadata Print Event for file {}".format(path))       
         self._event_bus.fire(event, payload=custom_payload)
+
         
+    def _send_filament_change_event(self, origin, path):
+        event = "plugin_SlicerEstimator_filament_change"
+        custom_payload = dict()
+        for plugin in self._plugins:
+            custom_payload[plugin] = dict()
+            for target in self._plugins[plugin]["targets"]:
+                custom_payload[plugin][target] = self.get_metadata_file(plugin, target, origin, path)
+        self._logger.info("Send Metadata Print Event for file {}".format(path))       
+        self._event_bus.fire(event, payload=custom_payload)
+
     
     # Cleanup uninstalled registered plugins    
     def _cleanup_uninstalled_plugins(self):

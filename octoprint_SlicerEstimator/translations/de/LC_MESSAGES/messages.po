@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.3.5\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2022-05-05 20:53+0200\n"
+"POT-Creation-Date: 2022-05-07 16:00+0200\n"
 "PO-Revision-Date: 2022-05-05 19:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -19,17 +19,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:62
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:57
 msgid "Based on information added by the slicer."
 msgstr "basierend aus der Schätzung des Slicers"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:225
-msgid "change"
-msgstr "Wechsel"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:3
-msgid "Slicer Estimator"
-msgstr ""
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:171
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:233
+msgid "filament change"
+msgstr "Filamentwechsel"
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:6
 msgid "Main"
@@ -38,7 +35,6 @@ msgstr "Allgemein"
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:7
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:49
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:107
-
 msgid "Metadata"
 msgstr "Metadaten"
 
@@ -122,10 +118,10 @@ msgid ""
 "How to add custom metadata to OctoPrints filelist see <a "
 "href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
 "target=\"_blank\">here</a>!"
-msgstr "Wie man eigene Metadaten zu OctoPrints Dateibrowser hinzufügen kann "
-"findet man <a "
-"href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
-"target=\"_blank\"></a>!"
+msgstr ""
+"Wie man eigene Metadaten zu OctoPrints Dateibrowser hinzufügen kann "
+"findet man <a href=\"https://github.com/NilsRo/OctoPrint-"
+"SlicerEstimator\" target=\"_blank\"></a>!"
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:58
 msgid ""
@@ -157,18 +153,20 @@ msgid ""
 " time is read out of a comment in the GCODE. For a correct estimation "
 "OctoPrints percentage done is used as there is only the overall print "
 "time available."
-msgstr "Mit Cura müssen keine Änderungen an Cura durchgeführt werden. "
-"Die Druckzeit wird aus den GCODE Kommentaren gelesen. Für die Berechnung "
-"während des Drucks wird auf die prozentuelle Druckfortschritt von OctoPrint "
-"zurückgegriffen."
+msgstr ""
+"Mit Cura müssen keine Änderungen an Cura durchgeführt werden. Die "
+"Druckzeit wird aus den GCODE Kommentaren gelesen. Für die Berechnung "
+"während des Drucks wird auf die prozentuelle Druckfortschritt von "
+"OctoPrint zurückgegriffen."
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:67
 msgid ""
 "M117 is read out of M117 commands added by Cura if the following Post-"
 "Processing actions are activated. This will continuously update the "
 "remaining printing time."
-msgstr "Wird aus den M117 Kommandos von Cura ausgelesen. Dafür muss "
-"die folgende Nachbeabreitung in Cura aktiviert werden. Dies aktualisiert "
+msgstr ""
+"Wird aus den M117 Kommandos von Cura ausgelesen. Dafür muss die folgende "
+"Nachbeabreitung in Cura aktiviert werden. Dies aktualisiert "
 "kontinuierlich die Druckzeit und ermöglicht eine genaue Berechnung."
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:68
@@ -177,24 +175,28 @@ msgid ""
 "print time is read out of a comment in the GCODE. For a correct "
 "estimation OctoPrints percentage done is used as there is only the "
 "overall print time available."
-msgstr "Bei Simplify3D müssen keine Änderungen am Slicer durchgeführt "
-"werden, da diese aus den GCODE Kommentaren gelesen werden. Für die Berechnung "
-"während des Drucks wird auf die prozentuelle Druckfortschritt von OctoPrint "
-"zurückgegriffen."
+msgstr ""
+"Bei Simplify3D müssen keine Änderungen am Slicer durchgeführt werden, da "
+"diese aus den GCODE Kommentaren gelesen werden. Für die Berechnung "
+"während des Drucks wird auf die prozentuelle Druckfortschritt von "
+"OctoPrint zurückgegriffen."
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:69
 msgid ""
 "Remaining time is read out of M73 commands added by PrusaSlicer. This "
 "will update continuously the remaining print time."
-msgstr "Die Druckzeit wird aus den M73 Kommandos vom PrusaSlicer ermittelt. "
-"Dies aktualisiert kontinuierlich die Druckzeit und ermöglicht eine genaue Berechnung."
+msgstr ""
+"Die Druckzeit wird aus den M73 Kommandos vom PrusaSlicer ermittelt. Dies "
+"aktualisiert kontinuierlich die Druckzeit und ermöglicht eine genaue "
+"Berechnung."
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:72
 msgid ""
 "Additional support or a manual is available on <a "
 "href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
 "target=\"_blank\">Github</a>."
-msgstr "Support und eine Anleitung ist verfügbar auf <a "
+msgstr ""
+"Support und eine Anleitung ist verfügbar auf <a "
 "href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
 "target=\"_blank\">Github</a>."
 
@@ -324,8 +326,9 @@ msgstr ""
 "Datei nach Kommentaren sucht."
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:249
-cd ..msgid "Comment"
-msgstr "Slicer Kommentar"
+#, fuzzy
+msgid "Comment"
+msgstr "RegEx Kommentar"
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:254
 msgid "GCODE"
@@ -366,3 +369,4 @@ msgstr "Aktualisieren aus Entwickler-Branch"
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:274
 msgid "Use development branch <b>Restart of OctoPrint required</b>"
 msgstr "Benutze Entwickler-Branch <b>Neustart von OctoPrint notwendig</b>"
+
