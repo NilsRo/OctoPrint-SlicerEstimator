@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.3.5\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2022-05-07 16:00+0200\n"
+"POT-Creation-Date: 2022-05-07 16:10+0200\n"
 "PO-Revision-Date: 2022-05-05 19:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -369,3 +369,4 @@ msgstr "Aktualisieren aus Entwickler-Branch"
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:274
 msgid "Use development branch <b>Restart of OctoPrint required</b>"
 msgstr "Benutze Entwickler-Branch <b>Neustart von OctoPrint notwendig</b>"
+
