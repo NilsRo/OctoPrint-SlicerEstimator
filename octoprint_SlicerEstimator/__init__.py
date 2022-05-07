@@ -3,7 +3,6 @@ from __future__ import absolute_import, unicode_literals
 from asyncio.log import logger
 from concurrent.futures import ThreadPoolExecutor
 from gettext import find
-from attr import NOTHING
 from octoprint.printer.estimation import PrintTimeEstimator
 
 import octoprint.plugin
