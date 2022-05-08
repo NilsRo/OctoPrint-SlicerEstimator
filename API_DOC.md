@@ -134,4 +134,4 @@ Also it sends after start of the print the remaining time to the filament chnage
 
 Event: Events.PLUGIN__SLICER_ESTIMATOR_FILAMENT_CHANGE or plugin_SlicerEstimator_filament_change
 
-Payload: Dict of seconds the filament has to be changed
+Payload: Array of Array containing GCODE and seconds the filament has to be changed

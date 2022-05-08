@@ -36,6 +36,11 @@ Settings for metadata configuration
 
 ![](images/Settings_Metadata.png)
 
+# Tool changes (MMU and M600)
+Filament changes via M600 (manual) or via MMU (T) are detected in GCODE and added to filebrowser and also the actual print. This gives an overview how much time is left until you should watch the printer.
+
+![](images/Filament_Change.png)
+
 ## API - for other plugin developers
 Metadata stored can be easily used by other plugins. [An API description is available here](API_DOC.md).
 
