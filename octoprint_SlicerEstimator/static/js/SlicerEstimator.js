@@ -197,31 +197,37 @@ $(function() {
               changeList = actualFile.slicer_filament_change;
               if (changeList != null) {
                 let cnt = 0
-                changeList.forEach(function(item) {
+                for (let item of changeList) {
                   let returnArr = [];                  
                   let changeType;
                   cnt += 1;
-
-                  if (item[0] == "M600") {
-                    changeType = gettext("filament change (M600)");
+                  if (returnChange.length < 10) {
+                    if (item[0] == "M600") {
+                      changeType = gettext("filament change (M600)");
+                    } else {
+                      changeType = gettext("filament") + " (" + gettext("tool") + " " + item[0].substring(1,2) +")";
+                    }         
+                    returnArr["description"] = cnt + ". " + changeType;
+                    if (self.printerStateViewModel.printTimeLeft() === null) {
+                      changeTime = self.printerStateViewModel.estimatedPrintTime() - item[1];
+                    } else {
+                    changeTime = (self.printerStateViewModel.estimatedPrintTime() - item[1]) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
+                    }
+                    if (changeTime >= 0) {
+                      let changeTimeString = self.filamentChangeTimeFormat(changeTime);
+                      returnArr["value"] = changeTimeString;
+                      returnChange.push(returnArr);
+                    }
                   } else {
-                    changeType = gettext("filament") + " (" + gettext("tool") + " " + item[0].substring(1,2) +")";
-                  }         
-                  returnArr["description"] = cnt + ". " + changeType;
-                  if (self.printerStateViewModel.printTimeLeft() === null) {
-                    changeTime = self.printerStateViewModel.estimatedPrintTime() - item[1];
-                  } else {
-                  changeTime = (self.printerStateViewModel.estimatedPrintTime() - item[1]) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
-                  }
-                  if (changeTime < 0) {changeTime = 0}
-                    let changeTimeString = self.filamentChangeTimeFormat(changeTime);
-                    returnArr["value"] = changeTimeString;
+                    returnArr["description"] = gettext("up to") + " " + changeList.length;
+                    returnArr["value"] = "...";
                     returnChange.push(returnArr);
-                })
+                    break;
+                  }
+                }
               }
             }
           }
-        // }
       }
       return returnChange;
     });

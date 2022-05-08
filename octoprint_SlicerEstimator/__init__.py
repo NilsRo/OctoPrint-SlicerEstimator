@@ -304,12 +304,13 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
             self._logger.debug("Event received: {}".format(event))
-        if event == Events.FILE_ADDED and self._metadata:
-            if payload["storage"] == "local" and payload["type"][1] == "gcode":
+        if event == Events.FILE_ADDED and self._metadata:            
+            if payload["storage"] == "local" and payload["type"][1] == "gcode":                
                 self._logger.debug("File uploaded and will be scanned for Metadata")
+                self._set_slicer(payload["storage"], payload["path"])
                 self._find_metadata(payload["storage"], payload["path"])
-            if self._slicer == 0 or self._slicer == 1:
-                self._update_filament_changes_metadata(payload["storage"], payload["path"])
+                if self._slicer == 0 or self._slicer == 1:
+                    self._update_filament_changes_metadata(payload["storage"], payload["path"])
 
 
 # SECTION: File metadata
@@ -360,8 +361,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     # read filament change from GCODE and save to file metadata
     def _update_filament_changes_metadata(self, origin, path):
         filament_changes_arr = self._search_filament_changes(origin, path)
-        self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer_filament_change", filament_changes_arr, overwrite=True)
-        self._logger.debug("filament changes found: " + self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_filament_change"))
+        if filament_changes_arr:
+            self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer_filament_change", filament_changes_arr, overwrite=True)
+            self._logger.debug("filament changes found: " + self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_filament_change"))
 
 
 
@@ -501,10 +503,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     # scan for filament changes
     def _search_filament_changes(self, origin, path):
         if origin == "local":
-            regexStr = "^(M600 |T\d|" + self._slicer_gcode + " )"
+            regexStr = "^(M600 |T[0-9]|" + self._slicer_gcode + " )"
             commands = self._search_in_file_regex(origin, path, regexStr, 0, True)        
             change_list = list(filter(lambda p: p[1][:4] == "M600" or p[1][:1] == "T", commands))
-            time_list = list(filter(lambda p: p[1][:len(self._slicer_gcode)] == self._slicer_gcode, commands))
+            time_list = list(filter(lambda p: p[1][:len(self._slicer_gcode)] == self._slicer_gcode and self._parseEstimation(p[1]), commands))
             return_arr = []
 
             if len(change_list) > 0 and len(time_list) > 0:
