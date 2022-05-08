@@ -131,12 +131,18 @@ $(function() {
         }
 
         //filament changes
-        if (data.slicer_M600 != null && Object.keys(data.slicer_M600).length > 0 && data["gcodeAnalysis"]["estimatedPrintTime"] != null) {
+        if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data["gcodeAnalysis"]["estimatedPrintTime"] != null) {
           let cnt = 0;
-          for (const [key, value] of Object.entries(data.slicer_M600)) {
+          for (const [key, value] of Object.entries(data.slicer_filament_change)) {
             cnt += 1;
-            let changeTimeString =  self.filamentChangeTimeFormat(data["gcodeAnalysis"]["estimatedPrintTime"] - value);
-            return_value += cnt + "." + gettext("filament change") + ": " + changeTimeString +'<br>';
+            let changeTimeString = self.filamentChangeTimeFormat(data["gcodeAnalysis"]["estimatedPrintTime"] - value[1]);
+            let changeType;
+            if (value[0] == "M600") {
+              changeType = gettext("filament change (M600)");
+            } else {
+              changeType = gettext("filament") + " (" + gettext("tool") + " " + value[0].substring(1,2) +")";
+            }            
+            return_value += cnt + ". " + changeType + ": " + changeTimeString +'<br>';
           }
         }
 
@@ -187,18 +193,25 @@ $(function() {
         // if (!self.printerStateViewModel.printTime() || !(self.printerStateViewModel.isPrinting() || self.printerStateViewModel.isPaused())) {
           let actualFile = self.filesViewModel.filesOnlyList().find(elem => elem.path === self.printerStateViewModel.filepath() && elem.slicer != null);
           if (typeof actualFile !== 'undefined') {
-            if (actualFile.slicer_M600 != null && Object.keys(actualFile.slicer_M600).length > 0) {
-              M600List = actualFile.slicer_M600;
-              if (M600List != null) {
+            if (actualFile.slicer_filament_change != null && Object.keys(actualFile.slicer_filament_change).length > 0) {
+              changeList = actualFile.slicer_filament_change;
+              if (changeList != null) {
                 let cnt = 0
-                M600List.forEach(function(item) {
-                  let returnArr = [];
+                changeList.forEach(function(item) {
+                  let returnArr = [];                  
+                  let changeType;
                   cnt += 1;
-                  returnArr["description"] = cnt + ". " + gettext("filament change");
-                  if (self.printerStateViewModel.printTimeLeft() === null) {
-                    changeTime = self.printerStateViewModel.estimatedPrintTime() - item;
+
+                  if (item[0] == "M600") {
+                    changeType = gettext("filament change (M600)");
                   } else {
-                  changeTime = (self.printerStateViewModel.estimatedPrintTime() - item) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
+                    changeType = gettext("filament") + " (" + gettext("tool") + " " + item[0].substring(1,2) +")";
+                  }         
+                  returnArr["description"] = cnt + ". " + changeType;
+                  if (self.printerStateViewModel.printTimeLeft() === null) {
+                    changeTime = self.printerStateViewModel.estimatedPrintTime() - item[1];
+                  } else {
+                  changeTime = (self.printerStateViewModel.estimatedPrintTime() - item[1]) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
                   }
                   if (changeTime < 0) {changeTime = 0}
                     let changeTimeString = self.filamentChangeTimeFormat(changeTime);

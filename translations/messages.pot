@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.4.0\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2022-05-07 16:26+0200\n"
+"POT-Creation-Date: 2022-05-08 10:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,9 +22,19 @@ msgstr ""
 msgid "Based on information added by the slicer."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:171
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:233
-msgid "filament change"
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:173
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:242
+msgid "filament change (M600)"
+msgstr ""
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:175
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:244
+msgid "filament"
+msgstr ""
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:175
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:244
+msgid "tool"
 msgstr ""
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:6

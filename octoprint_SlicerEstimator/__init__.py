@@ -309,7 +309,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self._logger.debug("File uploaded and will be scanned for Metadata")
                 self._find_metadata(payload["storage"], payload["path"])
             if self._slicer == 0 or self._slicer == 1:
-                self._update_M600_metadata(payload["storage"], payload["path"])
+                self._update_filament_changes_metadata(payload["storage"], payload["path"])
 
 
 # SECTION: File metadata
@@ -358,10 +358,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
  
     # read filament change from GCODE and save to file metadata
-    def _update_M600_metadata(self, origin, path):
+    def _update_filament_changes_metadata(self, origin, path):
         filament_changes_arr = self._search_filament_changes(origin, path)
-        self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer_M600", filament_changes_arr, overwrite=True)
-        self._logger.debug("M600 changes found: " + self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_M600"))
+        self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer_filament_change", filament_changes_arr, overwrite=True)
+        self._logger.debug("filament changes found: " + self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_filament_change"))
 
 
 
@@ -498,20 +498,20 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         return return_arr
     
     
-    # scan for filament changes (M600)
+    # scan for filament changes
     def _search_filament_changes(self, origin, path):
         if origin == "local":
-            regexStr = "^(M600 |" + self._slicer_gcode + " )"
+            regexStr = "^(M600 |T\d|" + self._slicer_gcode + " )"
             commands = self._search_in_file_regex(origin, path, regexStr, 0, True)        
-            M600List = list(filter(lambda p: p[1][:4] == "M600", commands))
-            TimeList = list(filter(lambda p: p[1][:len(self._slicer_gcode)] == self._slicer_gcode, commands))
+            change_list = list(filter(lambda p: p[1][:4] == "M600" or p[1][:1] == "T", commands))
+            time_list = list(filter(lambda p: p[1][:len(self._slicer_gcode)] == self._slicer_gcode, commands))
             return_arr = []
 
-            if len(M600List) > 0 and len(TimeList) > 0:
-                for M600 in M600List:
-                    TimeLine = min(TimeList, key=lambda x:abs(x[0]-M600[0]))
-                    self._logger.debug("Slicer-Comment {} found for M600.".format(TimeLine[1]))
-                    slicer_estimation = self._parseEstimation(TimeLine[1])
+            if len(change_list) > 0 and len(time_list) > 0:
+                for change in change_list:
+                    time_line = min(time_list, key=lambda x:abs(x[0]-change[0]))
+                    self._logger.debug("Slicer-Comment {} found for filament change.".format(time_line[1]))
+                    slicer_estimation = [change[1].split()[0], self._parseEstimation(time_line[1])]
                     return_arr.append(slicer_estimation)
                 return return_arr
             
