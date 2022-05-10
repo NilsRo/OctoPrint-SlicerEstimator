@@ -219,8 +219,19 @@ $(function() {
                       returnChange.push(returnArr);
                     }
                   } else {
-                    returnArr["description"] = gettext("up to") + " " + changeList.length;
-                    returnArr["value"] = "...";
+                    if (changeList[changeList.length - 1][0] == "M600") {
+                      changeType = gettext("filament change (M600)");
+                    } else {
+                      changeType = gettext("filament") + " (" + gettext("tool") + " " + changeList[changeList.length - 1][0].substring(1,2) +")";
+                    }         
+                    returnArr["description"] = gettext("up to") + " " + changeList.length + ". " + changeType;
+                    if (self.printerStateViewModel.printTimeLeft() === null) {
+                      changeTime = self.printerStateViewModel.estimatedPrintTime() - changeList[changeList.length - 1][1];
+                    } else {
+                      changeTime = (self.printerStateViewModel.estimatedPrintTime() - changeList[changeList.length - 1][1]) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
+                    }
+                    let changeTimeString = self.filamentChangeTimeFormat(changeTime);
+                    returnArr["value"] = changeTimeString;
                     returnChange.push(returnArr);
                     break;
                   }
