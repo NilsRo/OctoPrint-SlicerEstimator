@@ -5,6 +5,20 @@ If your plugin is registered it will be added to the configuration dropdown like
 
 ![](images/Plugin_API_Settings.png)
 
+- [API description](#api-description)
+  * [Summary](#summary)
+  * [Methods](#methods)
+    + [register_plugin(plugin_identifier, plugin_name)](#register-plugin-plugin-identifier--plugin-name-)
+    + [register_plugin_target(plugin_identifier, target, target_name)](#register-plugin-target-plugin-identifier--target--target-name-)
+    + [unregister_plugin(plugin_identifier)](#unregister-plugin-plugin-identifier-)
+    + [unregister_plugin_target(plugin_identifier, target)](#unregister-plugin-target-plugin-identifier--target-)
+    + [get_registered_plugins](#get-registered-plugins)
+    + [get_registered_plugin_targets(plugin_identifier)](#get-registered-plugin-targets-plugin-identifier-)
+    + [get_metadata_file(plugin_identifier, target, origin, path):](#get-metadata-file-plugin-identifier--target--origin--path--)
+  * [Events](#events)
+    + [Metadata](#metadata)
+    + [Time to filament change](#time-to-filament-change)
+
 # API description
 ## Summary
 You can find the official API documentation in the helpers section of OctoPrints documentation: https://docs.octoprint.org/en/master/plugins/helpers.html

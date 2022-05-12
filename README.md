@@ -1,4 +1,17 @@
 # Slicer Estimator is a generic implementation to read remaining time to print and custom metadata embedded in the GCODE file by the slicer
+
+- [Estimation](#estimation)
+- [Custom metadata](#custom-metadata)
+- [Tool changes (MMU and M600)](#tool-changes-by-mmu-and-m600)
+  * [API - for other plugin developers](#api---for-other-plugin-developers)
+  * [Slicers supported](#slicers-supported)
+    + [Cura](#cura)
+    + [Cura M117](#cura-m117)
+    + [Simplify3D](#simplify3d)
+    + [PrusaSlicer](#prusaslicer)
+  * [Notes](#notes)
+  * [Custom Settings](#custom-settings)
+
 With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
 Also you can add custom metadata that will be added to the filebrowser to get e.g. the material the GCODE was created for.
 
@@ -36,7 +49,7 @@ Settings for metadata configuration
 
 ![](images/Settings_Metadata.png)
 
-# Tool changes (MMU and M600)
+# Tool changes by MMU and M600
 Filament changes via M600 (manual) or via MMU (T) are detected in GCODE and added to filebrowser and also the actual print. This gives an overview how much time is left until you should watch the printer.
 
 ![](images/Filament_Change.png)
