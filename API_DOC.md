@@ -128,11 +128,14 @@ Get the Metadata to a file in an Array containing a tripple array
         [Array]: Array of metadata in metadata_id, description and value
 
 ## Events
-Slicer Estimator sends a custom event to the event bus if a print starts and metadata handling is enabled in settings. The event contains the metadata for all plugins registered as payload in same format returned from get_metadata_file method.
+Slicer Estimator sends a custom event to the event bus.
 
 There is a bug in OctoPrint < 1.80. You should use the string comparison: [Details available here](https://github.com/OctoPrint/OctoPrint/issues/4417).
 
 ### Metadata
+Event contains the metadata for all plugins registered as payload in same format returned from get_metadata_file method.
+
+Trigger: If a print starts and metadata handling is enabled in settings.
 Event: Events.PLUGIN__SLICER_ESTIMATOR_METADATA_PRINT or "plugin_SlicerEstimator_metadata_print"
 
 Payload: Payload[plugin_identifier][target]
@@ -144,8 +147,9 @@ Payload: Payload[plugin_identifier][target]
 ```
 
 ### Time to filament change
-Also it sends after start of the print the remaining time to the filament chnages that other plugins can show this as well. Actually it is a single event only.
+Event contains the remaining time to the filament changes. Actually it is a single event only and is not updated during print. If this is helpful feel free to ask.
 
+Trigger: If a print starts and metadata handling is enabled in settings. 
 Event: Events.PLUGIN__SLICER_ESTIMATOR_FILAMENT_CHANGE or plugin_SlicerEstimator_filament_change
 
 Payload: Array of Array containing GCODE and seconds the filament has to be changed
