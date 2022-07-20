@@ -94,17 +94,17 @@ $(function() {
 
     //Activate flag filelist
     self.filelistEnabled = ko.pureComputed(function() {
-      return self.settingsViewModel.settings.plugins.SlicerEstimator.metadata() && self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_filelist()
+      return self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_filelist()
     });
 
     //Activate flag printer
     self.printerEnabled = ko.pureComputed(function() {
-      return self.settingsViewModel.settings.plugins.SlicerEstimator.metadata() && self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_printer()
+      return self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_printer()
     });
 
     // Overwrite the enableAdditionalData function to handle available metadata
     self.filesViewModel.slicerEnableAdditionalData = function(data) {
-      if (data.slicer != null && Object.keys(data.slicer).length > 0 && self.filelistEnabled()) {
+      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
           return true;
       } else {
           return self.filesViewModel.originalEnableAdditionalData(data);
@@ -115,36 +115,35 @@ $(function() {
 
     //Add the slicer metadata to "additionalMetadata"
     self.filesViewModel.getSlicerData = function(data) {
-      if (self.filelistEnabled()) {
-        let return_value = "";
+      let return_value = "";
 
-        //custom metadata
-        if (data.slicer != null && Object.keys(data.slicer).length > 0) {
-          for (const [key, value] of Object.entries(data.slicer)) {
-            meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["SlicerEstimator"]["filelist"]() === true);
-            let description = "No description";
-            if (meta != null) {
-              description = meta.description();
-              return_value += description + ": " + value + "<br>";
-            }
+      //custom metadata
+      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
+        for (const [key, value] of Object.entries(data.slicer)) {
+          meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["SlicerEstimator"]["filelist"]() === true);
+          let description = "No description";
+          if (meta != null) {
+            description = meta.description();
+            return_value += description + ": " + value + "<br>";
           }
         }
 
         //filament changes
-        if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data["gcodeAnalysis"]["estimatedPrintTime"] != null) {
-          let cnt = 0;
-          for (const [key, value] of Object.entries(data.slicer_filament_change)) {
-            cnt += 1;
-            let changeTimeString = self.filamentChangeTimeFormat(data["gcodeAnalysis"]["estimatedPrintTime"] - value[1]);
-            let changeType;
-            if (value[0] == "M600") {
-              changeType = gettext("filament change (M600)");
-            } else {
-              changeType = gettext("filament") + " (" + gettext("tool") + " " + value[0].substring(1,2) +")";
-            }            
-            return_value += cnt + ". " + changeType + ": " + changeTimeString +'<br>';
-          }
-        }
+        // if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional["printtime"] != null) {
+        //   let cnt = 0;
+        //   for (const [key, value] of Object.entries(data.slicer_filament_change)) {
+        //     cnt += 1;
+        //     let changeTimeString = self.filamentChangeTimeFormat(data.slicer_additional["printtime"] - value[1]);
+        //     let changeType;
+        //     if (value[0] == "M600") {
+        //       changeType = gettext("filament change (M600)");
+        //     } else {
+        //       debugger
+        //       changeType = gettext("filament") + " (" + gettext("tool") + " " + value[0].substring(1,2) +")";
+        //     }            
+        //     return_value += cnt + ". " + changeType + ": " + changeTimeString +'<br>';
+        //   }
+        // }
 
         if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_filelist_align() === "top") {
           return_value += self.filesViewModel.originalGetAdditionalData(data);
@@ -200,6 +199,7 @@ $(function() {
                 for (let item of changeList) {
                   let returnArr = [];                  
                   let changeType;
+                  let changeTime;
                   cnt += 1;
                   if (returnChange.length < 10) {
                     if (item[0] == "M600") {
@@ -316,23 +316,6 @@ $(function() {
       return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().target;
     });
 
-    //Switch tab in settings on/off
-    self.settingsViewModel.customTabCss = ko.pureComputed(function() {
-      if (self.settingsViewModel.settings.plugins.SlicerEstimator.slicer() === "c") {
-        return "show";
-      } else {
-        return "hide";
-      }
-    });
-
-    //Switch tab in settings on/off
-    self.settingsViewModel.metadataTabCss = ko.pureComputed(function() {
-      if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata()) {
-        return "show";
-      } else {
-        return "hide";
-      }
-    });
 
     //Settings Report Bug
     self.settingsViewModel.createIssue = function() {
