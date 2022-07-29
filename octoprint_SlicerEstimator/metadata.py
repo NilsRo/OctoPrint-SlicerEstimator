@@ -67,7 +67,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         self.printtime = 0.0
         self._line_cnt = 0
         self._time_list = list()
-        self._change_list = list()
+        self._change_list = list()   # format GCODE, Time, Progress in file
         self._filament = dict()
         self._file_manager = file_manager
 
@@ -78,15 +78,17 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         decoded_line = line.decode()
         if decoded_line[:10] == "@TIME_LEFT":
             return None
-        elif decoded_line[:4] == "M600":
-            M600_regex = re.compile("M600.*(T[0-9]).*")
-            M600_match = M600_regex.match(decoded_line)
-            if M600_match[1]:
-                extruder = M600_match[1][1:]      
+        elif decoded_line[:4] == "M600":                        
             if self._time_list:
-                self._change_list.append([extruder, self._time_list[-1][1]])
+                self._change_list.append(["M600", self._time_list[-1][1],self._line_cnt])
             else:
-                self._change_list.append([extruder, 0.0])
+                self._change_list.append(["M600", 0.0, 1])
+        elif decoded_line[:1] == "T" and len(decoded_line) == 2:
+            # Tool change
+            if self._time_list:
+                self._change_list.append([decoded_line, self._time_list[-1][1], self._line_cnt])
+            else:
+                self._change_list.append([decoded_line, 0.0, 1])
         elif decoded_line[:13] == ";Slicer info:":
                 slicer_info = decoded_line[13:].rstrip("\n").split(";")
                 if len(slicer_info) == 3:

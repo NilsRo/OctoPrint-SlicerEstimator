@@ -129,21 +129,20 @@ $(function() {
         }
 
         //filament changes
-        // if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional["printtime"] != null) {
-        //   let cnt = 0;
-        //   for (const [key, value] of Object.entries(data.slicer_filament_change)) {
-        //     cnt += 1;
-        //     let changeTimeString = self.filamentChangeTimeFormat(data.slicer_additional["printtime"] - value[1]);
-        //     let changeType;
-        //     if (value[0] == "M600") {
-        //       changeType = gettext("filament change (M600)");
-        //     } else {
-        //       debugger
-        //       changeType = gettext("filament") + " (" + gettext("tool") + " " + value[0].substring(1,2) +")";
-        //     }            
-        //     return_value += cnt + ". " + changeType + ": " + changeTimeString +'<br>';
-        //   }
-        // }
+        if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional["printtime"] != null) {
+          let cnt = 0;
+          for (const [key, value] of Object.entries(data.slicer_filament_change)) {
+            cnt += 1;
+            let changeTimeString = self.filamentChangeTimeFormat(data.slicer_additional["printtime"] - value[1]);
+            let changeType;
+            if (value[0] == "M600") {
+              changeType = gettext("filament change (M600)");
+            } else {              
+              changeType = gettext("filament") + " (" + gettext("tool") + " " + value[0].substring(1,2) +")";
+            }            
+            return_value += cnt + ". " + changeType + ": " + changeTimeString +'<br>';
+          }
+        }
 
         if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_filelist_align() === "top") {
           return_value += self.filesViewModel.originalGetAdditionalData(data);
