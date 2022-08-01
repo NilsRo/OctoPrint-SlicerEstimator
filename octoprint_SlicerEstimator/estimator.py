@@ -9,26 +9,31 @@ class SlicerEstimator(PrintTimeEstimator):
     def __init__(self, job_type):
         PrintTimeEstimator.__init__(self, job_type)
         self._job_type = job_type
-        self.estimated_time = -1.0
         self.average_prio = False
+        self.use_progress = False
         self.time_left = -1.0
-        self.cleaned_print_time = -1.0
+        self.time_total = -1.0
 
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
-        self.cleaned_print_time = cleanedPrintTime
 
-        if self._job_type != "local" or self.estimated_time == -1.0 or cleanedPrintTime is None or progress is None:
+        if self._job_type != "local" or self.time_left == -1.0 or cleanedPrintTime is None or progress is None:
             # using standard estimator
+            self.time_left = std_estimator[0]
             return std_estimator
         elif std_estimator[1] == "average" and self.average_prio:
             # average more important than estimation
+            self.time_left = std_estimator[0]
             return std_estimator
+        elif self.use_progress:
+            self.time_left = progress * 0.01 * self.time_total
+            logger.debug("SlicerEstimator: Estimation Reported {}".format(self.time_left))
+            return self.time_left, "slicerestimator"
         else:
             # return "slicerestimator" as Origin of estimation
             logger.debug("SlicerEstimator: Estimation Reported {}".format(self.time_left))
-            return self.estimated_time, "slicerestimator"
+            return self.time_left, "slicerestimator"
         
        
 class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue):    

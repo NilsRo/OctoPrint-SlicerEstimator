@@ -64,8 +64,9 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         self.path = path
         self._file_object = file_object
         self.slicer = self._detect_slicer()
-        self.printtime = 0.0
+        self.printtime = -1.0
         self._line_cnt = 0
+        self._bytes_processed = 0
         self._time_list = list()
         self._change_list = list()   # format GCODE, Time, Progress in file
         self._filament = dict()
@@ -75,20 +76,21 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
     # Line parsing after upload  
     def process_line(self, line):
         self._line_cnt += 1
+        self._bytes_processed += len(line)
         decoded_line = line.decode()
         if decoded_line[:10] == "@TIME_LEFT":
             return None
         elif decoded_line[:4] == "M600":                        
             if self._time_list:
-                self._change_list.append(["M600", self._time_list[-1][1],self._line_cnt])
+                self._change_list.append(["M600", self._time_list[-1][1],self._line_cnt, self._bytes_processed])
             else:
-                self._change_list.append(["M600", 0.0, 1])
-        elif decoded_line[:1] == "T" and len(decoded_line) == 2:
+                self._change_list.append(["M600", None, self._line_cnt, self._bytes_processed])
+        elif decoded_line[:1] == "T":
             # Tool change
             if self._time_list:
-                self._change_list.append([decoded_line, self._time_list[-1][1], self._line_cnt])
+                self._change_list.append([decoded_line[:2], self._time_list[-1][1], self._line_cnt, self._bytes_processed])
             else:
-                self._change_list.append([decoded_line, 0.0, 1])
+                self._change_list.append([decoded_line[:2], None, self._line_cnt, self._bytes_processed])
         elif decoded_line[:13] == ";Slicer info:":
                 slicer_info = decoded_line[13:].rstrip("\n").split(";")
                 if len(slicer_info) == 3:
@@ -113,7 +115,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         elif self.slicer == SLICER_SIMPLIFY3D:
             re_result = self._regex.match(decoded_line)
             if re_result:
-                self.printtime = re_result[0]*60*60+re_result[1]*60
+                self.printtime = int(re_result[1])*60*60+int(re_result[2])*60
             
         return line    
 
@@ -146,6 +148,8 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         
         slicer_additional = dict()
         slicer_additional["printtime"] = self.printtime
+        slicer_additional["lines"] = self._line_cnt
+        slicer_additional["bytes"] = self._bytes_processed
         slicer_additional["slicer"] = self.slicer
         self._file_manager._storage_managers["local"].set_additional_metadata(self.path, "slicer_additional", slicer_additional, overwrite=True)
         self._logger.debug(self._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_additional"))

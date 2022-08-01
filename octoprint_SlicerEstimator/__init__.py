@@ -36,6 +36,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._executor = ThreadPoolExecutor()
         self._plugins = dict()
         self._filedata = dict()
+        self._filament_change_cnt = 0
+
 
 
 # SECTION: Settings
@@ -74,7 +76,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         plugins[self._identifier]["targets"] = dict(printer= "Printer", filelist= "Filelist")
 
         return dict(
-            average_prio=True,
+            average_prio=False,
             use_assets=True,
             metadata_filelist=True,
             metadata_filelist_align="top",
@@ -143,7 +145,16 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     # Called by at sign in GCODE
     def on_at_command(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
         if phase == "sending" and command == "TIME_LEFT":
-            self._estimator.estimated_time = float(parameters)
+            self._estimator.time_left = float(parameters)
+            
+            
+    # Process Gcode
+    def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
+        # Update Filament Change Time from actual print
+        if self._slicer_filament_change and (gcode == "M600" or gcode =="T"):
+            self._filament_change_cnt += 1
+            if self._estimator.time_left > -1.0:
+                self._slicer_filament_change[self._filament_change_cnt][1] = self._estimator.time_left
 
 
     # Hook after file upload for pre-processing
@@ -166,17 +177,32 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             origin = payload["origin"]
             path = payload["path"]
             if origin == "local":
+                self._filament_change_cnt = 0
+                slicer_additional = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_additional")
+                if slicer_additional:
+                    if slicer_additional["slicer"] == SLICER_SIMPLIFY3D:
+                        # Simplify3D has no embedded time left
+                        self._estimator.use_progress = True
+                    else:
+                        self._estimator.use_progress = False
+                    self._estimator.time_total = slicer_additional["printtime"]
+                self._slicer_filament_change = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_filament_change")
                 self._send_metadata_print_event(origin, path)
                 self._send_filament_change_event(origin, path)
-            slicer_additional = self._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_additional")
-            if slicer_additional:
-                self._estimator.estimated_time = slicer_additional["printtime"] 
+
         if event == Events.PRINT_CANCELLED or event == Events.PRINT_FAILED or event == Events.PRINT_DONE:
             # Init of Class variables for new estimation
             self._slicer_estimation = None
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
+            self._slicer_filament_change = None
             self._logger.debug("Event received: {}".format(event))
+
+        if event == Events.PRINT_DONE:
+            origin = payload["origin"]
+            path = payload["path"]
+            self._file_manager._storage_managers["local"].set_additional_metadata(path, "slicer_filament_change", self._slicer_filament_change, overwrite=True)
+
         if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
                 self._filedata[payload["path"]].store_metadata()
@@ -189,21 +215,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._estimator.average_prio = self._average_prio            
             return self._estimator
         return factory
-
-
-    # update estimation mode
-    def _update_estimation_mode(self):
-        if self._estimator is not NOTHING:
-            if self._slicer == SLICER_CURA:
-                self._estimator.estimation_mode = ESTIMATION_MODE_TIME_DONE
-            elif self._slicer == SLICER_CURA_M117:
-                self._estimator.estimation_mode = ESTIMATION_MODE_DIRECT
-            elif self._slicer == SLICER_PRUSA:
-                self._estimator.estimation_mode = ESTIMATION_MODE_DIRECT
-            elif self._slicer == SLICER_SIMPLIFY3D:
-                self._estimator.estimation_mode = ESTIMATION_MODE_PROGRESS
-            else:
-                self._estimator.estimation_mode = ESTIMATION_MODE_PROGRESS
 
             
 
@@ -490,6 +501,7 @@ def __plugin_load__():
 
     global __plugin_hooks__
     __plugin_hooks__ = {
+        "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.on_gcode_sent,
         "octoprint.printer.estimation.factory": __plugin_implementation__.estimator_factory,
         "octoprint.filemanager.analysis.factory": __plugin_implementation__.analysis_queue_factory,
         "octoprint.filemanager.preprocessor": __plugin_implementation__.on_file_upload,
