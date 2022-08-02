@@ -93,11 +93,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                 self._change_list.append([decoded_line[:2], None, self._line_cnt, self._bytes_processed])
         elif decoded_line[:13] == ";Slicer info:":
                 slicer_info = decoded_line[13:].rstrip("\n").split(";")
-                if len(slicer_info) == 3:
-                    # old format
-                    self._filament[slicer_info[0]] = slicer_info[2].strip()
-                else:
-                    self._filament[slicer_info[0]] = slicer_info[1].strip()
+                self._filament[slicer_info[0]] = slicer_info[1].strip()
         elif self.slicer == SLICER_CURA:
             if decoded_line[:6] == ";TIME:":
                 self.printtime = float(line[6:])

@@ -36,6 +36,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._executor = ThreadPoolExecutor()
         self._plugins = dict()
         self._filedata = dict()
+        self._slicer_filament_change = None
         self._filament_change_cnt = 0
 
 
@@ -152,9 +153,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         # Update Filament Change Time from actual print
         if self._slicer_filament_change and (gcode == "M600" or gcode =="T"):
-            self._filament_change_cnt += 1
             if self._estimator.time_left > -1.0:
                 self._slicer_filament_change[self._filament_change_cnt][1] = self._estimator.time_left
+            self._filament_change_cnt += 1
 
 
     # Hook after file upload for pre-processing
@@ -164,12 +165,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         filedata = SlicerEstimatorFiledata(path, file_object, self._file_manager)
         self._filedata[path] = filedata
         return octoprint.filemanager.util.StreamWrapper(file_object.filename, filedata)        
-  
-
-    # logs estimation on print progress
-    def on_print_progress(self, storage, path, progress):
-        self._logger.debug("SlicerEstimator: Estimator {}sec, CleanedPrintTime {}sec".format(self._estimator.time_left, self._estimator.cleaned_print_time))
-                
+                 
 
     # EventHandlerPlugin for native information search
     def on_event(self, event, payload):
