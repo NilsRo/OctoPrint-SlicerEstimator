@@ -151,10 +151,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             
     # Process Gcode
     def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        # Update Filament Change Time from actual print
+        # Update Filament Change Time and Position from actual print
         if self._slicer_filament_change and (gcode == "M600" or gcode =="T"):
             if self._estimator.time_left > -1.0:
                 self._slicer_filament_change[self._filament_change_cnt][1] = self._estimator.time_left
+            self._slicer_filament_change[self._filament_change_cnt][3] = comm_instance._currentFile._pos
             self._filament_change_cnt += 1
 
 

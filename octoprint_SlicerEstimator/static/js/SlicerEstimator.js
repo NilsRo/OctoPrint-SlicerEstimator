@@ -216,7 +216,7 @@ $(function() {
                     }
                   } else {
                     // progress based calculation
-                    changeTime = (self.printerStateViewModel.estimatedPrintTime() * ( item[3] / self.printerStateViewModel.filesize() )) - ((self.printerStateViewModel.estimatedPrintTime() * ( item[3] / self.printerStateViewModel.filesize() )) * ( self.printerStateViewModel.filepos() / item[3] ))
+                    changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[3] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * ( item[3] / self.printerStateViewModel.filesize() )) * ( self.printerStateViewModel.filepos() / item[3] ))
                   }
                   if (changeTime >= 0 && self.printerStateViewModel.filepos() <= item[3]) {
                     let changeTimeString = self.filamentChangeTimeFormat(changeTime);
