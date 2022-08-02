@@ -8,37 +8,40 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.3.5\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2022-05-08 12:55+0200\n"
+"POT-Creation-Date: 2022-08-02 22:31+0200\n"
 "PO-Revision-Date: 2022-05-05 19:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
 "Language-Team: de <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:57
 msgid "Based on information added by the slicer."
 msgstr "basierend aus der Schätzung des Slicers"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:173
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:242
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:171
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:241
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:266
 msgid "filament change (M600)"
 msgstr "Filamentwechsel (M600)"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:175
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:244
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:173
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:243
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:268
 msgid "filament"
 msgstr "Filament"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:175
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:244
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:173
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:243
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:268
 msgid "tool"
 msgstr "Tool"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:258
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:270
 msgid "up to"
 msgstr "bis"
 
@@ -47,52 +50,20 @@ msgid "Main"
 msgstr "Allgemein"
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:7
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:49
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:107
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:35
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:72
 msgid "Metadata"
 msgstr "Metadaten"
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:8
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:30
-msgid "Custom"
-msgstr "Individuell"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:9
 msgid "Development"
 msgstr "Entwicklung"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:14
-msgid "General"
-msgstr "Allgemein"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:16
-msgid ""
-"If you do want spend time about the settings or if you use diffrent "
-"slicers leave this setting active. The slicer will be detected "
-"automatically before printing. If the slicer is not found the manual "
-"slicer selection is used."
-msgstr ""
-"Wer es sich einfach machen möchte kann den Slicer automatisch erkennen "
-"lassen. Wenn er nicht erkannt werden kann wird der ausgewählte Slicer "
-"genutzt."
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:17
-msgid "Auto-Detect slicer before printing"
-msgstr "Slicer vor dem Druck auomatisch erkennen"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:23
-msgid "Slicer"
-msgstr "Slicer"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:24
-msgid "Select slicer or custom for your own settings"
-msgstr "Wähle deinen Slicer oder individuell für deine eigenen Einstellungen"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:34
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:13
 msgid "Print time estimation"
 msgstr "Druckzeit"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:36
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:15
 msgid ""
 "The average estimation is based on the last prints (green dot is shown). "
 "It can be more accurate in the first minutes compared to the slicer "
@@ -103,88 +74,33 @@ msgstr ""
 "(grüner Punkt). Dies ist meistens genauer als die vom Slicer ermittelte "
 "Zeit und berücksichtigt auch die Aufwärmphase."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:37
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:16
 msgid "Use average estimation before slicer"
 msgstr "Nutze die 'durchschittliche Druckzeit' wenn vorhanden"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:43
-msgid "Update the estimation in OctoPrints filebrowser after uploading a file."
-msgstr ""
-"Aktualisiere die erwartete Druckzeit in OctoPrints Dateibrowser nach dem "
-"Upload."
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:21
+msgid "Slicer"
+msgstr "Slicer"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:44
-msgid "Update estimation on file upload"
-msgstr "Aktualisiere Druckzeit nach Dateiupload"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:51
-msgid "Add custom metadata like filament brand, material,... in OctoPrint"
-msgstr ""
-"Zeige eigene Metadaten wie Filamenthersteller, Material, ... in OctoPrint"
-" an"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:52
-msgid "Activate parsing of slicer metadata"
-msgstr "Aktiviere Metadaten"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:55
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:22
 msgid ""
-"How to add custom metadata to OctoPrints filelist see <a "
-"href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
-"target=\"_blank\">here</a>!"
+"The slicer is selected automatically. If this does not work anymore "
+"please open a Ticket."
 msgstr ""
-"Wie man eigene Metadaten zu OctoPrints Dateibrowser hinzufügen kann "
-"findet man <a href=\"https://github.com/NilsRo/OctoPrint-"
-"SlicerEstimator\" target=\"_blank\">hier</a>!"
+"Der Slicer wird automatisch ausgewählt. Funktioniert dies nicht bitte ein"
+" Ticket eröffnen."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:58
-msgid ""
-"Metadata has to be added in the Start GCODE in this format: (;Slicer "
-"info:&lt;key&gt;;&lt;value&gt;). You can add as much metadata as you "
-"like. Actually only the first 5000 rows are read after upload. You can "
-"find an\n"
-"                            example <a "
-"href=\"https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile\" "
-"target=\"_blank\">here</a> for Cura."
-msgstr ""
-"Metadaten müssen im Start GCODE im folgenden Format ergänzt werden: "
-"(;Slicer info:&lt;key&gt;;&lt;value&gt;). Du kannst so viele Metadaten "
-"hinzufügen wie du magst. Aktuell werden jedoch nur die ersten 5000 Zeilen"
-" durchsucht. Du kannst ein Beispiel hier <a "
-"href=\"https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile\" "
-"target=\"_blank\">hier</a> für Cura finden."
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:63
-msgid ""
-"Select your slicer or custom setting which as to be configured in Custom-"
-"Tab."
-msgstr ""
-"Wählen deinen Slicer oder individuell, wenn du eigene Einstellungen im "
-"Individuell-Tab einstellen möchtest."
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:66
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:25
 msgid ""
 "With Cura native no changes have to be applied to Cura. The overall print"
-" time is read out of a comment in the GCODE. For a correct estimation "
-"OctoPrints percentage done is used as there is only the overall print "
-"time available."
+" time is read out of a comment in the GCODE. This will update "
+"continuously the remaining print time."
 msgstr ""
-"Es müssen keine Änderungen an Cura durchgeführt werden. Die Druckzeit "
-"wird aus den GCODE Kommentaren gelesen. Für die Berechnung während des "
-"Drucks wird auf die prozentuelle Druckfortschritt von OctoPrint "
-"zurückgegriffen."
+"Bei Cura müssen keine Änderungen am Slicer durchgeführt werden, da diese "
+"aus den GCODE Kommentaren gelesen werden. Dies aktualisiert "
+"kontinuierlich die Druckzeit und ermöglicht eine genaue Berechnung."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:67
-msgid ""
-"M117 is read out of M117 commands added by Cura if the following Post-"
-"Processing actions are activated. This will continuously update the "
-"remaining printing time."
-msgstr ""
-"Wird aus den M117 Kommandos von Cura ausgelesen. Dafür muss die "
-"entsprechende Nachbearbeitung in Cura aktiviert werden. Dies aktualisiert"
-" kontinuierlich die Druckzeit und ermöglicht eine genaue Berechnung."
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:68
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:26
 msgid ""
 "With Simplify3D no changes has to be applied to Simplify3D. The overall "
 "print time is read out of a comment in the GCODE. For a correct "
@@ -196,7 +112,7 @@ msgstr ""
 "während des Drucks wird auf die prozentuelle Druckfortschritt von "
 "OctoPrint zurückgegriffen."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:69
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:27
 msgid ""
 "Remaining time is read out of M73 commands added by PrusaSlicer. This "
 "will update continuously the remaining print time."
@@ -205,7 +121,7 @@ msgstr ""
 "aktualisiert kontinuierlich die Druckzeit und ermöglicht eine genaue "
 "Berechnung."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:72
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:30
 msgid ""
 "Additional support or a manual is available on <a "
 "href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
@@ -215,15 +131,40 @@ msgstr ""
 "href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
 "target=\"_blank\">Github</a>."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:73
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:31
 msgid "Create issue"
 msgstr "Ticket erstellen"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:77
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:36
+msgid ""
+"How to add custom metadata to OctoPrints filelist see <a "
+"href=\"https://github.com/NilsRo/OctoPrint-SlicerEstimator\" "
+"target=\"_blank\">here</a>!"
+msgstr ""
+"Wie man eigene Metadaten zu OctoPrints Dateibrowser hinzufügen kann "
+"findet man <a href=\"https://github.com/NilsRo/OctoPrint-"
+"SlicerEstimator\" target=\"_blank\">hier</a>!"
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:39
+msgid ""
+"Metadata has to be added in the Start GCODE in this format: (;Slicer "
+"info:&lt;key&gt;;&lt;value&gt;). You can add as much metadata as you "
+"like. You can find an\n"
+"                    example <a "
+"href=\"https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile\" "
+"target=\"_blank\">here</a> for Cura."
+msgstr ""
+"Metadaten müssen im Start GCODE im folgenden Format ergänzt werden: "
+"(;Slicer info:&lt;key&gt;;&lt;value&gt;). Du kannst so viele Metadaten "
+"hinzufügen wie du magst. Du kannst ein Beispiel hier <a "
+"href=\"https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile\" "
+"target=\"_blank\">hier</a> für Cura finden."
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:42
 msgid "Filelist"
 msgstr "Dateibrowser"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:79
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:44
 msgid ""
 "Add custom metadata like filament brand, material,... in OctoPrints "
 "filebrowser after uploading a file."
@@ -231,26 +172,34 @@ msgstr ""
 "Ergänze eigene Metadaten wie Filamenthersteller, Material, ... in "
 "OctoPrints Dateibrowser nach dem Upload."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:80
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:101
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:45
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:66
 msgid "Add metadata"
 msgstr "Metadaten hinzufügen"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:86
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:51
 msgid "Orientation"
 msgstr "Ausrichtung"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:87
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:52
 msgid ""
 "Change the orientation in the filelist above or below the standard "
 "metadata."
 msgstr "Ändere die Ausrichtung im Dateibrowser auf oben oder unten."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:98
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:55
+msgid "Top"
+msgstr "oben"
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:59
+msgid "Bottom"
+msgstr "unten"
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:63
 msgid "Current print"
 msgstr "Druckstatus"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:100
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:65
 msgid ""
 "Add custom metadata like filament brand, material,... in OctoPrints "
 "current print view."
@@ -258,130 +207,202 @@ msgstr ""
 "Zeige eigene Metadaten wie Filamenthersteller, Material, ... in "
 "OctoPrints Druckbereich an."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:103
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:68
 msgid "(restart of GUI - Browsersession - required)"
 msgstr "(Neustart der GUI - Browsersession - notwendig)"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:118
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:83
 msgid "Metadata ID"
 msgstr "Metadaten ID"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:119
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:84
 msgid "Description"
 msgstr "Beschreibung"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:143
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:108
 msgid "Refresh Metadata"
 msgstr "Metadaten aktualisieren"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:148
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:113
 msgid "Use Refresh to update metadata from files. It will not delete entries..."
 msgstr ""
 "Nutze 'Aktualisieren' um die Metadaten neu einzulesen. Dies löscht keine "
 "Einträge..."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:153
-msgid ""
-"For help use RegEx Tester like: <a "
-"href=\"https://regex101.com/\">RegEx101</a>"
-msgstr ""
-"Beim testen hilft der RegEx Tester: <a "
-"href=\"https://regex101.com/\">RegEx101</a>"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:155
-msgid "RegEx Week"
-msgstr "RegEx Woche"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:156
-msgid "RegEx and Position of match for Weeks"
-msgstr "RegEx und Position für die Wochen"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:173
-msgid "RegEx Day"
-msgstr "RegEx Tag"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:174
-msgid "RegEx and Position of match for Days"
-msgstr "RegEx und die Position für die Tage"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:191
-msgid "RegEx Hour"
-msgstr "RegEx Stunde"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:192
-msgid "RegEx and Position of match for Hours"
-msgstr "RegEx und die Position für Stunden"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:209
-msgid "RegEx Minute"
-msgstr "RegEx Minute"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:210
-msgid "RegEx and Position of match for Minutes"
-msgstr "RegEx und die Position für die Minuten"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:227
-msgid "RegEx Second"
-msgstr "RegEx Sekunde"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:228
-msgid "RegEx and Position of match for Seconds"
-msgstr "RegEx und die Position für die Sekunden"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:245
-msgid "GCODE or Slicer Comment Search"
-msgstr "GCODE oder Slicer Kommentar-Erkennung"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:246
-msgid ""
-"Defindes if the Plugin should look for GCODE during print or scan the "
-"file once for a slicer comment."
-msgstr ""
-"Definiert ob das Plugin auf GCODE während des Drucks reagiert oder die "
-"Datei nach Kommentaren sucht."
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:249
-#, fuzzy
-msgid "Comment"
-msgstr "RegEx Kommentar"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:254
-msgid "GCODE"
-msgstr "GCODE"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:255
-msgid "GCODE to watch"
-msgstr "Ausschau halten nach"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:260
-msgid "RegEx Comment"
-msgstr "RegEx Kommentar"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:261
-msgid "Comment to look for"
-msgstr "nach Kommentar suchen"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:265
-msgid ""
-"All not matching components are ignored so the remaining time calculation"
-" will be wrong in case of a mistake.\n"
-"                Initial settings are fine with Cura for example."
-msgstr ""
-"Alle nicht erkannten Komponenten aus dem RegEx werden ignoriert. Das "
-"führt dazu, dass die ermittelte Druckzeit nicht korrekt ist.\n"
-"                Die Standardeinstellungen sind passend für Cura."
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:269
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:118
 msgid "Developer settings - use at your own risk / enable it on request only"
 msgstr ""
 "Entwickler-Einstellungen - auf eigene Gefahr / nur auf Rückfrage "
 "aktivieren"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:271
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:120
 msgid "Update from development branch"
 msgstr "Aktualisieren aus Entwickler-Branch"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:274
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:123
 msgid "Use development branch <b>Restart of OctoPrint required</b>"
 msgstr "Benutze Entwickler-Branch <b>Neustart von OctoPrint notwendig</b>"
+
+#~ msgid "Custom"
+#~ msgstr "Individuell"
+
+#~ msgid "General"
+#~ msgstr "Allgemein"
+
+#~ msgid ""
+#~ "If you do want spend time about"
+#~ " the settings or if you use "
+#~ "diffrent slicers leave this setting "
+#~ "active. The slicer will be detected "
+#~ "automatically before printing. If the "
+#~ "slicer is not found the manual "
+#~ "slicer selection is used."
+#~ msgstr ""
+#~ "Wer es sich einfach machen möchte "
+#~ "kann den Slicer automatisch erkennen "
+#~ "lassen. Wenn er nicht erkannt werden "
+#~ "kann wird der ausgewählte Slicer "
+#~ "genutzt."
+
+#~ msgid "Auto-Detect slicer before printing"
+#~ msgstr "Slicer vor dem Druck auomatisch erkennen"
+
+#~ msgid "Select slicer or custom for your own settings"
+#~ msgstr "Wähle deinen Slicer oder individuell für deine eigenen Einstellungen"
+
+#~ msgid "Update the estimation in OctoPrints filebrowser after uploading a file."
+#~ msgstr ""
+#~ "Aktualisiere die erwartete Druckzeit in "
+#~ "OctoPrints Dateibrowser nach dem Upload."
+
+#~ msgid "Update estimation on file upload"
+#~ msgstr "Aktualisiere Druckzeit nach Dateiupload"
+
+#~ msgid "Add custom metadata like filament brand, material,... in OctoPrint"
+#~ msgstr ""
+#~ "Zeige eigene Metadaten wie Filamenthersteller,"
+#~ " Material, ... in OctoPrint an"
+
+#~ msgid "Activate parsing of slicer metadata"
+#~ msgstr "Aktiviere Metadaten"
+
+#~ msgid ""
+#~ "Select your slicer or custom setting "
+#~ "which as to be configured in "
+#~ "Custom-Tab."
+#~ msgstr ""
+#~ "Wählen deinen Slicer oder individuell, "
+#~ "wenn du eigene Einstellungen im "
+#~ "Individuell-Tab einstellen möchtest."
+
+#~ msgid ""
+#~ "M117 is read out of M117 commands"
+#~ " added by Cura if the following "
+#~ "Post-Processing actions are activated. "
+#~ "This will continuously update the "
+#~ "remaining printing time."
+#~ msgstr ""
+#~ "Wird aus den M117 Kommandos von "
+#~ "Cura ausgelesen. Dafür muss die "
+#~ "entsprechende Nachbearbeitung in Cura "
+#~ "aktiviert werden. Dies aktualisiert "
+#~ "kontinuierlich die Druckzeit und ermöglicht"
+#~ " eine genaue Berechnung."
+
+#~ msgid ""
+#~ "For help use RegEx Tester like: <a"
+#~ " href=\"https://regex101.com/\">RegEx101</a>"
+#~ msgstr ""
+#~ "Beim testen hilft der RegEx Tester: "
+#~ "<a href=\"https://regex101.com/\">RegEx101</a>"
+
+#~ msgid "RegEx Week"
+#~ msgstr "RegEx Woche"
+
+#~ msgid "RegEx and Position of match for Weeks"
+#~ msgstr "RegEx und Position für die Wochen"
+
+#~ msgid "RegEx Day"
+#~ msgstr "RegEx Tag"
+
+#~ msgid "RegEx and Position of match for Days"
+#~ msgstr "RegEx und die Position für die Tage"
+
+#~ msgid "RegEx Hour"
+#~ msgstr "RegEx Stunde"
+
+#~ msgid "RegEx and Position of match for Hours"
+#~ msgstr "RegEx und die Position für Stunden"
+
+#~ msgid "RegEx Minute"
+#~ msgstr "RegEx Minute"
+
+#~ msgid "RegEx and Position of match for Minutes"
+#~ msgstr "RegEx und die Position für die Minuten"
+
+#~ msgid "RegEx Second"
+#~ msgstr "RegEx Sekunde"
+
+#~ msgid "RegEx and Position of match for Seconds"
+#~ msgstr "RegEx und die Position für die Sekunden"
+
+#~ msgid "GCODE or Slicer Comment Search"
+#~ msgstr "GCODE oder Slicer Kommentar-Erkennung"
+
+#~ msgid ""
+#~ "Defindes if the Plugin should look "
+#~ "for GCODE during print or scan the"
+#~ " file once for a slicer comment."
+#~ msgstr ""
+#~ "Definiert ob das Plugin auf GCODE "
+#~ "während des Drucks reagiert oder die "
+#~ "Datei nach Kommentaren sucht."
+
+#~ msgid "Comment"
+#~ msgstr "RegEx Kommentar"
+
+#~ msgid "GCODE"
+#~ msgstr "GCODE"
+
+#~ msgid "GCODE to watch"
+#~ msgstr "Ausschau halten nach"
+
+#~ msgid "RegEx Comment"
+#~ msgstr "RegEx Kommentar"
+
+#~ msgid "Comment to look for"
+#~ msgstr "nach Kommentar suchen"
+
+#~ msgid ""
+#~ "All not matching components are ignored"
+#~ " so the remaining time calculation "
+#~ "will be wrong in case of a "
+#~ "mistake.\n"
+#~ "                Initial settings are fine with Cura for example."
+#~ msgstr ""
+#~ "Alle nicht erkannten Komponenten aus dem"
+#~ " RegEx werden ignoriert. Das führt "
+#~ "dazu, dass die ermittelte Druckzeit "
+#~ "nicht korrekt ist.\n"
+#~ "                Die Standardeinstellungen sind passend für Cura."
+
+#~ msgid ""
+#~ "Metadata has to be added in the"
+#~ " Start GCODE in this format: (;Slicer"
+#~ " info:&lt;key&gt;;&lt;value&gt;). You can add "
+#~ "as much metadata as you like. "
+#~ "Actually only the first 5000 rows "
+#~ "are read after upload. You can "
+#~ "find an\n"
+#~ "                    example <a "
+#~ "href=\"https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile\" "
+#~ "target=\"_blank\">here</a> for Cura."
+#~ msgstr ""
+#~ "Metadaten müssen im Start GCODE im "
+#~ "folgenden Format ergänzt werden: (;Slicer "
+#~ "info:&lt;key&gt;;&lt;value&gt;). Du kannst so "
+#~ "viele Metadaten hinzufügen wie du magst."
+#~ " Du kannst ein Beispiel hier <a "
+#~ "href=\"https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile\" "
+#~ "target=\"_blank\">hier</a> für Cura finden."
 
