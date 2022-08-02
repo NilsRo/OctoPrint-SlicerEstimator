@@ -1,13 +1,11 @@
 # coding=utf-8
 from __future__ import absolute_import, unicode_literals
 from concurrent.futures import ThreadPoolExecutor
-from fileinput import filename
 
 import re
 import io
 import os
 import sys
-from attr import NOTHING
 
 import octoprint.plugin
 import octoprint.events
