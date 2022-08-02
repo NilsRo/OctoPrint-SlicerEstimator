@@ -75,7 +75,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         plugins[self._identifier]["targets"] = dict(printer= "Printer", filelist= "Filelist")
 
         return dict(
-            average_prio=False,
+            average_prio=True,
             use_assets=True,
             metadata_filelist=True,
             metadata_filelist_align="top",
