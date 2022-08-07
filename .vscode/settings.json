@@ -1,4 +1,4 @@
 {
-    "python.defaultInterpreterPath": "C:/Users/nrott/Documents/GitHub/OctoPrint/venv3/Scripts/python",
-    "python.disableInstallationCheck": true
+    "python.disableInstallationCheck": true,
+    "python.defaultInterpreterPath": "C:/Users/nrott/Documents/GitHub/OctoPrint/venv/Scripts/python"
 }

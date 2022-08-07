@@ -4,33 +4,12 @@
 
         <ul class="nav nav-tabs" id="SlicerEstimator_tabs">
             <li class="active"><a data-toggle="tab" href="#SlicerEstimator_basic">{{ _('Main') }}</a></li>
-            <li data-bind="class: metadataTabCss()"><a data-toggle="tab" href="#SlicerEstimator_meta">{{ _('Metadata') }}</a></li>
-            <li data-bind="class: customTabCss()"><a data-toggle="tab" href="#SlicerEstimator_custom">{{ _('Custom') }}</a></li>
+            <li><a data-toggle="tab" href="#SlicerEstimator_meta">{{ _('Metadata') }}</a></li>            
             <li><a data-toggle="tab" href="#SlicerEstimator_development">{{ _('Development') }}</a></li>
         </ul>
 
-        <div class="tab-content">
-            <div id="SlicerEstimator_basic" class="tab-pane active">
-                <h4>{{ _('General') }}</h4>
-                <div class="control-group">
-                    <div class="controls" data-toggle="tooltip" title="{{ _('If you do want spend time about the settings or if you use diffrent slicers leave this setting active. The slicer will be detected automatically before printing. If the slicer is not found the manual slicer selection is used.') }}">
-                        <label class="checkbox">{{ _('Auto-Detect slicer before printing') }}
-                            <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.slicer_auto">
-                        </label>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">{{ _('Slicer') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Select slicer or custom for your own settings') }}">
-                        <select data-bind="value: settings.plugins.SlicerEstimator.slicer">
-                            <option value="2">Cura</option>
-                            <option value="0">Cura M117</option>
-                            <option value="3">Simplify3D</option>
-                            <option value="1">PrusaSlicer</option>
-                            <option value="c">{{ _('Custom') }}</option>
-                        </select>
-                    </div>
-                </div>
+         <div class="tab-content">
+           <div id="SlicerEstimator_basic" class="tab-pane active">                                
                 <h4>{{ _('Print time estimation') }}</h4>
                 <div class="control-group">                    
                     <div class="controls" data-toggle="tooltip" title="{{ _('The average estimation is based on the last prints (green dot is shown). It can be more accurate in the first minutes compared to the slicer estimation as it also includes the heatup time of the printer and is based on the print-history. After print-start slicer estimation is fine.') }}">
@@ -39,32 +18,11 @@
                         </label>
                     </div>
                 </div>
-                <div class="control-group">                    
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Update the estimation in OctoPrints filebrowser after uploading a file.') }}">
-                        <label class="checkbox">{{ _('Update estimation on file upload') }}
-                            <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.estimate_upload">
-                        </label>
-                    </div>
-                </div>
-                <h4>{{ _('Metadata') }}</h4>
-                <div class="control-group">
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in OctoPrint') }}">
-                        <label class="checkbox">{{ _('Activate parsing of slicer metadata') }}
-                            <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.metadata">
-                        </label>
-                        <p>{{ _('How to add custom metadata to OctoPrints filelist see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!') }}</p>
-                        <div class="alert alert-info">
-                            <i class="fas fa-info icon-info-sign iconRight"></i>
-                            {{ _('Metadata has to be added in the Start GCODE in this format: (;Slicer info:&lt;key&gt;;&lt;value&gt;). You can add as much metadata as you like. Actually only the first 5000 rows are read after upload. You can find an
-                            example <a href="https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile" target="_blank">here</a> for Cura.') }}
-                        </div>
-                    </div>
-                </div>
-                <div class="help-block">{{ _('Select your slicer or custom setting which as to be configured in Custom-Tab.') }}
+                <h4>{{ _('Slicer') }}</h4>                         
+                <div class="help-block">{{ _('The slicer is selected automatically. If this does not work anymore please open a Ticket.') }}
                     <p>
                     <ul>
-                        <li><b>Cura</b>: {{ _('With Cura native no changes have to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.') }}</li>
-                        <li><b>Cura M117</b>: {{ _('M117 is read out of M117 commands added by Cura if the following Post-Processing actions are activated. This will continuously update the remaining printing time.') }}</li>
+                        <li><b>Cura</b>: {{ _('With Cura native no changes have to be applied to Cura. The overall print time is read out of a comment in the GCODE. This will update continuously the remaining print time.') }}</li>                    
                         <li><b>Simply3D</b>: {{ _('With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.') }}</li>
                         <li><b>PrusaSlicer</b>: {{ _('Remaining time is read out of M73 commands added by PrusaSlicer. This will update continuously the remaining print time.') }}</li>
                     </ul>
@@ -74,6 +32,13 @@
                 </div>
             </div>
             <div id="SlicerEstimator_meta" class="tab-pane">
+                <h4>{{ _('Metadata') }}</h4>                                    
+                <p>{{ _('How to add custom metadata to OctoPrints filelist see <a href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!') }}</p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info icon-info-sign iconRight"></i>
+                    {{ _('Metadata has to be added in the Start GCODE in this format: (;Slicer info:&lt;key&gt;;&lt;value&gt;). You can add as much metadata as you like. You can find an
+                    example <a href="https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile" target="_blank">here</a> for Cura.') }}
+                </div>                                    
                 <h4>{{ _('Filelist') }}</h4>
                 <div class="control-group">
                     <div class="controls" data-toggle="tooltip" title="{{ _('Add custom metadata like filament brand, material,... in OctoPrints filebrowser after uploading a file.') }}">
@@ -87,11 +52,11 @@
                     <div class="controls" data-toggle="tooltip" title="{{ _('Change the orientation in the filelist above or below the standard metadata.') }}">
                         <label class="radio">
                             <input type="radio" name="pluginFilelistOrientation" value="top" data-bind="checked: settings.plugins.SlicerEstimator.metadata_filelist_align">
-                            Top
+                            {{ _('Top') }}
                         </label>
                         <label class="radio">
                             <input type="radio" name="pluginFilelistOrientation" value="bottom" data-bind="checked: settings.plugins.SlicerEstimator.metadata_filelist_align">
-                            Bottom
+                            {{ _('Bottom') }}
                         </label>                                                
                     </div>
                 </div>
@@ -149,122 +114,6 @@
                     </div>
                 </div>
             </div>
-            <div id="SlicerEstimator_custom" class="tab-pane">
-                <div class="help-block">{{ _('For help use RegEx Tester like: <a href="https://regex101.com/">RegEx101</a>') }}</div>
-             	<div class="control-group">
-                    <label class="control-label">{{ _('RegEx Week') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Weeks') }}">                        
-                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pw">
-                        <select data-bind="value: settings.plugins.SlicerEstimator.pwp">
-                            <option value="1">Match 1</option>
-                            <option value="2">Match 2</option>
-                            <option value="3">Match 3</option>
-                            <option value="4">Match 4</option>
-                            <option value="5">Match 5</option>
-                            <option value="6">Match 6</option>
-                            <option value="7">Match 7</option>
-                            <option value="8">Match 8</option>
-                            <option value="9">Match 9</option>
-                            <option value="10">Match 10</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">{{ _('RegEx Day') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Days') }}">
-                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pd">
-                        <select data-bind="value: settings.plugins.SlicerEstimator.pdp">
-                            <option value="1">Match 1</option>
-                            <option value="2">Match 2</option>
-                            <option value="3">Match 3</option>
-                            <option value="4">Match 4</option>
-                            <option value="5">Match 5</option>
-                            <option value="6">Match 6</option>
-                            <option value="7">Match 7</option>
-                            <option value="8">Match 8</option>
-                            <option value="9">Match 9</option>
-                            <option value="10">Match 10</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">{{ _('RegEx Hour') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Hours') }}">
-                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ph">
-                        <select data-bind="value: settings.plugins.SlicerEstimator.php">
-                            <option value="1">Match 1</option>
-                            <option value="2">Match 2</option>
-                            <option value="3">Match 3</option>
-                            <option value="4">Match 4</option>
-                            <option value="5">Match 5</option>
-                            <option value="6">Match 6</option>
-                            <option value="7">Match 7</option>
-                            <option value="8">Match 8</option>
-                            <option value="9">Match 9</option>
-                            <option value="10">Match 10</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">{{ _('RegEx Minute') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Minutes') }}">
-                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.pm">
-                        <select data-bind="value: settings.plugins.SlicerEstimator.pmp">
-                            <option value="1">Match 1</option>
-                            <option value="2">Match 2</option>
-                            <option value="3">Match 3</option>
-                            <option value="4">Match 4</option>
-                            <option value="5">Match 5</option>
-                            <option value="6">Match 6</option>
-                            <option value="7">Match 7</option>
-                            <option value="8">Match 8</option>
-                            <option value="9">Match 9</option>
-                            <option value="10">Match 10</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">{{ _('RegEx Second') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('RegEx and Position of match for Seconds') }}">
-                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.ps">
-                        <select data-bind="value: settings.plugins.SlicerEstimator.psp">
-                            <option value="1">Match 1</option>
-                            <option value="2">Match 2</option>
-                            <option value="3">Match 3</option>
-                            <option value="4">Match 4</option>
-                            <option value="5">Match 5</option>
-                            <option value="6">Match 6</option>
-                            <option value="7">Match 7</option>
-                            <option value="8">Match 8</option>
-                            <option value="9">Match 9</option>
-                            <option value="10">Match 10</option>
-                        </select>
-                    </div>
-                </div>
-  				<div class="control-group">
-                    <label class="control-label">{{ _('GCODE or Slicer Comment Search') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Defindes if the Plugin should look for GCODE during print or scan the file once for a slicer comment.') }}">
-                        <select data-bind="value: settings.plugins.SlicerEstimator.search_mode">
-                            <option value="GCODE">GCODE</option>
-                            <option value="COMMENT">{{ _('Comment') }}</option>
-                        </select>
-                    </div>
-                </div>
-             	<div class="control-group">
-                    <label class="control-label">{{ _('GCODE') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('GCODE to watch') }}">
-                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.slicer_gcode">
-                    </div>
-                </div>
-        		<div class="control-group">
-                    <label class="control-label">{{ _('RegEx Comment') }}</label>
-                    <div class="controls" data-toggle="tooltip" title="{{ _('Comment to look for') }}">
-                        <input type="text" class="input-block-level" data-bind="value: settings.plugins.SlicerEstimator.search_pattern">
-                    </div>
-                </div>
-                <div class="help-block">{{ _('All not matching components are ignored so the remaining time calculation will be wrong in case of a mistake.
-                Initial settings are fine with Cura for example.') }}</div>
-            </div>
             <div id="SlicerEstimator_development" class="tab-pane">
                 <div class="help-block">{{ _('Developer settings - use at your own risk / enable it on request only') }}</div>
              	<div class="control-group">
@@ -277,5 +126,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
 </form>

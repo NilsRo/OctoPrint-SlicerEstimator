@@ -1,58 +1,24 @@
 # coding=utf-8
 from __future__ import absolute_import, unicode_literals
-from asyncio.log import logger
 from concurrent.futures import ThreadPoolExecutor
-from gettext import find
-from octoprint.printer.estimation import PrintTimeEstimator
+
+import re
+import io
+import os
+import sys
 
 import octoprint.plugin
 import octoprint.events
+import octoprint.filemanager
 import octoprint.filemanager.storage
-import re
-import io
-import time
-import os
-import sys
-import collections
-
-
-from octoprint.filemanager.analysis import AnalysisAborted
-from octoprint.filemanager.analysis import GcodeAnalysisQueue
-from octoprint.printer.estimation import PrintTimeEstimator
+import octoprint.filemanager.util
 from octoprint.events import Events
 
-class SlicerEstimator(PrintTimeEstimator):
-    def __init__(self, job_type):
-        PrintTimeEstimator.__init__(self, job_type)
-        self._job_type = job_type
-        self.estimated_time = -1.0
-        self.direct_time = False
-        self.average_prio = False
-        self.time_left = -1.0
-        self.cleaned_print_time = -1.0
+from .const import *
+from .metadata import *
+from .util import *
+from octoprint_SlicerEstimator.estimator import SlicerEstimator, SlicerEstimatorGcodeAnalysisQueue
 
-
-    def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
-        std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
-        self.cleaned_print_time = cleanedPrintTime
-
-        if self._job_type != "local" or self.estimated_time == -1.0 or cleanedPrintTime is None or progress is None:
-            # using standard estimator
-            return std_estimator
-        elif std_estimator[1] == "average" and self.average_prio:
-            # average more important than estimation
-            return std_estimator
-        else:
-            # return "slicerestimator" as Origin of estimation
-            if self.direct_time:
-                self.time_left = self.estimated_time                
-            else:
-                if progress >= 0.98 or (self.estimated_time - cleanedPrintTime) < 300.0:
-                    self.time_left = self.estimated_time - (self.estimated_time * progress)
-                else:
-                    self.time_left = self.estimated_time - cleanedPrintTime                    
-            logger.debug("SlicerEstimator: Estimation Reported {}".format(self.time_left))
-            return self.time_left, "slicerestimator"
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
@@ -60,35 +26,17 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.EventHandlerPlugin,
                             octoprint.plugin.ProgressPlugin,
                             octoprint.plugin.AssetPlugin,
-                            octoprint.plugin.ReloadNeedingPlugin):
+                            octoprint.plugin.ReloadNeedingPlugin,
+                            octoprint.filemanager.util.LineProcessorStream):
     def __init__(self):
         self._estimator = None
         self._slicer_estimation = None
         self._executor = ThreadPoolExecutor()
         self._plugins = dict()
+        self._filedata = dict()
+        self._slicer_filament_change = None
+        self._filament_change_cnt = 0
 
-        # Slicer defaults - actual Cura M117, PrusaSlicer, Cura, Simplify3D
-        self._slicer_def = [
-                ["M117","","",
-                "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                "M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-                1,1,1,2,3,"GCODE","M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s"],
-                ["M73","","",
-                "",
-                "M73 P([0-9]+) R([0-9]+).*",
-                "",
-                1,1,1,2,1,"GCODE","M73 P([0-9]+) R([0-9]+).*"],
-                ["","","",
-                "",
-                "",
-                ";TIME:([0-9]+)",
-                1,1,1,1,1,"COMMENT",";TIME:([0-9]+)"],
-                ["","","",
-                ";   Build time: ([0-9]+) hours? ([0-9]+) minutes",
-                ";   Build time: ([0-9]+) hours? ([0-9]+) minutes",
-                "",
-                1,1,1,2,1,"COMMENT",";   Build time: ([0-9]+) hours? ([0-9]+) minutes"]]
 
 
 # SECTION: Settings
@@ -97,10 +45,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # Setting löschen: self._settings.set([], None)
         self._update_settings_from_config()
         self._cleanup_uninstalled_plugins()
-        
+
         # Example for API calls
-        # helpers = self._plugin_manager.get_helpers("SlicerEstimator", 
-        #                                            "register_plugin", 
+        # helpers = self._plugin_manager.get_helpers("SlicerEstimator",
+        #                                            "register_plugin",
         #                                            "register_plugin_target",
         #                                            "unregister_plugin",
         #                                            "unregister_plugin_target",
@@ -108,13 +56,13 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         #                                            )
         # if helpers is None:
         #     self._logger.info("Slicer Estimator not installed")
-        # else:            
+        # else:
         #     self.se_register_plugin = helpers["register_plugin"]
         #     self.se_register_plugin_target = helpers["register_plugin_target"]
         #     self.se_unregister_plugin = helpers["unregister_plugin"]
         #     self.se_unregister_plugin_target = helpers["unregister_plugin_target"]
         #     self.se_get_metadata_file = helpers["get_metadata_file"]
-            
+
         #     self.se_register_plugin(self._identifier, self._plugin_name)
         #     self.se_register_plugin_target(self._identifier, "filelist_mobile_id","Filelist in Mobile")
         #     metadata = self.se_get_metadata_file(self._identifier,"filelist_mobile_id", "local", "Wanderstöcke Halterung.gcode")
@@ -127,28 +75,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         plugins[self._identifier]["targets"] = dict(printer= "Printer", filelist= "Filelist")
 
         return dict(
-            slicer="2",
-            slicer_gcode="M117",
-            pw="",
-            pd="",
-            ph="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-            pm="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-            ps="M117 Time Left ([0-9]+)h([0-9]+)m([0-9]+)s",
-            pwp=1,
-            pdp=1,
-            php=1,
-            pmp=2,
-            psp=3,
-            search_mode="GCODE",
-            search_pattern="",
             average_prio=True,
             use_assets=True,
-            slicer_auto=True,
-            estimate_upload=True,
-            metadata=False,
             metadata_filelist=True,
             metadata_filelist_align="top",
-            metadata_printer=False,
+            metadata_printer=True,
             metadata_list=[],
             useDevChannel=False,
             plugins=plugins
@@ -198,10 +129,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._slicer_conf = self._settings.get(["slicer"])
         self._logger.debug("SlicerEstimator: Slicer Setting {}".format(self._slicer_conf))
 
-        self._slicer_auto = self._settings.get(["slicer_auto"])
         self._average_prio = self._settings.get(["average_prio"])
-        self.estimate_upload = self._settings.get(["estimate_upload"])
-        self._metadata = self._settings.get(["metadata"])
         self._metadata_list = self._settings.get(["metadata_list"])
         self._useDevChannel = self._settings.get(["useDevChannel"])
         self._plugins = self._settings.get(["plugins"])
@@ -211,311 +139,78 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         self._logger.debug("Average: {}".format(self._average_prio))
 
-        if self._slicer_conf == "c":
-            self._slicer = self._slicer_conf
-            self._slicer_gcode = self._settings.get(["slicer_gcode"])
-            self._pw = re.compile(self._settings.get(["pw"]))
-            self._pd = re.compile(self._settings.get(["pd"]))
-            self._ph = re.compile(self._settings.get(["ph"]))
-            self._pm = re.compile(self._settings.get(["pm"]))
-            self._ps = re.compile(self._settings.get(["ps"]))
-
-            self._pwp = int(self._settings.get(["pwp"]))
-            self._pdp = int(self._settings.get(["pdp"]))
-            self._php = int(self._settings.get(["php"]))
-            self._pmp = int(self._settings.get(["pmp"]))
-            self._psp = int(self._settings.get(["psp"]))
-
-            self._search_mode = self._settings.get(["search_mode"])
-            self._search_pattern = self._settings.get(["search_pattern"])
-        else:
-            self._set_slicer_settings(int(self._slicer_conf))
-
-
-    def _set_slicer_settings(self, slicer):
-        self._slicer = slicer
-        self._slicer_gcode = self._slicer_def[int(slicer)][0]
-        self._pw = re.compile(self._slicer_def[int(slicer)][1])
-        self._pd = re.compile(self._slicer_def[int(slicer)][2])
-        self._ph = re.compile(self._slicer_def[int(slicer)][3])
-        self._pm = re.compile(self._slicer_def[int(slicer)][4])
-        self._ps = re.compile(self._slicer_def[int(slicer)][5])
-
-        self._pwp = self._slicer_def[int(slicer)][6]
-        self._pdp = self._slicer_def[int(slicer)][7]
-        self._php = self._slicer_def[int(slicer)][8]
-        self._pmp = self._slicer_def[int(slicer)][9]
-        self._psp = self._slicer_def[int(slicer)][10]
-
-        self._search_mode = self._slicer_def[int(slicer)][11]
-        self._search_pattern = self._slicer_def[int(slicer)][12]
-
 
 # SECTION: Estimation
-    def updateGcodeEstimation(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        if self._estimator is None:
-            return
-
-        if self._search_mode == "GCODE" and gcode and gcode == self._slicer_gcode:
-            self._logger.debug("SlicerEstimator: {} found - {}".format(gcode,cmd))
-            estimated_time = self._parseEstimation(cmd)
-            if estimated_time:
-                self._estimator.estimated_time = estimated_time
-        else:
-            return
-
-
-    # logs estimation on print progress      
-    def on_print_progress(self, storage, path, progress):
-        self._logger.debug("SlicerEstimator: Estimator {}sec, CleanedPrintTime {}sec".format(self._estimator.time_left, self._estimator.cleaned_print_time))
+    # Called by at sign in GCODE
+    def on_at_command(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
+        if phase == "sending" and command == "TIME_LEFT":
+            self._estimator.time_left = float(parameters)
+            
+            
+    # Process Gcode
+    def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
+        # Update Filament Change Time and Position from actual print
+        if self._slicer_filament_change and (gcode == "M600" or gcode =="T"):
+            if self._estimator.time_left > -1.0:
+                self._slicer_filament_change[self._filament_change_cnt][1] = self._estimator.time_left
+            self._slicer_filament_change[self._filament_change_cnt][3] = comm_instance._currentFile._pos
+            self._filament_change_cnt += 1
 
 
-    # estimator factory hook
-    def estimator_factory(self):
-        def factory(*args, **kwargs):
-            self._estimator = SlicerEstimator(*args, **kwargs)
-            self._estimator.average_prio = self._average_prio
-            self._estimator.direct_time = self._search_mode == "GCODE"
-            return self._estimator
-        return factory
-
+    # Hook after file upload for pre-processing
+    def on_file_upload(self, path, file_object, links=None, printer_profile=None, allow_overwrite=True, *args, **kwargs):
+        if not octoprint.filemanager.valid_file_type(path, type="gcode"):
+            return file_object
+        filedata = SlicerEstimatorFiledata(path, file_object, self._file_manager)
+        self._filedata[path] = filedata
+        return octoprint.filemanager.util.StreamWrapper(file_object.filename, filedata)        
+                 
 
     # EventHandlerPlugin for native information search
     def on_event(self, event, payload):
         if event == Events.PRINT_STARTED:
             origin = payload["origin"]
             path = payload["path"]
-            if origin == "local":                
-                if self._metadata:
-                    self._send_metadata_print_event(origin, path)
-                    self._send_filament_change_event(origin, path)
-                self._set_slicer(origin, path)
-                if self._search_mode == "COMMENT":
-                    self._estimator.direct_time = False
-                    self._logger.debug("Search started in file {}".format(path))
-                    self._executor.submit(
-                        self._search_slicer_comment_file, origin, path
-                    )
-                else:
-                    self._estimator.direct_time = True
+            if origin == "local":
+                self._filament_change_cnt = 0
+                slicer_additional = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_additional")
+                if slicer_additional:
+                    if slicer_additional["slicer"] == SLICER_SIMPLIFY3D:
+                        # Simplify3D has no embedded time left
+                        self._estimator.use_progress = True
+                    else:
+                        self._estimator.use_progress = False
+                    self._estimator.time_total = slicer_additional["printtime"]
+                self._slicer_filament_change = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_filament_change")
+                self._send_metadata_print_event(origin, path)
+                self._send_filament_change_event(origin, path)
+
         if event == Events.PRINT_CANCELLED or event == Events.PRINT_FAILED or event == Events.PRINT_DONE:
             # Init of Class variables for new estimation
             self._slicer_estimation = None
             self._sliver_estimation_str = None
             self._estimator.estimated_time = -1
+            self._slicer_filament_change = None
             self._logger.debug("Event received: {}".format(event))
-        if event == Events.FILE_ADDED and self._metadata:            
-            if payload["storage"] == "local" and payload["type"][1] == "gcode":                
-                self._logger.debug("File uploaded and will be scanned for Metadata")
-                self._set_slicer(payload["storage"], payload["path"])
-                self._find_metadata(payload["storage"], payload["path"])
-                if self._slicer == 0 or self._slicer == 1:
-                    self._update_filament_changes_metadata(payload["storage"], payload["path"])
+
+        if event == Events.PRINT_DONE:
+            origin = payload["origin"]
+            path = payload["path"]
+            self._file_manager._storage_managers["local"].set_additional_metadata(path, "slicer_filament_change", self._slicer_filament_change, overwrite=True)
+
+        if event == Events.FILE_ADDED:
+            if payload["storage"] == "local" and payload["type"][1] == "gcode":
+                self._filedata[payload["path"]].store_metadata()
 
 
-# SECTION: File metadata
+    # estimator factory hook
+    def estimator_factory(self):
+        def factory(*args, **kwargs):
+            self._estimator = SlicerEstimator(*args, **kwargs)
+            self._estimator.average_prio = self._average_prio            
+            return self._estimator
+        return factory
 
-#TODO: Verschieben von GCODE Files in Ordner anhand ihrer Metadaten
-    # search for material data
-    def _find_metadata(self, origin, path):
-        # Format: ;Slicer info:<key>;<Displayname>;<Value>
-        results = self._search_in_file_start_all(origin, path, ";Slicer info:", 5000)
-        if results is not None:
-            filament = dict()
-            for result in results:
-                slicer_info = result[13:].rstrip("\n").split(";")
-                if len(slicer_info) == 3:
-                    # old format
-                    filament[slicer_info[0]] = slicer_info[2].strip()
-                else:
-                    filament[slicer_info[0]] = slicer_info[1].strip()
-
-        self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer", filament, overwrite=True)
-        self._logger.debug(self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer"))
-
-
-    # Update all metadata in files
-    def _update_metadata_in_files(self):
-        results =  self._file_manager._storage_managers["local"].list_files(recursive=True)
-        filelist = dict()
-        if results is not None:
-            for resultKey in results:
-                if results[resultKey]["type"] == "machinecode":
-                    filelist[results[resultKey]["path"]] =  results[resultKey]
-                if results[resultKey]["type"] == "folder":
-                    self._flatten_files(results[resultKey], filelist) 
-            for path in filelist:        
-                self._file_manager._storage_managers["local"].remove_additional_metadata(path, "slicer")
-                self._find_metadata("local", path)
-
-
-    # recursive function to flatten the filelist hierarchy
-    def _flatten_files(self, folder, filelist = dict()):
-        for fileKey in folder["children"]:
-            if folder["children"][fileKey]["type"] == "machinecode":
-                filelist[folder["children"][fileKey]["path"]] = folder["children"][fileKey]
-            if folder["children"][fileKey]["type"] == "folder":
-               self._flatten_files(folder["children"][fileKey], filelist)
-
- 
-    # read filament change from GCODE and save to file metadata
-    def _update_filament_changes_metadata(self, origin, path):
-        filament_changes_arr = self._search_filament_changes(origin, path)
-        if filament_changes_arr:
-            self._file_manager._storage_managers[origin].set_additional_metadata(path, "slicer_filament_change", filament_changes_arr, overwrite=True)
-            self._logger.debug("filament changes found: " + self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_filament_change"))
-
-
-
-# SECTION: Estimation helper
-    # set the slicer before starting the print, fallback to config if fails
-    def _set_slicer(self, origin, path):
-        if self._slicer_auto:
-            slicer_detected = self._detect_slicer(origin, path)
-            if slicer_detected:
-                self._set_slicer_settings(slicer_detected)
-            else:
-                self._set_slicer_settings(self._slicer_conf)
-
-
-   # slicer auto selection
-    def _detect_slicer(self, origin, path):
-        #TODO: Add saving information in metadata
-        line = self._search_in_file_regex(origin, path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
-        if line:
-            if  "Cura_SteamEngine" in line:
-                self._logger.info("Detected Cura")
-                return 2
-            elif "PrusaSlicer" in line:
-                self._logger.info("Detected PrusaSlicer")
-                return 1
-            elif "Simplify3D" in line:
-                self._logger.info("Detected Simplify3D")
-                return 3
-        else:
-            self._logger.warning("Autoselection of slicer not successful!")
-
-
-    def _parseEstimation(self,cmd):
-        if self._pw.pattern != "":
-            mw = self._pw.match(cmd)
-        else:
-            mw = None
-        if self._pd.pattern != "":
-            md = self._pd.match(cmd)
-        else:
-            md = None
-        if self._ph.pattern != "":
-            mh = self._ph.match(cmd)
-        else:
-            mh = None
-        if self._pm.pattern != "":
-            mm = self._pm.match(cmd)
-        else:
-            mm = None
-        if self._ps.pattern != "":
-            ms = self._ps.match(cmd)
-        else:
-            ms = None
-
-        if mw or md or mh or mm or ms:
-            if mw:
-                weeks = float(mw.group(self._pwp))
-            else:
-                weeks = 0
-            if md:
-                days = float(md.group(self._pdp))
-            else:
-                days = 0
-            if mh:
-                hours = float(mh.group(self._php))
-            else:
-                hours = 0
-            if mm:
-                minutes = float(mm.group(self._pmp))
-            else:
-                minutes = 0
-            if ms:
-                seconds = float(ms.group(self._psp))
-            else:
-                seconds = 0
-            self._logger.debug("SlicerEstimator: Weeks {}, Days {}, Hours {}, Minutes {}, Seconds {}".format(weeks, days, hours, minutes, seconds))
-            estimated_time = weeks*7*24*60*60 + days*24*60*60 + hours*60*60 + minutes*60 + seconds
-            self._logger.debug("SlicerEstimator: {}sec".format(estimated_time))
-            return estimated_time
-        else:
-            self._logger.debug("SlicerEstimator: unknown cmd {}".format(cmd))
-
-
-    # file search slicer comment
-    def _search_slicer_comment_file(self, origin, path):
-        self._slicer_estimation = None
-        slicer_estimation_str = self._search_in_file_regex(origin, path, self._search_pattern)
-
-        if slicer_estimation_str:
-            self._logger.debug("Slicer-Comment {} found.".format(slicer_estimation_str))
-            self._slicer_estimation = self._parseEstimation(slicer_estimation_str)
-            self._estimator.estimated_time = self._slicer_estimation
-        else:
-            self._logger.warning("Slicer-Comment not found. Please check if you selected the correct slicer.")
-
-
-    # generic file search with RegEx
-    def _search_in_file_regex(self, origin, path, pattern, maxrows = 0, multiple = False):
-        path_on_disk = self._file_manager.path_on_disk(origin, path)
-        self._logger.debug("Path on disc searched: {}".format(path_on_disk))
-        compiled = re.compile(pattern)
-        rownumber = 0        
-        return_arr = []
-        
-        with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
-            for line in f:
-                rownumber += 1
-                if compiled.match(line):
-                    if multiple:
-                       return_arr.append([rownumber, line])
-                    else:                        
-                        return line
-                if maxrows != 0 and rownumber >= maxrows:
-                    break
-            if multiple:
-                return return_arr
-
-
-    # generic file search and find all occurences beginning with
-    def _search_in_file_start_all(self, origin, path, pattern, rows = 0):
-        path_on_disk = self._file_manager.path_on_disk(origin, path)
-        self._logger.debug("Path on disc searched: {}".format(path_on_disk))
-        steps = rows
-        return_arr = []
-        
-        with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
-            for line in f:
-                if line[:len(pattern)] == pattern:
-                    return_arr.append(line)
-                if rows > 0:
-                    steps -= 1
-                    if steps <= 0:
-                        return return_arr
-        return return_arr
-    
-    
-    # scan for filament changes
-    def _search_filament_changes(self, origin, path):
-        if origin == "local":
-            regexStr = "^(M600 |T[0-9]|" + self._slicer_gcode + " )"
-            commands = self._search_in_file_regex(origin, path, regexStr, 0, True)        
-            change_list = list(filter(lambda p: p[1][:4] == "M600" or p[1][:1] == "T", commands))
-            time_list = list(filter(lambda p: p[1][:len(self._slicer_gcode)] == self._slicer_gcode and self._parseEstimation(p[1]), commands))
-            return_arr = []
-
-            if len(change_list) > 0 and len(time_list) > 0:
-                for change in change_list:
-                    time_line = min(time_list, key=lambda x:abs(x[0]-change[0]))
-                    self._logger.debug("Slicer-Comment {} found for filament change.".format(time_line[1]))
-                    slicer_estimation = [change[1].split()[0], self._parseEstimation(time_line[1])]
-                    return_arr.append(slicer_estimation)
-                return return_arr
             
 
 # SECTION: Analysis Queue Estimation (file upload)
@@ -524,13 +219,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     def run_analysis(self, path):
-        #TODO: Add saving information in metadata
-        self._set_slicer("local", path)
-        self._logger.debug("Search started in file {}".format(path))
-        slicer_estimation_str = self._search_in_file_regex("local", path, self._search_pattern)
-        if slicer_estimation_str:
-            self._logger.debug("Slicer-Estimation {} found.".format(slicer_estimation_str))
-            return self._parseEstimation(slicer_estimation_str)
+        slicer_additional = self._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_additional")
+        if slicer_additional:
+                self._estimator.estimated_time = slicer_additional["printtime"]
         else:
             self._logger.warning("Slicer-Estimation not found. Please check if you selected the correct slicer.")
 
@@ -543,10 +234,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             plugin_identifier (String): OctoPrint Plugin Identifier
             plugin_name (String): OctoPrints plugins name (or any other name you like to use)
         """
-        if plugin_identifier in self._plugin_manager.plugins.keys():    
+        if plugin_identifier in self._plugin_manager.plugins.keys():
             if plugin_identifier in self._plugins:
                 self._logger.debug("Plugin {} already registered".format(plugin_identifier))
-            else:
+            else:                
                 self._logger.debug("Plugin {} registered".format(plugin_identifier))
                 self._plugins[plugin_identifier] = dict()
                 self._plugins[plugin_identifier]["name"] = plugin_name
@@ -577,7 +268,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self._logger.debug("Plugins {} target {} registered".format(plugin_identifier, target))
         else:
             self._logger.error("Plugin {} tried to register target {} but not found in registry".format(plugin_identifier, target))
-            
+
 
     def unregister_plugin(self, plugin_identifier):
         """Unrgister a plugin if you like to remove all settings
@@ -609,7 +300,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.info("Plugin {} unregistered target {}".format())
         else:
             self._logger.error("Plugin {} tried to unregister target {} but not found in registry".format(plugin_identifier, target))
-            
+
 
     def get_registered_plugins(self):
         """Return list of plugins registered
@@ -634,7 +325,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         else:
             self._logger.error("Plugin {} tried to gets targets but not found in registry".format(plugin_identifier))
 
-            
+
     def get_metadata_file(self, plugin_identifier, target, origin, path):
         """Get the Metadata to a file in an Array containing a tripple array
 
@@ -674,24 +365,24 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             custom_payload[plugin] = dict()
             for target in self._plugins[plugin]["targets"]:
                 custom_payload[plugin][target] = self.get_metadata_file(plugin, target, origin, path)
-        self._logger.info("Send Metadata Print Event for file {}".format(path))       
+        self._logger.info("Send Metadata Print Event for file {}".format(path))
         self._event_bus.fire(event, payload=custom_payload)
 
-        
+
     def _send_filament_change_event(self, origin, path):
         event = "plugin_SlicerEstimator_filament_change"
-        custom_payload = self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_M600")
+        custom_payload = self._file_manager._storage_managers[origin].get_additional_metadata(path,"slicer_filament_change")
         if custom_payload:
             self._logger.info("Send Filament Change Event for file {}".format(path))
             self._event_bus.fire(event, payload=custom_payload)
 
-    
-    # Cleanup uninstalled registered plugins    
+
+    # Cleanup uninstalled registered plugins
     def _cleanup_uninstalled_plugins(self):
         for plugin in self._plugins.keys():
             if plugin not in self._plugin_manager.plugins.keys():
                 self.unregister_plugin(plugin)
-    
+
 
     # def get_api_commands(self):
     #     return dict(get_filament_data = [])
@@ -781,41 +472,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
 
-# SECTION: Analysis Queue Class
-class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue):
-    def __init__(self, finished_callback, plugin):
-        super(SlicerEstimatorGcodeAnalysisQueue, self).__init__(finished_callback)
-        self._plugin = plugin
-        self._result_slicer = None
 
-    def _do_analysis(self, high_priority=False):
-        try: # run a standard analysis and update estimation if found in GCODE
-            result = super(SlicerEstimatorGcodeAnalysisQueue, self)._do_analysis(high_priority)
-            if self._plugin.estimate_upload and not self._aborted:
-                future = self._plugin._executor.submit(
-                    self._run_analysis, self._current.path
-                )
-                # Break analysis of abort requested
-                while not future.done() and not self._aborted:
-                    time.sleep(1)
-                if future.done() and self._result_slicer:
-                    self._logger.info("Found {}s from slicer for file {}".format(self._result_slicer, self._current.name))
-                    result["estimatedPrintTime"] = self._result_slicer
-                elif not future.done() and self._aborted:
-                    future.shutdown(wait=False)
-                    raise AnalysisAborted(reenqueue=self._reenqueue)
-                return result
-        except AnalysisAborted as _:
-            self._logger.info("Probably starting printing, aborting analysis of file-upload.")
-            raise
-
-    def _do_abort(self, reenqueue=True):
-        super(SlicerEstimatorGcodeAnalysisQueue, self)._do_abort(reenqueue)
-
-    def _run_analysis(self, path):
-        self._result_slicer = self._plugin.run_analysis(path)
-        
-        
 
 __plugin_name__ = "Slicer Estimator"
 __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
@@ -824,7 +481,7 @@ def _register_custom_events(*args, **kwargs):
     return ["metadata_print"]
 
 # SECTION: Register API for other plugins
-def __plugin_load__():  
+def __plugin_load__():
     global __plugin_implementation__
     __plugin_implementation__ = SlicerEstimatorPlugin()
 
@@ -836,12 +493,14 @@ def __plugin_load__():
         unregister_plugin_target=__plugin_implementation__.unregister_plugin_target,
         get_metadata_file=__plugin_implementation__.get_metadata_file
     )
-    
+
     global __plugin_hooks__
     __plugin_hooks__ = {
-        "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.updateGcodeEstimation,
+        "octoprint.comm.protocol.gcode.sent": __plugin_implementation__.on_gcode_sent,
         "octoprint.printer.estimation.factory": __plugin_implementation__.estimator_factory,
         "octoprint.filemanager.analysis.factory": __plugin_implementation__.analysis_queue_factory,
+        "octoprint.filemanager.preprocessor": __plugin_implementation__.on_file_upload,
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
+        "octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.on_at_command,
         "octoprint.events.register_custom_events": _register_custom_events
     }
