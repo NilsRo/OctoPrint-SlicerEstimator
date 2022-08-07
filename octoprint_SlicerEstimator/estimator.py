@@ -17,17 +17,17 @@ class SlicerEstimator(PrintTimeEstimator):
 
     def estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType):
         std_estimator = PrintTimeEstimator.estimate(self, progress, printTime, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType)
+        logger.debug("SlicerEstimator: Time Left {}, Use Progress {}, Progress {}, Cleaned Print Time {}, Stat. Total Print Time {}, Stat. Total Print Time Type {}".format(self.time_left, self.use_progress, progress, cleanedPrintTime, statisticalTotalPrintTime, statisticalTotalPrintTimeType))
 
         if self._job_type != "local" or ( self.time_left == -1.0 and not self.use_progress ) or cleanedPrintTime is None or progress is None:
-            # using standard estimator
-            self.time_left = std_estimator[0]
+            # using standard estimator            
             return std_estimator
         elif std_estimator[1] == "average" and self.average_prio:
             # average more important than estimation
             self.time_left = std_estimator[0]
             return std_estimator
         elif self.use_progress:
-            # progress based estimation - as GCODe position based not very accurate
+            # progress based estimation - as GCODE position based not very accurate
             self.time_left = self.time_total - (progress * 0.01 * self.time_total)
             logger.debug("SlicerEstimator: Estimation Reported {}".format(self.time_left))
             return self.time_left, "slicerestimator"
