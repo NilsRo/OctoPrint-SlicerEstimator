@@ -3,12 +3,12 @@
 - [Estimation](#estimation)
 - [Custom metadata](#custom-metadata)
 - [Tool changes (MMU and M600)](#tool-changes-by-mmu-and-m600)
-  * [API - for other plugin developers](#api---for-other-plugin-developers)
-  * [Slicers supported](#slicers-supported)
-    + [Cura](#cura)
-    + [Simplify3D](#simplify3d)
-    + [PrusaSlicer](#prusaslicer)
-  * [Notes](#notes)
+- [API - for other plugin developers](#api---for-other-plugin-developers)
+- [Slicers supported](#slicers-supported)
+  * [Cura](#cura)
+  * [Simplify3D](#simplify3d)
+  * [PrusaSlicer](#prusaslicer)
+- [Notes](#notes)
 
 With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
 Also you can add custom metadata that will be added to the filebrowser to get e.g. the material the GCODE was created for.
