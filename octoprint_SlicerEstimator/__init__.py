@@ -178,9 +178,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                     if slicer_additional["slicer"] == SLICER_SIMPLIFY3D:
                         # Simplify3D has no embedded time left
                         self._estimator.use_progress = True
+                        self._estimator.time_total = slicer_additional["printtime"]
                     else:
                         self._estimator.use_progress = False
-                    self._estimator.time_total = slicer_additional["printtime"]
                 self._slicer_filament_change = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_filament_change")
                 self._send_metadata_print_event(origin, path)
                 self._send_filament_change_event(origin, path)
@@ -189,7 +189,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             # Init of Class variables for new estimation
             self._slicer_estimation = None
             self._sliver_estimation_str = None
-            self._estimator.estimated_time = -1
+            self._estimator.time_left = -1.0
+            self._estimator.time_total = -1.0
+            self._estimator.use_progress = False
             self._slicer_filament_change = None
             self._logger.debug("Event received: {}".format(event))
 
@@ -345,11 +347,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 return_list = []
                 meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target] == True, self._metadata_list)
                 additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer")
-                for meta_item in meta_selected:
-                    additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer")
-                    if meta_item["id"] in additional_metadata:
-                        return_item = [meta_item["id"], meta_item["description"], additional_metadata[meta_item["id"]]]
-                        return_list.append(return_item)
+                if additional_metadata:
+                    for meta_item in meta_selected:
+                        if meta_item["id"] in additional_metadata:
+                            return_item = [meta_item["id"], meta_item["description"], additional_metadata[meta_item["id"]]]
+                            return_list.append(return_item)
                 return return_list
             else:
                 self._logger.error("Target {} of plugin {} not registered.".format(target, plugin_identifier))
