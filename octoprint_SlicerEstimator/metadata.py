@@ -104,10 +104,10 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
             if decoded_line[:4] == "M73 ":
                 re_result = self._regex.match(decoded_line)
                 if re_result:
-                    if self.printtime == 0.0:
-                        self.printtime = re_result[1]
-                    else:
-                        self._time_list.append(self._line_cnt, re_result[1])
+                    # first remaining time is the overall printtime
+                    if self.printtime == -1.0:
+                        self.printtime = float(re_result[2])*60
+                    self._time_list.append([self._line_cnt, float(re_result[2])*60])
         elif self.slicer == SLICER_SIMPLIFY3D:
             re_result = self._regex.match(decoded_line)
             if re_result:
