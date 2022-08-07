@@ -6,11 +6,9 @@
   * [API - for other plugin developers](#api---for-other-plugin-developers)
   * [Slicers supported](#slicers-supported)
     + [Cura](#cura)
-    + [Cura M117](#cura-m117)
     + [Simplify3D](#simplify3d)
     + [PrusaSlicer](#prusaslicer)
   * [Notes](#notes)
-  * [Custom Settings](#custom-settings)
 
 With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
 Also you can add custom metadata that will be added to the filebrowser to get e.g. the material the GCODE was created for.
@@ -61,8 +59,6 @@ Metadata stored can be easily used by other plugins. [An API description is avai
 ### Cura
 With Cura native no changes has to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
 
-![](images/Cura.png)
-
 ### Simplify3D
 With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
 
@@ -79,3 +75,4 @@ Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will
  * Also adding e.g. linear advance to Cura in post processing will lead to a lower estimation as Cura does not know the changes done.
  * Due to general changes in the handling custom rules and M117 command of Cura is not supported anymore.
  * File is changed during upload, so it is neccessary to upload a file again to get a slicer based estimation.
+ * Filament Changes will be updated after a print to have a more accurate estimation. So the time shown could be changing after multiple prints
