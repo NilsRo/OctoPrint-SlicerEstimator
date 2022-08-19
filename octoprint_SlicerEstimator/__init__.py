@@ -141,7 +141,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     # sends the data-dictonary to the client/browser
     def _sendDataToClient(self, dataDict):
         self._plugin_manager.send_plugin_message(self._identifier, dataDict)
-        self._lastSendClientData = dataDict
 
 
 # SECTION: Estimation
