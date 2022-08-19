@@ -18,7 +18,7 @@ from .const import *
 from .metadata import *
 from .util import *
 from octoprint_SlicerEstimator.estimator import SlicerEstimator, SlicerEstimatorGcodeAnalysisQueue
-
+from flask_babel import gettext
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
@@ -36,7 +36,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._filedata = dict()
         self._slicer_filament_change = None
         self._filament_change_cnt = 0
-
 
 
 # SECTION: Settings
@@ -138,6 +137,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._estimator.average_prio = self._average_prio
 
         self._logger.debug("Average: {}".format(self._average_prio))
+        
+    # sends the data-dictonary to the client/browser
+    def _sendDataToClient(self, dataDict):
+        self._plugin_manager.send_plugin_message(self._identifier, dataDict)
+        self._lastSendClientData = dataDict
 
 
 # SECTION: Estimation
@@ -181,6 +185,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                         self._estimator.time_total = slicer_additional["printtime"]
                     else:
                         self._estimator.use_progress = False
+                else:
+                    self._sendDataToClient(dict(notifyType="info", notifyTitle=gettext("Slicer Estimator Info"), notifyMessage=gettext("No print time estimation from slicer available. Please upload GCODE file again."), notifyHide=True))
                 self._slicer_filament_change = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_filament_change")
                 self._send_metadata_print_event(origin, path)
                 self._send_filament_change_event(origin, path)
@@ -200,10 +206,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             path = payload["path"]
             self._file_manager._storage_managers["local"].set_additional_metadata(path, "slicer_filament_change", self._slicer_filament_change, overwrite=True)
 
-        if event == Events.FILE_ADDED:
+        if event == Events.FILE_ADDED:            
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
+                if self._filedata[payload["path"]].slicer != None:
+                    self._sendDataToClient(dict(notifyType="warning", notifyTitle=gettext("Slicer Estimator Warning"), notifyMessage=gettext("Slicer not detected. Please open a ticket if the slicer should be known..."), notifyHide=False))
                 self._filedata[payload["path"]].store_metadata()
-
+                
 
     # estimator factory hook
     def estimator_factory(self):

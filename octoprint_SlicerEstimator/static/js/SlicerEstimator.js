@@ -30,6 +30,23 @@ $(function() {
       : formatDuration;
       return fmt(changeTime);
     }; 
+
+    // receive data from server
+    self.onDataUpdaterPluginMessage = function (plugin, data) {
+      // NotificationMessages
+      if (data.notifyType){
+        var notfiyType = data.notifyType;
+        var notifyTitle = data.notifyTitle;
+        var notifyMessage = data.notifyMessage;
+        var notifyHide = data.notifyHide;
+              new PNotify({
+                  title: notifyTitle,
+                  text: notifyMessage,
+                  type: notfiyType,
+                  hide: notifyHide
+                  });
+      }
+    };
  
 
     // --- Estimator
