@@ -38,6 +38,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._filament_change_cnt = 0
 
 
+
 # SECTION: Settings
     def on_after_startup(self):
         self._logger.info("Started up SlicerEstimator")
@@ -123,6 +124,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         ]
 
 
+
 # SECTION: Settings helper
     def _update_settings_from_config(self):
         self._slicer_conf = self._settings.get(["slicer"])
@@ -137,10 +139,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._estimator.average_prio = self._average_prio
 
         self._logger.debug("Average: {}".format(self._average_prio))
-        
+
+
     # sends the data-dictonary to the client/browser
     def _sendDataToClient(self, dataDict):
         self._plugin_manager.send_plugin_message(self._identifier, dataDict)
+
 
 
 # SECTION: Estimation
@@ -148,8 +152,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     def on_at_command(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
         if phase == "sending" and command == "TIME_LEFT":
             self._estimator.time_left = float(parameters)
-            
-            
+
+
     # Process Gcode
     def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         # Update Filament Change Time and Position from actual print
@@ -166,8 +170,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             return file_object
         filedata = SlicerEstimatorFiledata(path, file_object, self._file_manager)
         self._filedata[path] = filedata
-        return octoprint.filemanager.util.StreamWrapper(file_object.filename, filedata)        
-                 
+        return octoprint.filemanager.util.StreamWrapper(file_object.filename, filedata)
+
 
     # EventHandlerPlugin for native information search
     def on_event(self, event, payload):
@@ -205,22 +209,22 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             path = payload["path"]
             self._file_manager._storage_managers["local"].set_additional_metadata(path, "slicer_filament_change", self._slicer_filament_change, overwrite=True)
 
-        if event == Events.FILE_ADDED:            
+        if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
                 if self._filedata[payload["path"]].slicer != None:
                     self._sendDataToClient(dict(notifyType="warning", notifyTitle=gettext("Slicer Estimator Warning"), notifyMessage=gettext("Slicer not detected. Please open a ticket if the slicer should be known..."), notifyHide=False))
                 self._filedata[payload["path"]].store_metadata()
-                
+
 
     # estimator factory hook
     def estimator_factory(self):
         def factory(*args, **kwargs):
             self._estimator = SlicerEstimator(*args, **kwargs)
-            self._estimator.average_prio = self._average_prio            
+            self._estimator.average_prio = self._average_prio
             return self._estimator
         return factory
 
-            
+
 
 # SECTION: Analysis Queue Estimation (file upload)
     def analysis_queue_factory(self, *args, **kwargs):
@@ -235,6 +239,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.warning("Slicer-Estimation not found. Please check if you selected the correct slicer.")
 
 
+
 # SECTION: API
     def register_plugin(self, plugin_identifier, plugin_name):
         """Register a plugin to add it to the setting
@@ -246,7 +251,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if plugin_identifier in self._plugin_manager.plugins.keys():
             if plugin_identifier in self._plugins:
                 self._logger.debug("Plugin {} already registered".format(plugin_identifier))
-            else:                
+            else:
                 self._logger.debug("Plugin {} registered".format(plugin_identifier))
                 self._plugins[plugin_identifier] = dict()
                 self._plugins[plugin_identifier]["name"] = plugin_name
@@ -416,6 +421,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     #         return flask.jsonify(results)
 
 
+
 # SECTION: Assets
     def get_assets(self):
         # Define your plugin's asset files to automatically include in the
@@ -426,6 +432,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             css=["css/SlicerEstimator.css"],
             less=["less/SlicerEstimator.less"]
         )
+
 
 
 # SECTION: software update hook
@@ -488,6 +495,8 @@ __plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
 
 def _register_custom_events(*args, **kwargs):
     return ["metadata_print"]
+
+
 
 # SECTION: Register API for other plugins
 def __plugin_load__():
