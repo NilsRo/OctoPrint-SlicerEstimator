@@ -34,7 +34,7 @@ $(function() {
     // receive data from server
     self.onDataUpdaterPluginMessage = function (plugin, data) {
       // NotificationMessages
-      if (data.notifyType){
+      if (data.notifyType) {
         var notfiyType = data.notifyType;
         var notifyTitle = data.notifyTitle;
         var notifyMessage = data.notifyMessage;
@@ -45,6 +45,26 @@ $(function() {
                   type: notfiyType,
                   hide: notifyHide
                   });
+      }
+      if (data.notifyMessageID) {
+        switch (data.notifyMessageID) {
+          case "no_estimation":
+            new PNotify({
+              title: "Slicer Estimator",
+              text: gettext("No print time estimation from slicer available. Please upload GCODE file again."),
+              type: "info",
+              hide: true
+              });
+            break;
+          case "no_slicer_detected":
+            new PNotify({
+              title:  "Slicer Estimator",
+              text: gettext("Slicer not detected. Please open a ticket if the slicer should be known..."),
+              type: "warning",
+              hide: false
+              });
+            break;
+        }
       }
     };
  
