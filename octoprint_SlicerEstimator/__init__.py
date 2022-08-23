@@ -216,7 +216,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
-                if self._filedata[payload["path"]].slicer != None:
+                if self._filedata[payload["path"]].slicer == None:
                     self._sendNotificationToClient("no_slicer_detected")
                 self._filedata[payload["path"]].store_metadata()
 
