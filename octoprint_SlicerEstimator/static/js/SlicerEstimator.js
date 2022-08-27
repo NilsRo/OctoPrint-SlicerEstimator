@@ -64,6 +64,14 @@ $(function() {
               hide: false
               });
             break;
+            case "no_timecodes_found":
+              new PNotify({
+                title:  "Slicer Estimator",
+                text: gettext("No timecodes found. Please check if the reamining time function of the slicer is active."),
+                type: "warning",
+                hide: false
+                });
+              break;            
         }
       }
     };

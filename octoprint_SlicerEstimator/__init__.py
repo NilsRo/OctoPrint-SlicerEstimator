@@ -87,13 +87,16 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     def get_settings_version(self):
-        return 2
+        return 3
 
 
     def on_settings_migrate(self, target, current):
+        self._logger.info("SlicerEstimator: Updating Metadata from files...")
+        metadata_handler = SlicerEstimatorMetadata("local", self._file_manager)            
+        metadata_handler.update_metadata_in_files()
+
         if current is not None:
             self._logger.info("SlicerEstimator: Setting migration from version {} to {}".format(current, target))
-            self._update_metadata_in_files()
 
             if current < 2:
                 # Move settings to a dynamic dict to support other plugins
@@ -127,9 +130,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 # SECTION: Settings helper
     def _update_settings_from_config(self):
-        self._slicer_conf = self._settings.get(["slicer"])
-        self._logger.debug("SlicerEstimator: Slicer Setting {}".format(self._slicer_conf))
-
         self._average_prio = self._settings.get(["average_prio"])
         self._metadata_list = self._settings.get(["metadata_list"])
         self._useDevChannel = self._settings.get(["useDevChannel"])
@@ -363,7 +363,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             if target in self._plugins[plugin_identifier]["targets"].keys():
                 return_list = []
                 meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target] == True, self._metadata_list)
-                additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer")
+                additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer_metadata")
                 if additional_metadata:
                     for meta_item in meta_selected:
                         if meta_item["id"] in additional_metadata:
