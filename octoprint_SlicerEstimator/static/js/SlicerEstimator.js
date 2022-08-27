@@ -314,7 +314,6 @@ $(function() {
 
     //reset metadata list in printerStateViewModel
     self.removeMetadata = function() {
-      debugger
       self.filamentChangeArr.removeAll();
       self.currentMetadataArr.removeAll();
     };
