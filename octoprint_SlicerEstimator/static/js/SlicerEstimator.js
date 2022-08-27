@@ -166,8 +166,8 @@ $(function() {
       let return_value = "";
 
       //custom metadata
-      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
-        for (const [key, value] of Object.entries(data.slicer)) {
+      if (data.slicer_metadata != null && Object.keys(data.slicer_metadata).length > 0) {
+        for (const [key, value] of Object.entries(data.slicer_metadata)) {
           meta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === key && elem.targets["SlicerEstimator"]["filelist"]() === true);
           let description = "No description";
           if (meta != null) {
@@ -220,8 +220,8 @@ $(function() {
         self.currentMetadataArr.removeAll();
         if (typeof actualFile !== 'undefined') {
           enabledMeta.forEach(function(data) {
-            if (actualFile.slicer != null && Object.keys(actualFile.slicer).length > 0) {
-              item = actualFile.slicer[data.id()];
+            if (actualFile.slicer_metadata != null && Object.keys(actualFile.slicer_metadata).length > 0) {
+              item = actualFile.slicer_metadata[data.id()];
               if (item != null) {
                 let returnArr = [];
                 returnArr["description"] = data.description;

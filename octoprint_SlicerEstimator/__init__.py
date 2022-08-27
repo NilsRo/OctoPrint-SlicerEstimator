@@ -46,6 +46,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._update_settings_from_config()
         self._cleanup_uninstalled_plugins()
 
+        # self.on_settings_migrate(3,1)
         # Example for API calls
         # helpers = self._plugin_manager.get_helpers("SlicerEstimator",
         #                                            "register_plugin",
