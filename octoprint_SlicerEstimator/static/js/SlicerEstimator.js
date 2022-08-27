@@ -23,13 +23,13 @@ $(function() {
       }
       return result;
     };
-   
+
     self.filamentChangeTimeFormat = function(changeTime) {
       let fmt = self.settingsViewModel.appearance_fuzzyTimes()
       ? formatFuzzyPrintTime
       : formatDuration;
       return fmt(changeTime);
-    }; 
+    };
 
     // receive data from server
     self.onDataUpdaterPluginMessage = function (plugin, data) {
@@ -65,17 +65,17 @@ $(function() {
               });
             break;
           case "no_timecodes_found":
-              new PNotify({
-                title:  "Slicer Estimator",
-                text: gettext("No timecodes found. Please check if the remaining time feature in the slicer is active."),
-                type: "warning",
-                hide: false
-                });
-              break;            
+            new PNotify({
+              title:  "Slicer Estimator",
+              text: gettext("No timecodes found. Please check if the remaining time feature in the slicer is active."),
+              type: "warning",
+              hide: false
+              });
+            break;
         }
       }
     };
- 
+
 
     // --- Estimator
 
@@ -152,7 +152,7 @@ $(function() {
 
     // Overwrite the enableAdditionalData function to handle available metadata
     self.filesViewModel.slicerEnableAdditionalData = function(data) {
-      if (data.slicer != null && Object.keys(data.slicer).length > 0) {
+      if ((data.slicer_metadata != null && Object.keys(data.slicer_metadata).length > 0) || (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0)) {
           return true;
       } else {
           return self.filesViewModel.originalEnableAdditionalData(data);
@@ -185,9 +185,9 @@ $(function() {
             let changeType;
             if (value[0] == "M600") {
               changeType = gettext("filament change (M600)");
-            } else {              
+            } else {
               changeType = gettext("filament") + " (" + gettext("tool") + " " + value[0].substring(1,2) +")";
-            }            
+            }
             return_value += cnt + ". " + changeType + ": " + changeTimeString +'<br>';
           }
         }
@@ -239,7 +239,7 @@ $(function() {
             if (changeList != null) {
               let cnt = 0
               for (let item of changeList) {
-                let returnArr = [];                  
+                let returnArr = [];
                 let changeType;
                 let changeTime;
                 cnt += 1;
@@ -249,7 +249,7 @@ $(function() {
                     changeType = gettext("filament change (M600)");
                   } else {
                     changeType = gettext("filament") + " (" + gettext("tool") + " " + item[0].substring(1,2) +")";
-                  }                           
+                  }
                   returnArr["description"] = cnt + ". " + changeType;
                   if (item[1] != null) {
                     // SlicerEstimator based calculation - time
@@ -272,9 +272,9 @@ $(function() {
                     changeType = gettext("filament change (M600)");
                   } else {
                     changeType = gettext("filament") + " (" + gettext("tool") + " " + changeList[changeList.length - 1][0].substring(1,2) +")";
-                  }         
+                  }
                   returnArr["description"] = gettext("up to") + " " + changeList.length + ". " + changeType;
-                  
+
                   if (item[1] != null) {
                     //SlicerEstimator based calculation - time
                     if (self.printerStateViewModel.printTimeLeft() === null) {
@@ -354,7 +354,7 @@ $(function() {
     // Update available metadata from files in the settings
     self.settingsViewModel.crawlMetadata = function() {
       self.filesViewModel.filesOnlyList().forEach(function (data) {
-        Object.keys(data.slicer).forEach(function (slicerData) {
+        Object.keys(data.slicer_metadata).forEach(function (slicerData) {
           if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
             let targets = {};
             for (plugin of self.getActivePlugins()) {
