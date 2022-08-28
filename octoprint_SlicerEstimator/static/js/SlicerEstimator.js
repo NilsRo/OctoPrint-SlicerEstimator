@@ -399,7 +399,7 @@ $(function() {
     self.settingsViewModel.createIssue = function() {
       // Send the bug report
       url = 'https://github.com/NilsRo/OctoPrint-SlicerEstimator/issues/new';
-      var body = "## Description\n**ENTER DESCRIPTION HERE\nDescribe your problem?\nWhat is the problem?\nCan you recreate it?\nDid you try disabling plugins?\nDid you remember to update the subject?**\n\n\n**Plugins installed**\n";
+      var body = "## Description\n\n**ENTER DESCRIPTION HERE\n\nDescribe your problem?\nWhat is the problem?\nCan you recreate it?\nDid you try disabling plugins?\nWhat slicer are you using?\nDid you uploaded the GCODE file causing the issue?\nDid you remember to update the subject?**\n\n\n**Plugins installed**\n";
 
       // Get plugin info
       OctoPrint.coreui.viewmodels.pluginManagerViewModel.plugins.allItems.forEach(function(item) {
