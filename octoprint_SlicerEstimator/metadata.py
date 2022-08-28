@@ -12,17 +12,15 @@ from .util import *
 
 
 class SlicerEstimatorMetadata:
-    def __init__(self, origin, path, file_manager):        
+    def __init__(self, origin, file_manager):        
         self._origin = origin
-        self._path = path
         self._file_manager = file_manager
         
         
     # search for material data
-    def update_metadata(self):
-        filament = SlicerEstimatorMetadata.find_metadata(self._file_manager.path_on_disk(self._origin, self._path))
-        self._file_manager._storage_managers[self._origin].set_additional_metadata(self._path, "slicer", filament, overwrite=True)
-        self._logger.debug(self._file_manager._storage_managers[self._origin].get_additional_metadata(self._path,"slicer"))
+    def update_metadata(self, path):
+        metadata = SlicerEstimatorMetadata.find_metadata(self._file_manager.path_on_disk(self._origin, path))
+        self._file_manager._storage_managers[self._origin].set_additional_metadata(path, "slicer_metadata", metadata, overwrite=True)
 
 
     def find_metadata(path_on_disk):
@@ -40,9 +38,9 @@ class SlicerEstimatorMetadata:
             return filament
 
 
-    # Update all metadata in files
-    def update_metadata_in_files(file_manager):
-        results =  file_manager._storage_managers["local"].list_files(recursive=True)
+    # Update metadata in all files
+    def update_metadata_in_files(self):
+        results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)
         filelist = dict()
         if results is not None:
             for resultKey in results:
@@ -51,14 +49,13 @@ class SlicerEstimatorMetadata:
                 if results[resultKey]["type"] == "folder":
                     SlicerEstimatorFileHandling.flatten_files(results[resultKey], filelist)
             for path in filelist:
-                file_manager._storage_managers["local"].remove_additional_metadata(path, "slicer")
-                metadata = SlicerEstimatorMetadata("local", path, file_manager)
-                metadata.update_metadata()
+                self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer")                
+                self.update_metadata(path)
 
 
             
 class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
-    def __init__(self, path, file_object, file_manager):
+    def __init__(self, path, file_object, plugin):
         super().__init__(file_object.stream())
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self.path = path
@@ -69,8 +66,8 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         self._bytes_processed = 0
         self._time_list = list()
         self._change_list = list()   # format GCODE, Time, Progress in file
-        self._filament = dict()
-        self._file_manager = file_manager
+        self._metadata = dict()
+        self._plugin = plugin
 
     
     # Line parsing after upload  
@@ -93,14 +90,14 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                 self._change_list.append([decoded_line[:2], None, self._line_cnt, self._bytes_processed])
         elif decoded_line[:13] == ";Slicer info:":
                 slicer_info = decoded_line[13:].rstrip("\n").split(";")
-                self._filament[slicer_info[0]] = slicer_info[1].strip()
+                self._metadata[slicer_info[0]] = slicer_info[1].strip()
         elif self.slicer == SLICER_CURA:
             if decoded_line[:6] == ";TIME:":
                 self.printtime = float(line[6:])
             if decoded_line[:13] == ";TIME_ELAPSED":
                 self._time_list.append([self._line_cnt, self.printtime - float(decoded_line[14:])])               
                 return(("@TIME_LEFT " + str(self.printtime - float(decoded_line[14:])) + "\r\n").encode() + line)
-        elif self.slicer == SLICER_PRUSA:
+        elif self.slicer == SLICER_PRUSA or self.slicer == SLICER_SUPERSLICER:
             if decoded_line[:4] == "M73 ":
                 re_result = self._regex.match(decoded_line)
                 if re_result:
@@ -108,6 +105,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                     if self.printtime == -1.0:
                         self.printtime = float(re_result[2])*60
                     self._time_list.append([self._line_cnt, float(re_result[2])*60])
+                    return(("@TIME_LEFT " + str(float(re_result[2])*60) + "\r\n").encode() + line)
         elif self.slicer == SLICER_SIMPLIFY3D:
             re_result = self._regex.match(decoded_line)
             if re_result:
@@ -118,7 +116,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
 
    # slicer auto selection
     def _detect_slicer(self):
-        line = SlicerEstimatorFileHandling.search_in_file_regex(self._file_object.path,".*(PrusaSlicer|Simplify3D|Cura_SteamEngine).*")
+        line = SlicerEstimatorFileHandling.search_in_file_regex(self._file_object.path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine).*")
         if line:
             if  "Cura_SteamEngine" in line:
                 self._logger.info("Detected Cura")
@@ -127,6 +125,10 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                 self._logger.info("Detected PrusaSlicer")
                 self._regex = re.compile("M73 P([0-9]+) R([0-9]+).*")
                 return SLICER_PRUSA
+            elif "SuperSlicer" in line:
+                self._logger.info("Detected SuperSlicer")
+                self._regex = re.compile("M73 P([0-9]+) R([0-9]+).*")
+                return SLICER_SUPERSLICER            
             elif "Simplify3D" in line:
                 self._logger.info("Detected Simplify3D")
                 self._regex = re.compile(";   Build time: ([0-9]+) hours? ([0-9]+) minutes")
@@ -137,18 +139,24 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
 
     #Save gathered information to OctoPrint file metadata
     def store_metadata(self):
-        self._file_manager._storage_managers["local"].set_additional_metadata(self.path, "slicer", self._filament, overwrite=True)
-        self._logger.debug(self._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer"))        
-        self._file_manager._storage_managers["local"].set_additional_metadata(self.path, "slicer_filament_change", self._change_list, overwrite=True)
-        self._logger.debug(self._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_filament_change"))
+        self._plugin._file_manager._storage_managers["local"].set_additional_metadata(self.path, "slicer_metadata", self._metadata, overwrite=True)
+        self._logger.debug(self._plugin._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_metadata"))        
+        self._plugin._file_manager._storage_managers["local"].set_additional_metadata(self.path, "slicer_filament_change", self._change_list, overwrite=True)
+        self._logger.debug(self._plugin._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_filament_change"))
         
-        slicer_additional = dict()
-        slicer_additional["printtime"] = self.printtime
-        slicer_additional["lines"] = self._line_cnt
-        slicer_additional["bytes"] = self._bytes_processed
-        slicer_additional["slicer"] = self.slicer
-        self._file_manager._storage_managers["local"].set_additional_metadata(self.path, "slicer_additional", slicer_additional, overwrite=True)
-        self._logger.debug(self._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_additional"))
+        if self.slicer:
+            if self.printtime == -1.0:
+                self._plugin._sendNotificationToClient("no_timecodes_found")
+            else:
+                slicer_additional = dict()
+                slicer_additional["printtime"] = self.printtime
+                slicer_additional["lines"] = self._line_cnt
+                slicer_additional["bytes"] = self._bytes_processed
+                slicer_additional["slicer"] = self.slicer
+                self._plugin._file_manager._storage_managers["local"].set_additional_metadata(self.path, "slicer_additional", slicer_additional, overwrite=True)
+                self._logger.debug(self._plugin._file_manager._storage_managers["local"].get_additional_metadata(self.path,"slicer_additional"))
+        else:
+            self._logger.debug("No slicer additional informations found in GCODE: {}".format(self.path))
 
             
             
