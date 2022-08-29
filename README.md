@@ -65,6 +65,9 @@ With Simplify3D no changes has to be applied to Simplify3D. The overall print ti
 ### PrusaSlicer
 Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
 
+### SuperSlicer
+Remaining time is read out of M73 commands added by SuperSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
+
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.
  * In case SDCARD print is used the original estimator from OctoPrint will be used
