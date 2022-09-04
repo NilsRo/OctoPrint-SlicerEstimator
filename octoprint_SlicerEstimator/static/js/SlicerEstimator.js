@@ -339,7 +339,7 @@ $(function() {
 
     //--- Settings
     self.settingsViewModel.selectedPlugin = ko.observable();
-    self.settingsViewModel.filterTable = ko.observable('Bla');
+    self.settingsViewModel.filterTable = ko.observable('');
 
 
     //Delete an entry in the settings
@@ -400,15 +400,12 @@ $(function() {
     });
 
     self.settingsViewModel.getFilteredMetadataList = ko.pureComputed(function () {
-      return ko.utils.arrayFilter(self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list(), function (rec) {  
-          return ((self.settingsViewModel.filterTable.length == 0 || ko.utils.stringStartsWith(rec.id().toLowerCase(), self.settingsViewModel.filterTable().toLowerCase())));
+      return ko.utils.arrayFilter(self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list(), function (rec) {
+        let return_value;
+        return_value = (self.settingsViewModel.filterTable().length == 0 || rec.id().toLowerCase().includes(self.settingsViewModel.filterTable().toLowerCase()) || rec.description().toLowerCase().includes(self.settingsViewModel.filterTable().toLowerCase()));
+        return return_value;
       });  
     });
-
-
-    self.settingsViewModel.filterTable.subscribe(function(data) {alert(data);});    
-
-
 
 
     //Settings Report Bug
