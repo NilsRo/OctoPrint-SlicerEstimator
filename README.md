@@ -27,7 +27,7 @@ Slicer Estimator detected the embedded remaining time if there is a checkmark ri
 Also the estimated time of an upload is updated if slicer comments are found.
 
 # Metadata
-Slicers can add comments in GCODE to add information to the file (like material brand, nozzle size, ... ). This metadata added can be shown in the filelist or printer state.
+Slicers can add comments to the GCODE to embed additional metadata in the file (like material brand, nozzle size, ... ). This metadata can be shown in OctoPrints filelist or printer state view.
 
 If you like to show additional metadata not added by the slicer usually you have to use the following format (`;Slicer info:<key>;<value>`) which is e.g. mandatory for Cura.
 
