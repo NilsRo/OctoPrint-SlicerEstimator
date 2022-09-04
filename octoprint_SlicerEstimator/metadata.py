@@ -68,6 +68,33 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         self._change_list = list()   # format GCODE, Time, Progress in file
         self._metadata = dict()
         self._plugin = plugin
+        if self.slicer == SLICER_PRUSA or self.slicer == SLICER_SUPERSLICER:
+            self._metadata_regex = re.compile("^; (\w*) = (.*)")
+        elif self.slicer == SLICER_SIMPLIFY3D:
+            self._metadata_regex = re.compile("^;   (\w*),(.*)")
+
+
+    # get metadata from line
+    def process_metadata_line(self, decoded_line):
+        # standard format for slicers
+        # Cura: no standard format for metadata
+        # Prusa/SuperSlicer: ; bridge_angle = 0
+        # Simplify3D: ;   layerHeight,0.2
+        if self._plugin._metadata_slicer:
+            if self.slicer == SLICER_PRUSA or self.slicer == SLICER_SUPERSLICER:
+                if decoded_line[:2] == "; ":
+                    re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
+                    if re_result and len(re_result.groups()) == 2:
+                        if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config":
+                            self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
+            elif self.slicer == SLICER_SIMPLIFY3D:
+                if decoded_line[:4] == ";   ":
+                    re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
+                    if re_result and len(re_result.groups()) == 2:
+                        self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
+        if decoded_line[:13] == ";Slicer info:":
+            slicer_info = decoded_line[13:].rstrip("\n").split(";")
+            self._metadata[slicer_info[0]] = slicer_info[1].strip()
 
     
     # Line parsing after upload  
@@ -88,9 +115,6 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                 self._change_list.append([decoded_line[:2], self._time_list[-1][1], self._line_cnt, self._bytes_processed])
             else:
                 self._change_list.append([decoded_line[:2], None, self._line_cnt, self._bytes_processed])
-        elif decoded_line[:13] == ";Slicer info:":
-                slicer_info = decoded_line[13:].rstrip("\n").split(";")
-                self._metadata[slicer_info[0]] = slicer_info[1].strip()
         elif self.slicer == SLICER_CURA:
             if decoded_line[:6] == ";TIME:":
                 self.printtime = float(line[6:])
@@ -107,9 +131,14 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                     self._time_list.append([self._line_cnt, float(re_result[2])*60])
                     return(("@TIME_LEFT " + str(float(re_result[2])*60) + "\r\n").encode() + line)
         elif self.slicer == SLICER_SIMPLIFY3D:
-            re_result = self._regex.match(decoded_line)
-            if re_result:
-                self.printtime = int(re_result[1])*60*60+int(re_result[2])*60
+            if decoded_line[:15] == ";   Build time:":
+                re_result = self._regex.match(decoded_line)
+                if re_result:
+                    self.printtime = int(re_result[1])*60*60+int(re_result[2])*60
+
+        if decoded_line[:1] == ";":
+            # check a comment line for metadata
+            self.process_metadata_line(decoded_line)
             
         return line    
 

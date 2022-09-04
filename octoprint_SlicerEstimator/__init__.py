@@ -82,6 +82,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             metadata_filelist_align="top",
             metadata_printer=True,
             metadata_list=[],
+            metadata_slicer=True,
             useDevChannel=False,
             plugins=plugins
             )
@@ -135,6 +136,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._metadata_list = self._settings.get(["metadata_list"])
         self._useDevChannel = self._settings.get(["useDevChannel"])
         self._plugins = self._settings.get(["plugins"])
+        self._metadata_slicer = self._settings.get(["metadata_slicer"])
 
         if self._estimator != None:
             self._estimator.average_prio = self._average_prio

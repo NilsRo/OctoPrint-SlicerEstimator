@@ -339,12 +339,15 @@ $(function() {
 
     //--- Settings
     self.settingsViewModel.selectedPlugin = ko.observable();
+    self.settingsViewModel.filterTable = ko.observable('Bla');
+
 
     //Delete an entry in the settings
     self.settingsViewModel.deleteMeta = function(data) {
       let delIndex = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().findIndex(elem => elem.id() === data.id());
       self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.splice(delIndex,1);
     };
+
 
     self.getActivePlugins = function() {
       return Object.entries(self.settingsViewModel.settings.plugins.SlicerEstimator.plugins).filter(elem => elem[1]["targets"] != null);
@@ -353,6 +356,7 @@ $(function() {
     // Update available metadata from files in the settings
     self.settingsViewModel.crawlMetadata = function() {
       self.filesViewModel.filesOnlyList().forEach(function (data) {
+        if (data.slicer_metadata != null) {
         Object.keys(data.slicer_metadata).forEach(function (slicerData) {
           if (self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().find(elem => elem.id() === slicerData) == null) {
             let targets = {};
@@ -370,6 +374,7 @@ $(function() {
             self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.push(meta);
           }
         });
+        };
       });
     };
 
@@ -393,6 +398,17 @@ $(function() {
     self.settingsViewModel.selectedPluginTarget = ko.pureComputed(function () {
       return self.settingsViewModel.selectedPlugin() && self.settingsViewModel.selectedPlugin().target;
     });
+
+    self.settingsViewModel.getFilteredMetadataList = ko.pureComputed(function () {
+      return ko.utils.arrayFilter(self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list(), function (rec) {  
+          return ((self.settingsViewModel.filterTable.length == 0 || ko.utils.stringStartsWith(rec.id().toLowerCase(), self.settingsViewModel.filterTable().toLowerCase())));
+      });  
+    });
+
+
+    self.settingsViewModel.filterTable.subscribe(function(data) {alert(data);});    
+
+
 
 
     //Settings Report Bug
