@@ -80,7 +80,10 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         # Cura: no standard format for metadata
         # Prusa/SuperSlicer: ; bridge_angle = 0
         # Simplify3D: ;   layerHeight,0.2
-        if self._plugin._metadata_slicer:
+        if decoded_line[:13] == ";Slicer info:":
+            slicer_info = decoded_line[13:].rstrip("\n").split(";")
+            self._metadata[slicer_info[0]] = slicer_info[1].strip()
+        elif self._plugin._metadata_slicer:
             if self.slicer == SLICER_PRUSA or self.slicer == SLICER_SUPERSLICER:
                 if decoded_line[:2] == "; ":
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
@@ -92,10 +95,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
                     if re_result and len(re_result.groups()) == 2:
                         self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
-        if decoded_line[:13] == ";Slicer info:":
-            slicer_info = decoded_line[13:].rstrip("\n").split(";")
-            self._metadata[slicer_info[0]] = slicer_info[1].strip()
-
+        
     
     # Line parsing after upload  
     def process_line(self, line):
