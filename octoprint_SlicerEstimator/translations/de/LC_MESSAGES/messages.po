@@ -41,7 +41,7 @@ msgstr "Keine Zeitangaben gefunden. Bitte prüfen, ob diese im Slicer aktiv sind
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:107
 msgid "Based on information added by the slicer."
-msgstr "basierend aus der Schätzung des Slicers"
+msgstr "basierend auf der Schätzung des Slicers"
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:221
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:287
