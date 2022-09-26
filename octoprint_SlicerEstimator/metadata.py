@@ -145,9 +145,9 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
 
    # slicer auto selection
     def _detect_slicer(self):
-        line = SlicerEstimatorFileHandling.search_in_file_regex(self._file_object.path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine).*")
+        line = SlicerEstimatorFileHandling.search_in_file_regex(self._file_object.path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer).*")
         if line:
-            if  "Cura_SteamEngine" in line:
+            if  "Cura_SteamEngine" in line or "Creality Slicer" in line:
                 self._logger.info("Detected Cura")
                 return SLICER_CURA
             elif "PrusaSlicer" in line:
