@@ -181,7 +181,12 @@ $(function() {
           let cnt = 0;
           for (const [key, value] of Object.entries(data.slicer_filament_change)) {
             cnt += 1;
-            let changeTimeString = self.filamentChangeTimeFormat(data.slicer_additional["printtime"] - value[1]);
+            let changeTimeString;
+            if (value[1] == null) { 
+              changeTimeString = self.filamentChangeTimeFormat(data.slicer_additional["printtime"] * (value[3] / data.size));
+            } else {
+              changeTimeString = self.filamentChangeTimeFormat(data.slicer_additional["printtime"] - value[1]);
+            }
             let changeType;
             if (value[0] == "M600") {
               changeType = gettext("filament change (M600)");
