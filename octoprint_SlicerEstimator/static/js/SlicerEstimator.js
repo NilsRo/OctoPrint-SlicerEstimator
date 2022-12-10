@@ -51,7 +51,7 @@ $(function() {
           case "no_estimation":
             new PNotify({
               title: "Slicer Estimator",
-              text: gettext("No print time estimation from slicer available. Please upload GCODE file again."),
+              text: gettext("No print time estimation from slicer available. Please upload GCODE file again. The file was uploaded before Slicer Estimator was installed or Slicer was not detected."),
               type: "info",
               hide: true
               });
