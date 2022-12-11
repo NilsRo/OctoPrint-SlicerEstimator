@@ -177,7 +177,7 @@ $(function() {
         }
 
         //filament changes
-        if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional["printtime"] != null) {
+        if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional != null && Object.keys(data.slicer_additional).length > 0 && data.slicer_additional["printtime"] != null) {
           let cnt = 0;
           for (const [key, value] of Object.entries(data.slicer_filament_change)) {
             cnt += 1;
