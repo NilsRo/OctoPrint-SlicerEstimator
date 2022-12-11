@@ -7,9 +7,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: OctoPrint-SlicerEstimator 1.5.5\n"
+"Project-Id-Version: OctoPrint-SlicerEstimator 1.5.7\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2022-09-27 00:03+0200\n"
+"POT-Creation-Date: 2022-12-10 10:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,8 @@ msgstr ""
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:57
 msgid ""
 "No print time estimation from slicer available. Please upload GCODE file "
-"again."
+"again. The file was uploaded before Slicer Estimator was installed or "
+"Slicer was not detected."
 msgstr ""
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:65
@@ -38,25 +39,25 @@ msgstr ""
 msgid "Based on information added by the slicer."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:221
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:287
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:312
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:226
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:292
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:317
 msgid "filament change (M600)"
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:223
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:289
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:314
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
 msgid "filament"
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:223
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:289
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:314
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
 msgid "tool"
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:316
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:321
 msgid "up to"
 msgstr ""
 

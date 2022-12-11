@@ -51,7 +51,7 @@ $(function() {
           case "no_estimation":
             new PNotify({
               title: "Slicer Estimator",
-              text: gettext("No print time estimation from slicer available. Please upload GCODE file again."),
+              text: gettext("No print time estimation from slicer available. Please upload GCODE file again. The file was uploaded before Slicer Estimator was installed or Slicer was not detected."),
               type: "info",
               hide: true
               });
@@ -177,7 +177,7 @@ $(function() {
         }
 
         //filament changes
-        if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional["printtime"] != null) {
+        if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional != null && Object.keys(data.slicer_additional).length > 0 && data.slicer_additional["printtime"] != null) {
           let cnt = 0;
           for (const [key, value] of Object.entries(data.slicer_filament_change)) {
             cnt += 1;

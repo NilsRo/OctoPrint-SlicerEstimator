@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.3.5\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2022-09-27 00:03+0200\n"
+"POT-Creation-Date: 2022-12-10 10:55+0100\n"
 "PO-Revision-Date: 2022-05-05 19:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -22,10 +22,13 @@ msgstr ""
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:57
 msgid ""
 "No print time estimation from slicer available. Please upload GCODE file "
-"again."
+"again. The file was uploaded before Slicer Estimator was installed or "
+"Slicer was not detected."
 msgstr ""
-"Keine erwartete Druckzeit vom Slicer verfügbar. Bitte GCODE erneut "
-"hochladen."
+"Keine erwartete Druckzeit vom Slicer verfügbar."
+"Bitte GCODE erneut hochladen. Die Datei wurde hochgeladen "
+"bevor Slicer Estimator installiert war oder der Slicer wurde "
+"nicht erkannt." 
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:65
 msgid "Slicer not detected. Please open a ticket if the slicer should be known..."
@@ -43,25 +46,25 @@ msgstr "Keine Zeitangaben gefunden. Bitte prüfen, ob diese im Slicer aktiv sind
 msgid "Based on information added by the slicer."
 msgstr "basierend auf der Schätzung des Slicers"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:221
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:287
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:312
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:226
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:292
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:317
 msgid "filament change (M600)"
 msgstr "Filamentwechsel (M600)"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:223
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:289
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:314
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
 msgid "filament"
 msgstr "Filament"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:223
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:289
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:314
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
 msgid "tool"
 msgstr "Tool"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:316
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:321
 msgid "up to"
 msgstr "bis"
 
@@ -109,7 +112,8 @@ msgid ""
 "additional slicers."
 msgstr ""
 "Der Slicer wird automatisch ausgewählt. Funktioniert dies nicht bitte ein"
-" Ticket eröffnen als Bug für die u.g. Slicer oder für neue Slicer als Erweiterung."
+" Ticket eröffnen als Bug für die u.g. Slicer oder für neue Slicer als "
+"Erweiterung."
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:25
 msgid ""
@@ -444,4 +448,12 @@ msgstr "Benutze Entwickler-Branch <b>Neustart von OctoPrint notwendig</b>"
 
 #~ msgid "Slicer Estimator Warning"
 #~ msgstr "Slicer Estimator Warnung"
+
+#~ msgid ""
+#~ "No print time estimation from slicer "
+#~ "available. Please upload GCODE file "
+#~ "again."
+#~ msgstr ""
+#~ "Keine erwartete Druckzeit vom Slicer "
+#~ "verfügbar. Bitte GCODE erneut hochladen."
 

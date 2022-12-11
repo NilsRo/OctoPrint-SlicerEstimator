@@ -58,9 +58,11 @@ Metadata stored can be easily used by other plugins. [An API description is avai
 
 ### Cura
 With Cura native no changes has to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
+[Available placesholders](http://files.fieldofview.com/cura/Replacement_Patterns.html)
 
 ### Simplify3D
 With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
+
 
 ### PrusaSlicer
 Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
