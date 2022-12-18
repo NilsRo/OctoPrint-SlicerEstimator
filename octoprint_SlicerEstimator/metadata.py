@@ -131,10 +131,9 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                     self._time_list.append([self._line_cnt, float(re_result[2])*60])
                     return(("@TIME_LEFT " + str(float(re_result[2])*60) + "\r\n").encode() + line)
         elif self.slicer == SLICER_SIMPLIFY3D:
-            if decoded_line[:15] == ";   Build time:":
-                re_result = self._regex.match(decoded_line)
-                if re_result:
-                    self.printtime = int(re_result[1])*60*60+int(re_result[2])*60
+            re_result = self._regex.match(decoded_line)
+            if re_result:
+                self.printtime = int(re_result[1])*60*60+int(re_result[2])*60
 
         if decoded_line[:1] == ";":
             # check a comment line for metadata
@@ -160,7 +159,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
                 return SLICER_SUPERSLICER            
             elif "Simplify3D" in line:
                 self._logger.info("Detected Simplify3D")
-                self._regex = re.compile(";   Build time: ([0-9]+) hours? ([0-9]+) minutes?")
+                self._regex = re.compile(";   Build [tT]ime: ([0-9]+) hours? ([0-9]+) minutes?")
                 return SLICER_SIMPLIFY3D
         else:
             self._logger.warning("Autoselection of slicer not successful!")
