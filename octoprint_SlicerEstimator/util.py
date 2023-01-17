@@ -38,6 +38,21 @@ class SlicerEstimatorFileHandling:
         return return_arr
     
     
+    def return_file_lines(path_on_disk, rows = 0):
+        steps = rows
+        return_arr = []
+
+        with io.open(path_on_disk, mode="r", encoding="utf8", errors="replace") as f:
+            for line in f:
+                return_arr.append(line)
+                if rows > 0:
+                    steps -= 1
+                    if steps <= 0:
+                        return return_arr
+        return return_arr
+       
+    
+    
     # recursive function to flatten the filelist hierarchy
     def flatten_files(folder, filelist = dict()):
         for fileKey in folder["children"]:
