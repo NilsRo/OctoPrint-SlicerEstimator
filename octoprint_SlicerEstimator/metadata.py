@@ -17,27 +17,33 @@ class SlicerEstimatorMetadataFiles:
         self._plugin = plugin
         self._file_manager = self._plugin._file_manager
         self._origin = "local"
-    
-    
-    def update_metadata_in_files(self):
-        results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)
-        filelist = dict()
+      
+      
+    def delete_metadata_in_files(self):
+        results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)        
         if results is not None:
-            for resultKey in results:
-                if results[resultKey]["type"] == "machinecode":
-                    filelist[results[resultKey]["path"]] =  results[resultKey]
-                if results[resultKey]["type"] == "folder":
-                    SlicerEstimatorFileHandling.flatten_files(results[resultKey], filelist)
+            filelist = SlicerEstimatorFileHandling.flatten_files(results)
             for path in filelist:
                 self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
-                slicer = SlicerEstimatorMetadataFiles.detect_slicer(path)
+        return filelist
+        
+    
+    def update_metadata_in_files(self):
+        results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)        
+        if results is not None:
+            filelist = SlicerEstimatorFileHandling.flatten_files(results)
+            for path in filelist:
+                self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
+                path_on_disk = self._file_manager._storage_managers[self._origin].path_on_disk(path)
+                slicer = SlicerEstimatorMetadataFiles.detect_slicer(path_on_disk)
                 if slicer is not None:
-                    results = SlicerEstimatorFileHandling.return_file_lines(path, 10000)
+                    results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk, 10000)
                     if results is not None:
-                        metadata_obj = SlicerEstimatorMetadata("local", path, self._file_manager, slicer, self._plugin)             
+                        metadata_obj = SlicerEstimatorMetadata("local", path, slicer, self._plugin)             
                         for result in results:
                             metadata_obj.process_metadata_line(result)
-                        metadata_obj.store_metadata(path)
+                        metadata_obj.store_metadata()
+            return filelist
 
                 
     # slicer auto selection

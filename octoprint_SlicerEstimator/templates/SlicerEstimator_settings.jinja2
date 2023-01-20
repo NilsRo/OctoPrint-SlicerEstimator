@@ -135,6 +135,10 @@
                             {{ _('Use development branch <b>Restart of OctoPrint required</b>') }}
                         </label>
                     </div>
+                    <div class="control">
+                        <button class="btn" data-bind="click: deleteMetadataStored, enable: !settings.plugins.SlicerEstimator.deleteMetadataStoredRunning">{{ _('Delete Metadata stored') }}</button>
+                        <button class="btn" data-bind="click: updateMetadataStored, enable: !settings.plugins.SlicerEstimator.updateMetadataStoredRunning">{{ _('Update Metadata stored') }}</button>                        
+                    </div>
                 </div>
             </div>
         </div>

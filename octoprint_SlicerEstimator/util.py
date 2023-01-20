@@ -53,10 +53,12 @@ class SlicerEstimatorFileHandling:
        
     
     
-    # recursive function to flatten the filelist hierarchy
-    def flatten_files(folder, filelist = dict()):
-        for fileKey in folder["children"]:
-            if folder["children"][fileKey]["type"] == "machinecode":
-                filelist[folder["children"][fileKey]["path"]] = folder["children"][fileKey]
-            if folder["children"][fileKey]["type"] == "folder":
-               SlicerEstimatorFileHandling.flatten_files(folder["children"][fileKey], filelist)
+    # recursive function to flatten the filelist hierarchy - should be called with objectList only
+    def flatten_files(objectList, filelist = dict(), level = 0):
+        for objectKey in objectList:
+            if objectList[objectKey]["type"] == "machinecode":
+                filelist[objectList[objectKey]["path"]] = objectList[objectKey]
+            elif objectList[objectKey]["type"] == "folder":
+               SlicerEstimatorFileHandling.flatten_files(objectList[objectKey]["children"], filelist, level + 1)
+        if level == 0:
+            return filelist
