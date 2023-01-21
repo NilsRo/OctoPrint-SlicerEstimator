@@ -386,7 +386,7 @@ $(function() {
     };
 
     // Delete all metadata stored
-    self.settingsViewModel.deleteMetadataStored = function() {
+    self.deleteMetadataStored = function() {
       self.deleteMetadataStoredRunning(true);
       $.ajax({
 				url: API_BASEURL + "plugin/SlicerEstimator",
@@ -415,7 +415,7 @@ $(function() {
     };
 
     // Update all metadata stored
-    self.settingsViewModel.updateMetadataStored = function() {
+    self.updateMetadataStored = function() {
       self.updateMetadataStoredRunning(true);
       $.ajax({
 				url: API_BASEURL + "plugin/SlicerEstimator",
@@ -521,6 +521,6 @@ $(function() {
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
-    elements: ['#metadata_list', '#filamentChange_list']
+    elements: ['#metadata_list', '#filamentChange_list', '#metadataStored_group']
   });
 });

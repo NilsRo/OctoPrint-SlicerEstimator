@@ -135,9 +135,15 @@
                             {{ _('Use development branch <b>Restart of OctoPrint required</b>') }}
                         </label>
                     </div>
-                    <div class="control">
-                        <button class="btn" data-bind="click: deleteMetadataStored, enable: !deleteMetadataStoredRunning()"><i class="fa fa-spinner fa-spin" data-bind="visible: deleteMetadataStoredRunning" style="display: none;"></i> {{ _('Delete Metadata stored') }}</button>
-                        <button class="btn" data-bind="click: updateMetadataStored, enable: !updateMetadataStoredRunning()"><i class="fa fa-spinner fa-spin" data-bind="visible: updateMetadataStoredRunning" style="display: none;"></i> {{ _('Update Metadata stored') }}</button>                        
+                </div>
+                <div class="row-fluid" data-bind="allowBindings: false">
+                    <div class="row-fluid" data-bind="allowBindings: true">
+                        <div id="metadataStored_group" class="control-group">
+                            <div class="control">
+                                <button class="btn" data-bind="click: deleteMetadataStored, enable: !deleteMetadataStoredRunning()"><i class="fa fa-spinner fa-spin" data-bind="visible: deleteMetadataStoredRunning" style="display: none;"></i> {{ _('Delete Metadata stored') }}</button>
+                                <button class="btn" data-bind="click: updateMetadataStored, enable: !updateMetadataStoredRunning()"><i class="fa fa-spinner fa-spin" data-bind="visible: updateMetadataStoredRunning" style="display: none;"></i> {{ _('Update Metadata stored') }}</button>                        
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
