@@ -37,7 +37,7 @@ class SlicerEstimatorMetadataFiles:
                 path_on_disk = self._file_manager._storage_managers[self._origin].path_on_disk(path)
                 slicer = SlicerEstimatorMetadataFiles.detect_slicer(path_on_disk)
                 if slicer is not None:
-                    results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk, 10000)
+                    results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk)
                     if results is not None:
                         metadata_obj = SlicerEstimatorMetadata("local", path, slicer, self._plugin)             
                         for result in results:
@@ -104,7 +104,8 @@ class SlicerEstimatorMetadata:
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
                     if re_result and len(re_result.groups()) == 2:
                         if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config":
-                            self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
+                            if len(re_result.groups()[1].strip()) < 50:
+                                self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
             elif self._slicer == SLICER_SIMPLIFY3D:
                 if decoded_line[:4] == ";   ":
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
