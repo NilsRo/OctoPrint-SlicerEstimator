@@ -404,7 +404,6 @@ $(function() {
 				}
 
 				console.log(data);
-        debugger
 				// if(self.crawl_results().length === 0){
 				// 	self.crawl_results.push({name: ko.observable('No convertible files found'), files: ko.observableArray([])});
 				// }

@@ -126,7 +126,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     def get_template_configs(self):
         return [
-            {'type': "settings", 'custom_bindings': False, 'template': "SlicerEstimator_settings.jinja2"},
+            dict(type="settings", custom_bindings=False)
         ]
 
 

@@ -136,8 +136,8 @@
                         </label>
                     </div>
                     <div class="control">
-                        <button class="btn" data-bind="click: deleteMetadataStored, enable: !settings.plugins.SlicerEstimator.deleteMetadataStoredRunning">{{ _('Delete Metadata stored') }}</button>
-                        <button class="btn" data-bind="click: updateMetadataStored, enable: !settings.plugins.SlicerEstimator.updateMetadataStoredRunning">{{ _('Update Metadata stored') }}</button>                        
+                        <button class="btn" data-bind="click: deleteMetadataStored, enable: !deleteMetadataStoredRunning()"><i class="fa fa-spinner fa-spin" data-bind="visible: deleteMetadataStoredRunning" style="display: none;"></i> {{ _('Delete Metadata stored') }}</button>
+                        <button class="btn" data-bind="click: updateMetadataStored, enable: !updateMetadataStoredRunning()"><i class="fa fa-spinner fa-spin" data-bind="visible: updateMetadataStoredRunning" style="display: none;"></i> {{ _('Update Metadata stored') }}</button>                        
                     </div>
                 </div>
             </div>
