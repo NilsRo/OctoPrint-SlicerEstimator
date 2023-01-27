@@ -175,10 +175,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # Hook after file upload for pre-processing
     def on_file_upload(self, path, file_object, links=None, printer_profile=None, allow_overwrite=True, *args, **kwargs):
+        cleaned_path = str(path).lstrip("/")
         if not octoprint.filemanager.valid_file_type(path, type="gcode"):
             return file_object
         filedata = SlicerEstimatorFiledata(path, file_object, self)
-        self._filedata[path] = filedata
+        self._filedata[cleaned_path] = filedata
         return octoprint.filemanager.util.StreamWrapper(file_object.filename, filedata)
 
 
