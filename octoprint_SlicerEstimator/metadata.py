@@ -11,14 +11,13 @@ from .util import *
 
 
 class SlicerEstimatorMetadataFiles:
-    # Update metadata in all files
     
     def __init__(self, plugin):
         self._plugin = plugin
         self._file_manager = self._plugin._file_manager
         self._origin = "local"
       
-      
+    # Delete metadata in all files      
     def delete_metadata_in_files(self):
         results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)        
         if results is not None:
@@ -27,7 +26,7 @@ class SlicerEstimatorMetadataFiles:
                 self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
         return filelist
         
-    
+    # Update metadata in all files   
     def update_metadata_in_files(self):
         results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)        
         if results is not None:
