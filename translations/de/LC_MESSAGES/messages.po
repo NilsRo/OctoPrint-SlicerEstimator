@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.3.5\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2022-12-10 10:55+0100\n"
+"POT-Creation-Date: 2023-01-29 17:05+0100\n"
 "PO-Revision-Date: 2022-05-05 19:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -19,52 +19,51 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.10.1\n"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:57
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:59
 msgid ""
 "No print time estimation from slicer available. Please upload GCODE file "
 "again. The file was uploaded before Slicer Estimator was installed or "
 "Slicer was not detected."
 msgstr ""
-"Keine erwartete Druckzeit vom Slicer verfügbar."
-"Bitte GCODE erneut hochladen. Die Datei wurde hochgeladen "
-"bevor Slicer Estimator installiert war oder der Slicer wurde "
-"nicht erkannt." 
+"Keine erwartete Druckzeit vom Slicer verfügbar.Bitte GCODE erneut "
+"hochladen. Die Datei wurde hochgeladen bevor Slicer Estimator installiert"
+" war oder der Slicer wurde nicht erkannt."
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:65
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:67
 msgid "Slicer not detected. Please open a ticket if the slicer should be known..."
 msgstr ""
 "Slicer nicht erkannt. Bitte ein Ticket eröffnen, wenn der Slicer "
 "funktionieren sollte."
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:73
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:75
 msgid ""
 "No timecodes found. Please check if the remaining time feature in the "
 "slicer is active."
 msgstr "Keine Zeitangaben gefunden. Bitte prüfen, ob diese im Slicer aktiv sind."
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:107
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:109
 msgid "Based on information added by the slicer."
 msgstr "basierend auf der Schätzung des Slicers"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:226
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:292
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:317
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
 msgid "filament change (M600)"
 msgstr "Filamentwechsel (M600)"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:230
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:296
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:321
 msgid "filament"
 msgstr "Filament"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:230
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:296
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:321
 msgid "tool"
 msgstr "Tool"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:321
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:323
 msgid "up to"
 msgstr "bis"
 
@@ -279,6 +278,14 @@ msgstr "Aktualisieren aus Entwickler-Branch"
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:135
 msgid "Use development branch <b>Restart of OctoPrint required</b>"
 msgstr "Benutze Entwickler-Branch <b>Neustart von OctoPrint notwendig</b>"
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:143
+msgid "Delete Metadata stored"
+msgstr "gespeicherte Metadaten löschen"
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:144
+msgid "Update Metadata stored"
+msgstr "gespeicherte Metadaten aktualisieren"
 
 #~ msgid "Custom"
 #~ msgstr "Individuell"

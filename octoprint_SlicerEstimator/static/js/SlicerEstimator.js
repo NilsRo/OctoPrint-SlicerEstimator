@@ -12,6 +12,8 @@ $(function() {
 
     self.currentMetadataArr = ko.observableArray([]);
     self.filamentChangeArr = ko.observableArray([]);
+    self.deleteMetadataStoredRunning = ko.observable(false);
+    self.updateMetadataStoredRunning = ko.observable(false);
 
     //Helpers
     self.mapDictionaryToArray = function(dictionary) {
@@ -383,6 +385,64 @@ $(function() {
       });
     };
 
+    // Delete all metadata stored
+    self.deleteMetadataStored = function() {
+      self.deleteMetadataStoredRunning(true);
+      $.ajax({
+				url: API_BASEURL + "plugin/SlicerEstimator",
+				type: "POST",
+				dataType: "json",
+				data: JSON.stringify({
+					command: "deleteMetadataStored"
+				}),
+				contentType: "application/json; charset=UTF-8"
+			}).done(function(data){
+				for (key in data) {
+					// if(data[key].length){
+					// 	self.crawl_results.push({name: ko.observable(key), files: ko.observableArray(data[key])});
+					// }
+				}
+
+				console.log(data);
+				// if(self.crawl_results().length === 0){
+				// 	self.crawl_results.push({name: ko.observable('No convertible files found'), files: ko.observableArray([])});
+				// }
+				// self.filesViewModel.requestData({force: true});
+				self.deleteMetadataStoredRunning(false);
+			}).fail(function(data){
+				self.deleteMetadataStoredRunning(false);
+			});
+    };
+
+    // Update all metadata stored
+    self.updateMetadataStored = function() {
+      self.updateMetadataStoredRunning(true);
+      $.ajax({
+				url: API_BASEURL + "plugin/SlicerEstimator",
+				type: "POST",
+				dataType: "json",
+				data: JSON.stringify({
+					command: "updateMetadataStored"
+				}),
+				contentType: "application/json; charset=UTF-8"
+			}).done(function(data){
+				for (key in data) {
+					// if(data[key].length){
+					// 	self.crawl_results.push({name: ko.observable(key), files: ko.observableArray(data[key])});
+					// }
+				}
+
+				console.log(data);
+				// if(self.crawl_results().length === 0){
+				// 	self.crawl_results.push({name: ko.observable('No convertible files found'), files: ko.observableArray([])});
+				// }
+				// self.filesViewModel.requestData({force: true});
+				self.updateMetadataStoredRunning(false);
+			}).fail(function(data){
+				self.updateMetadataStoredRunning(false);
+			});
+    };
+
     self.settingsViewModel.pluginsSelection = function() {
       var returnArr = [];
       for (plugin of self.getActivePlugins()) {
@@ -461,6 +521,6 @@ $(function() {
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
-    elements: ['#metadata_list', '#filamentChange_list']
+    elements: ['#metadata_list', '#filamentChange_list', '#metadataStored_group']
   });
 });

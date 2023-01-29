@@ -24,6 +24,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
+                            octoprint.plugin.SimpleApiPlugin,                            
                             octoprint.plugin.ProgressPlugin,
                             octoprint.plugin.AssetPlugin,
                             octoprint.plugin.ReloadNeedingPlugin,
@@ -94,7 +95,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     def on_settings_migrate(self, target, current):
         self._logger.info("SlicerEstimator: Updating Metadata from files...")
-        metadata_handler = SlicerEstimatorMetadata("local", self._file_manager)            
+        metadata_handler = SlicerEstimatorMetadataFiles(self)            
         metadata_handler.update_metadata_in_files()
 
         if current is not None:
@@ -174,10 +175,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # Hook after file upload for pre-processing
     def on_file_upload(self, path, file_object, links=None, printer_profile=None, allow_overwrite=True, *args, **kwargs):
+        cleaned_path = str(path).lstrip("/")
         if not octoprint.filemanager.valid_file_type(path, type="gcode"):
             return file_object
         filedata = SlicerEstimatorFiledata(path, file_object, self)
-        self._filedata[path] = filedata
+        self._filedata[cleaned_path] = filedata
         return octoprint.filemanager.util.StreamWrapper(file_object.filename, filedata)
 
 
@@ -408,27 +410,26 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self.unregister_plugin(plugin)
 
 
-    # def get_api_commands(self):
-    #     return dict(get_filament_data = [])
+    def get_api_commands(self):
+        return {'deleteMetadataStored': [], 'updateMetadataStored': []}
 
+    def on_api_command(self, command, data):
+        import flask
+        from octoprint.server import user_permission
+        if not user_permission.can():
+            return flask.make_response("Insufficient rights", 403)
 
-    # def on_api_command(self, command, data):
-    #     import flask
-    #     import json
-    #     from octoprint.server import user_permission
-    #     if not user_permission.can():
-    #         return flask.make_response("Insufficient rights", 403)
-
-    #     if command == "get_filament_data":
-    #         FileList = self._file_manager.list_files(recursive=True)
-    #         self._logger.debug(FileList)
-    #         localfiles = FileList["local"]
-    #         results = filament_key = dict()
-    #         for key, file in localfiles.items():
-    #             if localfiles[key]["type"] == 'machinecode':
-    #                 filament_meta = self._file_manager._storage_managers['local'].get_additional_metadata(localfiles[key]["path"] ,"filament")
-    #                 results[localfiles[key]["path"]] = filament_meta
-    #         return flask.jsonify(results)
+        if command == "deleteMetadataStored":
+            self._logger.debug("Deleting metadata stored")
+            metadataFileObj = SlicerEstimatorMetadataFiles(self)
+            metadataFileObj.delete_metadata_in_files()
+            # return flask.jsonify(results)
+        elif command == "updateMetadataStored":
+            self._logger.debug("Updating metadata stored")
+            metadataFileObj = SlicerEstimatorMetadataFiles(self)
+            metadataFileObj.update_metadata_in_files()
+            # return flask.jsonify(results)
+            
 
 
 
