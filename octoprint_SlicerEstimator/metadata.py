@@ -76,16 +76,10 @@ class SlicerEstimatorMetadata:
             self._metadata_regex = re.compile("^;   (\w*),(.*)")        
  
         
-    # # search for material data
-    # def update_metadata(self, path):
-    #     metadata = SlicerEstimatorMetadata.find_metadata(self._file_manager.path_on_disk(self._origin, path))
-    #     self._file_manager._storage_managers[self._origin].set_additional_metadata(path, "slicer_metadata", metadata, overwrite=True)
-
-
     # Save gathered information to OctoPrint file metadata
     def store_metadata(self):
-        self._file_manager._storage_managers["local"].set_additional_metadata(self._path, "slicer_metadata", self._metadata, overwrite=True)
-        self._logger.debug(self._file_manager._storage_managers["local"].get_additional_metadata(self._path,"slicer_metadata"))                 
+        self._file_manager._storage_managers["local"].set_additional_metadata(self._path, "slicer_metadata", self._metadata, overwrite=True)     
+        self._logger.debug("File: {} - metadata written: {}".format(self._path, self._file_manager._storage_managers["local"].get_additional_metadata(self._path,"slicer_metadata")))         
 
                 
     # get metadata from line
