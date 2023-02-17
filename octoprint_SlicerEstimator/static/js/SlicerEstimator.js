@@ -304,11 +304,18 @@ $(function() {
         }
       });
     };
-
+    
     //get list of enabled metadata and filament change if a file is selected
-    self.onEventFileSelected = function(payload) {
-      self.addMetadata(payload["origin"], payload["path"]);
-    }
+    self.addMetadataLocal = function(filepath)
+    {
+      if (self.printerStateViewModel.sd() == false && filepath !== null) {
+        self.addMetadata("local", filepath);
+      }
+    };
+    self.printerStateViewModel.filepath.subscribe(function(filepath) {self.addMetadataLocal(filepath)});
+    self.printerStateViewModel.printTimeLeft.subscribe(function() {self.addMetadataLocal(self.printerStateViewModel.filepath())});
+    self.printerStateViewModel.estimatedPrintTime.subscribe(function() {self.addMetadataLocal(self.printerStateViewModel.filepath())});
+    self.printerStateViewModel.filepos.subscribe(function() {self.addMetadataLocal(self.printerStateViewModel.filepath())});
 
     //on reload if GUI refresh selected file
     ko.when(function () {
