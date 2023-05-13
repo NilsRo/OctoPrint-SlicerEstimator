@@ -70,6 +70,9 @@ Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will
 ### SuperSlicer
 Remaining time is read out of M73 commands added by SuperSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
 
+### OrcaSlicer
+Remaining time is read out of M73 commands added by OrcaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
+
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.
  * In case SDCARD print is used the original estimator from OctoPrint will be used
