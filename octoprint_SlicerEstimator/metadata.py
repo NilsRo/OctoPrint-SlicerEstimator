@@ -72,7 +72,7 @@ class SlicerEstimatorMetadata:
         self._slicer = slicer  
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self._metadata = dict()           
-        if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER:
+        if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA:
             self._metadata_regex = re.compile("^; (\w*) = (.*)")
         elif self._slicer == SLICER_SIMPLIFY3D:
             self._metadata_regex = re.compile("^;   (\w*),(.*)")        
@@ -94,11 +94,11 @@ class SlicerEstimatorMetadata:
             slicer_info = decoded_line[13:].rstrip("\n").split(";")
             self._metadata[slicer_info[0]] = slicer_info[1].strip()
         elif self._plugin._metadata_slicer:
-            if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER:
+            if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA:
                 if decoded_line[:2] == "; ":
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
                     if re_result and len(re_result.groups()) == 2:
-                        if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config":
+                        if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config" and re_result.groups()[0] != "CONFIG_BLOCK_START":
                             if len(re_result.groups()[1].strip()) < 50:
                                 self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
             elif self._slicer == SLICER_SIMPLIFY3D:
