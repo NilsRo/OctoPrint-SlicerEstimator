@@ -1,14 +1,17 @@
 # Slicer Estimator is a generic implementation to read remaining time to print and custom metadata embedded in the GCODE file by the slicer
 
+- [Slicer Estimator is a generic implementation to read remaining time to print and custom metadata embedded in the GCODE file by the slicer](#slicer-estimator-is-a-generic-implementation-to-read-remaining-time-to-print-and-custom-metadata-embedded-in-the-gcode-file-by-the-slicer)
 - [Estimation](#estimation)
 - [Metadata](#metadata)
-- [Tool changes (MMU and M600)](#tool-changes-by-mmu-and-m600)
-- [API - for other plugin developers](#api---for-other-plugin-developers)
-- [Slicers supported](#slicers-supported)
-  * [Cura](#cura)
-  * [Simplify3D](#simplify3d)
-  * [PrusaSlicer](#prusaslicer)
-- [Notes](#notes)
+- [Tool changes by MMU and M600](#tool-changes-by-mmu-and-m600)
+  - [API - for other plugin developers](#api---for-other-plugin-developers)
+  - [Slicers supported](#slicers-supported)
+    - [Cura](#cura)
+    - [Simplify3D](#simplify3d)
+    - [PrusaSlicer](#prusaslicer)
+    - [SuperSlicer](#superslicer)
+    - [OrcaSlicer](#orcaslicer)
+  - [Notes](#notes)
 
 With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
 Also you can add custom metadata that will be added to the filebrowser to get e.g. the material the GCODE was created for.
@@ -18,6 +21,8 @@ The slicer is detected automatically, the default configurations supports the fo
 * Cura
 * Simplify3D
 * PrusaSlicer
+* SuperSlicer
+* OrcaSlicer
 
 # Estimation
 Slicer Estimator detected the embedded remaining time if there is a checkmark right of the estimation:
@@ -69,6 +74,9 @@ Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will
 
 ### SuperSlicer
 Remaining time is read out of M73 commands added by SuperSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
+
+### OrcaSlicer
+Remaining time is read out of M73 commands added by OrcaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filamnt changes.
 
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.
