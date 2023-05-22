@@ -88,7 +88,7 @@ class SlicerEstimatorMetadata:
     def process_metadata_line(self, decoded_line):
         # standard format for slicers
         # Cura: no standard format for metadata
-        # Prusa/SuperSlicer: ; bridge_angle = 0
+        # Prusa/SuperSlicer/OrcaSlicer: ; bridge_angle = 0
         # Simplify3D: ;   layerHeight,0.2
         if decoded_line[:13] == ";Slicer info:":
             slicer_info = decoded_line[13:].rstrip("\n").split(";")
@@ -98,9 +98,11 @@ class SlicerEstimatorMetadata:
                 if decoded_line[:2] == "; ":
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
                     if re_result and len(re_result.groups()) == 2:
-                        if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config" and re_result.groups()[0] != "CONFIG_BLOCK_START":
+                        if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config":
                             if len(re_result.groups()[1].strip()) < 50:
                                 self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
+                            else:
+                                self._logger.debug("Metadata line ignored because of it's length.")
             elif self._slicer == SLICER_SIMPLIFY3D:
                 if decoded_line[:4] == ";   ":
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
