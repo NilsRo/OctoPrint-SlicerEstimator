@@ -116,9 +116,11 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         super().__init__(file_object.stream())
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self.path = path
+        self.slicer = None
         self._file_object = file_object
-        self.slicer = SlicerEstimatorMetadataFiles.detect_slicer(self._file_object.path)
-        self._detect_slicer()
+        if hasattr(self._file_object, "path"):
+            self.slicer = SlicerEstimatorMetadataFiles.detect_slicer(self._file_object.path)
+        self._set_slicer_metadata()
         self.printtime = -1.0
         self._line_cnt = 0
         self._bytes_processed = 0
@@ -197,7 +199,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
 
 
 #    # slicer auto selection
-    def _detect_slicer(self):
+    def _set_slicer_metadata(self):
         if self.slicer == SLICER_CURA:
             self._logger.info("Detected Cura")
         elif self.slicer == SLICER_PRUSA:
