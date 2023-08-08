@@ -116,6 +116,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         super().__init__(file_object.stream())
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self.path = path
+        self.slicer = None
         self._file_object = file_object
         if hasattr(self._file_object, "path"):
             self.slicer = SlicerEstimatorMetadataFiles.detect_slicer(self._file_object.path)
