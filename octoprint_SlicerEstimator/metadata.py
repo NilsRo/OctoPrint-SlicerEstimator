@@ -47,7 +47,7 @@ class SlicerEstimatorMetadataFiles:
                 
     # slicer auto selection
     def detect_slicer(path):
-        line = SlicerEstimatorFileHandling.search_in_file_regex(path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|OrcaSlicer).*")
+        line = SlicerEstimatorFileHandling.search_in_file_regex(path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|OrcaSlicer|BambuStudio).*")
         if line:
             if  "Cura_SteamEngine" in line or "Creality Slicer" in line:
                 return SLICER_CURA
@@ -59,6 +59,8 @@ class SlicerEstimatorMetadataFiles:
                 return SLICER_SIMPLIFY3D
             elif "OrcaSlicer" in line:
                 return SLICER_ORCA
+            elif "BambuStudio" in line:
+                return SLICER_BAMBU
             else: 
                 return None
 
@@ -72,7 +74,7 @@ class SlicerEstimatorMetadata:
         self._slicer = slicer  
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self._metadata = dict()           
-        if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA:
+        if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA or self._slicer == SLICER_BAMBU:
             self._metadata_regex = re.compile("^; (\w*) = (.*)")
         elif self._slicer == SLICER_SIMPLIFY3D:
             self._metadata_regex = re.compile("^;   (\w*),(.*)")        
@@ -94,7 +96,7 @@ class SlicerEstimatorMetadata:
             slicer_info = decoded_line[13:].rstrip("\n").split(";")
             self._metadata[slicer_info[0]] = slicer_info[1].strip()
         elif self._plugin._metadata_slicer:
-            if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA:
+            if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA or self._slicer == SLICER_BAMBU:
                 if decoded_line[:2] == "; ":
                     re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
                     if re_result and len(re_result.groups()) == 2:
@@ -118,6 +120,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         self.path = path
         self.slicer = None
         self._file_object = file_object
+        #TODO: Change handling that the sourcefile must not be read directly and normal line by line processing could be used.
         if hasattr(self._file_object, "path"):
             self.slicer = SlicerEstimatorMetadataFiles.detect_slicer(self._file_object.path)
         self._set_slicer_metadata()
@@ -177,7 +180,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
             if decoded_line[:13] == ";TIME_ELAPSED":
                 self._time_list.append([self._line_cnt, self.printtime - float(decoded_line[14:])])               
                 return(("@TIME_LEFT " + str(self.printtime - float(decoded_line[14:])) + "\r\n").encode() + line)
-        elif self.slicer == SLICER_PRUSA or self.slicer == SLICER_SUPERSLICER or self.slicer == SLICER_ORCA:
+        elif self.slicer == SLICER_PRUSA or self.slicer == SLICER_SUPERSLICER or self.slicer == SLICER_ORCA or self.slicer == SLICER_BAMBU:
             if decoded_line[:4] == "M73 ":
                 re_result = self._regex.match(decoded_line)
                 if re_result:
@@ -214,6 +217,9 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         elif self.slicer == SLICER_ORCA:
             self._logger.info("Detected OrcaSlicer")
             self._regex = re.compile("M73 P([0-9]+) R([0-9]+).*")
+        elif self.slicer == SLICER_BAMBU:
+            self._logger.info("Detected BambuStudio")
+            self._regex = re.compile("M73 P([0-9]+) R([0-9]+).*")            
         else:
             self._logger.warning("Autoselection of slicer not successful!")
 

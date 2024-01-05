@@ -11,6 +11,7 @@
     - [PrusaSlicer](#prusaslicer)
     - [SuperSlicer](#superslicer)
     - [OrcaSlicer](#orcaslicer)
+    - [Bambu Studio](#bambu-studio)
   - [Notes](#notes)
 
 With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
@@ -23,6 +24,7 @@ The slicer is detected automatically, the default configurations supports the fo
 * PrusaSlicer
 * SuperSlicer
 * OrcaSlicer
+* Bambu Studio
 
 # Estimation
 Slicer Estimator detected the embedded remaining time if there is a checkmark right of the estimation:
@@ -77,6 +79,9 @@ Remaining time is read out of M73 commands added by SuperSlicer. The slicer will
 
 ### OrcaSlicer
 Remaining time is read out of M73 commands added by OrcaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filament changes.
+
+### Bambu Studio
+Remaining time is read out of M73 commands added by Bambu Studio. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filament changes.
 
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.
