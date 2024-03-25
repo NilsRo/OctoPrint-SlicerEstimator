@@ -24,7 +24,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
-                            octoprint.plugin.SimpleApiPlugin,                            
+                            octoprint.plugin.SimpleApiPlugin,
                             octoprint.plugin.ProgressPlugin,
                             octoprint.plugin.AssetPlugin,
                             octoprint.plugin.ReloadNeedingPlugin,
@@ -95,7 +95,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     def on_settings_migrate(self, target, current):
         self._logger.info("SlicerEstimator: Updating Metadata from files...")
-        metadata_handler = SlicerEstimatorMetadataFiles(self)            
+        metadata_handler = SlicerEstimatorMetadataFiles(self)
         metadata_handler.update_metadata_in_files()
 
         if current is not None:
@@ -148,11 +148,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     # sends the data-dictonary to the client/browser
     def _sendDataToClient(self, dataDict):
         self._plugin_manager.send_plugin_message(self._identifier, dataDict)
-        
 
-    #send notification to client/browser        
+
+    #send notification to client/browser
     def _sendNotificationToClient(self, notifyMessageID):
         self._plugin_manager.send_plugin_message(self._identifier, dict(notifyMessageID=notifyMessageID))
+        self._logger.debug("Plugin message: {}".format(notifyMessageID))
 
 
 
@@ -175,7 +176,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # Hook after file upload for pre-processing
     def on_file_upload(self, path, file_object, links=None, printer_profile=None, allow_overwrite=True, *args, **kwargs):
-        cleaned_path = str(path).lstrip("/")
+        cleaned_path = str(path).lstrip("/")        
         if not octoprint.filemanager.valid_file_type(path, type="gcode"):
             return file_object
         filedata = SlicerEstimatorFiledata(path, file_object, self)
@@ -185,6 +186,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # EventHandlerPlugin for native information search
     def on_event(self, event, payload):
+        self._logger.debug("Event received: {}".format(event))
+        self._logger.debug("Payload: {}".format(payload))
         if event == Events.PRINT_STARTED:
             origin = payload["origin"]
             path = payload["path"]
@@ -215,7 +218,6 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._estimator.time_total = -1.0
             self._estimator.use_progress = False
             self._slicer_filament_change = None
-            self._logger.debug("Event received: {}".format(event))
 
         if event == Events.PRINT_DONE:
             origin = payload["origin"]
@@ -224,6 +226,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
+                self._logger.debug("Filedata: {}".format(self._filedata))
                 if self._filedata[payload["path"]].slicer == None:
                     self._sendNotificationToClient("no_slicer_detected")
                 self._filedata[payload["path"]].store_metadata()
@@ -430,7 +433,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             metadataFileObj = SlicerEstimatorMetadataFiles(self)
             metadataFileObj.update_metadata_in_files()
             # return flask.jsonify(results)
-            
+
 
 
 
