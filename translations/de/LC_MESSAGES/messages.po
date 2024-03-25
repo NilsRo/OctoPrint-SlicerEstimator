@@ -92,13 +92,13 @@ msgid ""
 "estimation as it also includes the heatup time of the printer and is "
 "based on the print-history. After print-start slicer estimation is fine."
 msgstr ""
-"Die 'durchschittliche Druckzeit' wird aus den letzten Drucken ermittelt "
+"Die 'durchschnittliche Druckzeit' wird aus den letzten Drucken ermittelt "
 "(grüner Punkt). Dies ist meistens genauer als die vom Slicer ermittelte "
 "Zeit und berücksichtigt auch die Aufwärmphase."
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:16
 msgid "Use average estimation before slicer"
-msgstr "Nutze die 'durchschittliche Druckzeit' wenn vorhanden"
+msgstr "Nutze die 'durchschnittliche Druckzeit' wenn vorhanden"
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:21
 msgid "Slicer"

@@ -160,14 +160,14 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 # SECTION: Estimation
     # Called by at sign in GCODE
     def on_at_command(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-        if phase == "sending" and command == "TIME_LEFT":
+        if phase == "sending" and command == "TIME_LEFT" and isinstance(self._estimator, SlicerEstimator):            
             self._estimator.time_left = float(parameters)
 
 
     # Process Gcode
     def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        # Update Filament Change Time and Position from actual print
-        if self._slicer_filament_change and (gcode == "M600" or gcode =="T"):
+        # Update Filament Change Time and Position from actual print        
+        if self._slicer_filament_change and (gcode == "M600" or gcode =="T") and isinstance(self._estimator, SlicerEstimator):
             if self._estimator.time_left > -1.0:
                 self._slicer_filament_change[self._filament_change_cnt][1] = self._estimator.time_left
             self._slicer_filament_change[self._filament_change_cnt][3] = comm_instance._currentFile._pos
@@ -195,14 +195,15 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self._filament_change_cnt = 0
                 slicer_additional = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_additional")
                 if slicer_additional:
-                    if slicer_additional["slicer"] == SLICER_SIMPLIFY3D:
-                        # Simplify3D has no embedded time left
-                        self._estimator.use_progress = True
-                        self._estimator.time_total = slicer_additional["printtime"]
-                    else:
-                        self._estimator.use_progress = False
-                        self._estimator.time_total = slicer_additional["printtime"]
-                        self._estimator.time_left = slicer_additional["printtime"]
+                    if isinstance(self._estimator, SlicerEstimator):
+                        if slicer_additional["slicer"] == SLICER_SIMPLIFY3D:
+                            # Simplify3D has no embedded time left
+                            self._estimator.use_progress = True
+                            self._estimator.time_total = slicer_additional["printtime"]
+                        else:
+                            self._estimator.use_progress = False
+                            self._estimator.time_total = slicer_additional["printtime"]
+                            self._estimator.time_left = slicer_additional["printtime"]
                 else:
                     #TODO: Start rebuilding metadata automatically
                     self._sendNotificationToClient("no_estimation")
@@ -214,9 +215,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             # Init of Class variables for new estimation
             self._slicer_estimation = None
             self._sliver_estimation_str = None
-            self._estimator.time_left = -1.0
-            self._estimator.time_total = -1.0
-            self._estimator.use_progress = False
+            if isinstance(self._estimator, SlicerEstimator):
+                self._estimator.time_left = -1.0
+                self._estimator.time_total = -1.0
+                self._estimator.use_progress = False
             self._slicer_filament_change = None
 
         if event == Events.PRINT_DONE:
