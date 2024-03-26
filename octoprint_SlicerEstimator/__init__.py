@@ -152,8 +152,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     #send notification to client/browser
     def _sendNotificationToClient(self, notifyMessageID):
-        self._plugin_manager.send_plugin_message(self._identifier, dict(notifyMessageID=notifyMessageID))
         self._logger.debug("Plugin message: {}".format(notifyMessageID))
+        self._plugin_manager.send_plugin_message(self._identifier, dict(notifyMessageID=notifyMessageID))
 
 
 
@@ -228,7 +228,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
-                self._logger.debug("Filedata: {}".format(self._filedata))
+                self._logger.debug("Filedata of {}: {}".format(payload["path"], vars(self._filedata[payload["path"]])))
                 if self._filedata[payload["path"]].slicer == None:
                     self._sendNotificationToClient("no_slicer_detected")
                 self._filedata[payload["path"]].store_metadata()
