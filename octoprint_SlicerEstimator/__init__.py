@@ -205,11 +205,21 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             self._estimator.time_total = slicer_additional["printtime"]
                             self._estimator.time_left = slicer_additional["printtime"]
                 else:
-                    #TODO: Start rebuilding metadata automatically
                     self._sendNotificationToClient("no_estimation")
                 self._slicer_filament_change = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_filament_change")
                 self._send_metadata_print_event(origin, path)
                 self._send_filament_change_event(origin, path)
+                
+        if event == Events.FILE_SELECTED:
+            origin = payload["origin"]
+            path = payload["path"]
+            slicer_metadata = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_metadata")
+            if self._metadata_slicer and not slicer_metadata:
+                #rebuild metadata in the background if missing
+                self._logger.info("Updating missing metadata in file {}".format(path))
+                metadataFileObj = SlicerEstimatorMetadataFiles(self)
+                metadataFileObj.update_metadata_in_file(path)
+                self._sendNotificationToClient("file_metadata_updated")
 
         if event == Events.PRINT_CANCELLED or event == Events.PRINT_FAILED or event == Events.PRINT_DONE:
             # Init of Class variables for new estimation

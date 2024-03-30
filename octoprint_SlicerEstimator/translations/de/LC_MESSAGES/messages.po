@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.3.5\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2024-03-26 22:44+0100\n"
+"POT-Creation-Date: 2024-03-30 18:56+0100\n"
 "PO-Revision-Date: 2022-05-05 19:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -30,40 +30,48 @@ msgstr ""
 " war oder der Slicer wurde nicht erkannt."
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:67
+msgid ""
+"For the selected file the metadata was missing. It is updated now, "
+"refresh the filelist if you like to see the metadata found."
+msgstr ""
+"In der ausgewählten Datei fehlten die Metadaten. Diese wurden "
+"aktualisiert, zur Anzeige die Dateiansicht aktualisieren."
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:75
 msgid "Slicer not detected. Please open a ticket if the slicer should be known..."
 msgstr ""
 "Slicer nicht erkannt. Bitte ein Ticket eröffnen, wenn der Slicer "
 "funktionieren sollte."
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:75
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:83
 msgid ""
 "No timecodes found. Please check if the remaining time feature in the "
 "slicer is active."
 msgstr "Keine Zeitangaben gefunden. Bitte prüfen, ob diese im Slicer aktiv sind."
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:109
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:116
 msgid "Based on information added by the slicer."
 msgstr "basierend auf der Schätzung des Slicers"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:228
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:294
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:319
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:236
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:302
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:327
 msgid "filament change (M600)"
 msgstr "Filamentwechsel (M600)"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:230
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:296
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:321
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:238
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:304
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:329
 msgid "filament"
 msgstr "Filament"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:230
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:296
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:321
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:238
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:304
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:329
 msgid "tool"
 msgstr "Tool"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:323
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:331
 msgid "up to"
 msgstr "bis"
 

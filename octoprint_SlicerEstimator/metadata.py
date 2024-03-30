@@ -9,7 +9,7 @@ import octoprint.filemanager.util
 from .const import *
 from .util import *
 
-
+#Todo: nachträgliche Aktualisierung aller Dateien mit den Zeitdaten - dies nicht beim Druck sinnvoll, da die Datei selber abgeändert wird.
 class SlicerEstimatorMetadataFiles:
     
     def __init__(self, plugin):
@@ -25,6 +25,19 @@ class SlicerEstimatorMetadataFiles:
             for path in filelist:
                 self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
         return filelist
+      
+    # Update metadata in one file
+    def update_metadata_in_file(self, path):
+        self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
+        path_on_disk = self._file_manager._storage_managers[self._origin].path_on_disk(path)
+        slicer = SlicerEstimatorMetadataFiles.detect_slicer(path_on_disk)
+        if slicer is not None:
+            results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk)
+            if results is not None:
+                metadata_obj = SlicerEstimatorMetadata("local", path, slicer, self._plugin)             
+                for result in results:
+                    metadata_obj.process_metadata_line(result)
+                metadata_obj.store_metadata()
         
     # Update metadata in all files   
     def update_metadata_in_files(self):
@@ -32,18 +45,8 @@ class SlicerEstimatorMetadataFiles:
         if results is not None:
             filelist = SlicerEstimatorFileHandling.flatten_files(results)
             for path in filelist:
-                self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
-                path_on_disk = self._file_manager._storage_managers[self._origin].path_on_disk(path)
-                slicer = SlicerEstimatorMetadataFiles.detect_slicer(path_on_disk)
-                if slicer is not None:
-                    results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk)
-                    if results is not None:
-                        metadata_obj = SlicerEstimatorMetadata("local", path, slicer, self._plugin)             
-                        for result in results:
-                            metadata_obj.process_metadata_line(result)
-                        metadata_obj.store_metadata()
+                self.update_metadata_in_file(self, path)
             return filelist
-
                 
     # slicer auto selection
     def detect_slicer(path):
@@ -112,7 +115,7 @@ class SlicerEstimatorMetadata:
                         self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()                
 
 
-            
+# Interface to OctoPrints Lineprocessor on file upload            
 class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
     def __init__(self, path, file_object, plugin):
         super().__init__(file_object.stream())
@@ -201,7 +204,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
         return line    
 
 
-#    # slicer auto selection
+    #slicer auto selection
     def _set_slicer_metadata(self):
         if self.slicer == SLICER_CURA:
             self._logger.info("Detected Cura")
