@@ -24,7 +24,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
                             octoprint.plugin.SettingsPlugin,
                             octoprint.plugin.EventHandlerPlugin,
-                            octoprint.plugin.SimpleApiPlugin,                            
+                            octoprint.plugin.SimpleApiPlugin,
                             octoprint.plugin.ProgressPlugin,
                             octoprint.plugin.AssetPlugin,
                             octoprint.plugin.ReloadNeedingPlugin,
@@ -95,7 +95,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     def on_settings_migrate(self, target, current):
         self._logger.info("SlicerEstimator: Updating Metadata from files...")
-        metadata_handler = SlicerEstimatorMetadataFiles(self)            
+        metadata_handler = SlicerEstimatorMetadataFiles(self)
         metadata_handler.update_metadata_in_files()
 
         if current is not None:
@@ -146,12 +146,14 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     # sends the data-dictonary to the client/browser
-    def _sendDataToClient(self, dataDict):
+    def _sendDataToClient(self, eventID, dataDict = dict()):
+        dataDict["eventID"] = eventID
         self._plugin_manager.send_plugin_message(self._identifier, dataDict)
-        
 
-    #send notification to client/browser        
+
+    #send notification to client/browser
     def _sendNotificationToClient(self, notifyMessageID):
+        self._logger.debug("Plugin message: {}".format(notifyMessageID))
         self._plugin_manager.send_plugin_message(self._identifier, dict(notifyMessageID=notifyMessageID))
 
 
@@ -159,14 +161,14 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 # SECTION: Estimation
     # Called by at sign in GCODE
     def on_at_command(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-        if phase == "sending" and command == "TIME_LEFT":
+        if phase == "sending" and command == "TIME_LEFT" and isinstance(self._estimator, SlicerEstimator):            
             self._estimator.time_left = float(parameters)
 
 
     # Process Gcode
     def on_gcode_sent(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        # Update Filament Change Time and Position from actual print
-        if self._slicer_filament_change and (gcode == "M600" or gcode =="T"):
+        # Update Filament Change Time and Position from actual print        
+        if self._slicer_filament_change and (gcode == "M600" or gcode =="T") and isinstance(self._estimator, SlicerEstimator):
             if self._estimator.time_left > -1.0:
                 self._slicer_filament_change[self._filament_change_cnt][1] = self._estimator.time_left
             self._slicer_filament_change[self._filament_change_cnt][3] = comm_instance._currentFile._pos
@@ -175,7 +177,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # Hook after file upload for pre-processing
     def on_file_upload(self, path, file_object, links=None, printer_profile=None, allow_overwrite=True, *args, **kwargs):
-        cleaned_path = str(path).lstrip("/")
+        cleaned_path = str(path).lstrip("/")        
         if not octoprint.filemanager.valid_file_type(path, type="gcode"):
             return file_object
         filedata = SlicerEstimatorFiledata(path, file_object, self)
@@ -185,6 +187,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
     # EventHandlerPlugin for native information search
     def on_event(self, event, payload):
+        self._logger.debug("Event received: {}".format(event))
+        self._logger.debug("Payload: {}".format(payload))
         if event == Events.PRINT_STARTED:
             origin = payload["origin"]
             path = payload["path"]
@@ -192,30 +196,42 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self._filament_change_cnt = 0
                 slicer_additional = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_additional")
                 if slicer_additional:
-                    if slicer_additional["slicer"] == SLICER_SIMPLIFY3D:
-                        # Simplify3D has no embedded time left
-                        self._estimator.use_progress = True
-                        self._estimator.time_total = slicer_additional["printtime"]
-                    else:
-                        self._estimator.use_progress = False
-                        self._estimator.time_total = slicer_additional["printtime"]
-                        self._estimator.time_left = slicer_additional["printtime"]
+                    if isinstance(self._estimator, SlicerEstimator):
+                        if slicer_additional["slicer"] == SLICER_SIMPLIFY3D:
+                            # Simplify3D has no embedded time left
+                            self._estimator.use_progress = True
+                            self._estimator.time_total = slicer_additional["printtime"]
+                        else:
+                            self._estimator.use_progress = False
+                            self._estimator.time_total = slicer_additional["printtime"]
+                            self._estimator.time_left = slicer_additional["printtime"]
                 else:
-                    #TODO: Start rebuilding metadata automatically
                     self._sendNotificationToClient("no_estimation")
                 self._slicer_filament_change = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_filament_change")
                 self._send_metadata_print_event(origin, path)
                 self._send_filament_change_event(origin, path)
+                
+        if event == Events.FILE_SELECTED:
+            origin = payload["origin"]
+            path = payload["path"]
+            slicer_metadata = self._file_manager._storage_managers["local"].get_additional_metadata(path,"slicer_metadata")
+            if self._metadata_slicer and not slicer_metadata:
+                #rebuild metadata in the background if missing
+                self._logger.info("Updating missing metadata in file {}".format(path))
+                metadataFileObj = SlicerEstimatorMetadataFiles(self)
+                metadataFileObj.update_metadata_in_file(path)
+                self._sendNotificationToClient("file_metadata_updated")
+                self._sendDataToClient("file_metadata_updated")
 
         if event == Events.PRINT_CANCELLED or event == Events.PRINT_FAILED or event == Events.PRINT_DONE:
             # Init of Class variables for new estimation
             self._slicer_estimation = None
             self._sliver_estimation_str = None
-            self._estimator.time_left = -1.0
-            self._estimator.time_total = -1.0
-            self._estimator.use_progress = False
+            if isinstance(self._estimator, SlicerEstimator):
+                self._estimator.time_left = -1.0
+                self._estimator.time_total = -1.0
+                self._estimator.use_progress = False
             self._slicer_filament_change = None
-            self._logger.debug("Event received: {}".format(event))
 
         if event == Events.PRINT_DONE:
             origin = payload["origin"]
@@ -224,6 +240,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
         if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
+                self._logger.debug("Filedata of {}: {}".format(payload["path"], vars(self._filedata[payload["path"]])))
                 if self._filedata[payload["path"]].slicer == None:
                     self._sendNotificationToClient("no_slicer_detected")
                 self._filedata[payload["path"]].store_metadata()
@@ -430,7 +447,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             metadataFileObj = SlicerEstimatorMetadataFiles(self)
             metadataFileObj.update_metadata_in_files()
             # return flask.jsonify(results)
-            
+
 
 
 
