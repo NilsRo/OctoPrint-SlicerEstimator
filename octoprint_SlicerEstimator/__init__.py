@@ -146,7 +146,8 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     # sends the data-dictonary to the client/browser
-    def _sendDataToClient(self, dataDict):
+    def _sendDataToClient(self, eventID, dataDict = dict()):
+        dataDict["eventID"] = eventID
         self._plugin_manager.send_plugin_message(self._identifier, dataDict)
 
 
@@ -220,6 +221,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 metadataFileObj = SlicerEstimatorMetadataFiles(self)
                 metadataFileObj.update_metadata_in_file(path)
                 self._sendNotificationToClient("file_metadata_updated")
+                self._sendDataToClient("file_metadata_updated")
 
         if event == Events.PRINT_CANCELLED or event == Events.PRINT_FAILED or event == Events.PRINT_DONE:
             # Init of Class variables for new estimation

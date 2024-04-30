@@ -35,6 +35,17 @@ $(function () {
 
     // receive data from server
     self.onDataUpdaterPluginMessage = function (plugin, data) {
+      // Event
+      if (data.eventID) {
+        switch (data.eventID) {
+          case "file_metadata_updated":
+            // Update file list metadata
+            debugger
+            self.filesViewModel.requestData({ force: true });
+        }
+      }
+
+
       // NotificationMessages
       if (data.notifyType) {
         var notfiyType = data.notifyType;
@@ -174,7 +185,6 @@ $(function () {
     //Add the slicer metadata to "additionalMetadata"
     self.filesViewModel.getSlicerData = function (data) {
       let return_value = "";
-
       //custom metadata
       if (data.slicer_metadata != null && Object.keys(data.slicer_metadata).length > 0) {
         for (const [key, value] of Object.entries(data.slicer_metadata)) {
