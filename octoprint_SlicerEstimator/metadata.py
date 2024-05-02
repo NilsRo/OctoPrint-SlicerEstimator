@@ -187,7 +187,7 @@ class SlicerEstimatorEstimator:
         self._bytes_processed += len(line)
         decoded_line = line.decode()
         if decoded_line[:10] == "@TIME_LEFT":
-            return None
+            return "".encode()
         elif self._slicer == SLICER_CURA:
             if decoded_line[:6] == ";TIME:":
                 self.printtime = float(line[6:])
