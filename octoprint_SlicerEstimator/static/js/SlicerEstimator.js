@@ -40,7 +40,6 @@ $(function () {
         switch (data.eventID) {
           case "file_metadata_updated":
             // Update file list metadata
-            debugger
             self.filesViewModel.requestData({ force: true });
         }
       }
