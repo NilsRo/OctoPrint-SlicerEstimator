@@ -12,6 +12,7 @@
     - [SuperSlicer](#superslicer)
     - [OrcaSlicer](#orcaslicer)
     - [Bambu Studio](#bambu-studio)
+    - [Snapmaker Luban](#snapmaker-luban)
   - [Notes](#notes)
 
 With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
@@ -25,6 +26,7 @@ The slicer is detected automatically, the default configurations supports the fo
 * SuperSlicer
 * OrcaSlicer
 * Bambu Studio
+* Snapmaker Luban
 
 # Estimation
 Slicer Estimator detected the embedded remaining time if there is a checkmark right of the estimation:
@@ -82,6 +84,9 @@ Remaining time is read out of M73 commands added by OrcaSlicer. The slicer will 
 
 ### Bambu Studio
 Remaining time is read out of M73 commands added by Bambu Studio. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filament changes.
+
+### Snapmaker Luban
+With Snapmaker Luban no changes has to be applied. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
 
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.

@@ -407,6 +407,10 @@ $(function () {
         };
       });
     };
+    // Delete available metadata from list
+    self.settingsViewModel.deleteMetadataList = function () {
+      self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list.removeAll();
+    };
 
     // Delete all metadata stored
     self.deleteMetadataStored = function () {
