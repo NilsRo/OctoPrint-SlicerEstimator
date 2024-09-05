@@ -24,10 +24,10 @@
                     Ticket. A bug for the slicers below or an enhancement request for additional slicers.') }}
                     <p>
                     <ul>
-                        <li><b>Cura</b> (Creality Slicer): {{ _('With Cura native no changes have to be applied to Cura.
+                        <li><b>Cura</b> (Creality Slicer): {{ _('No changes to the slicer have to be applied.
                             The overall print time is read out of a comment in the GCODE. This will update continuously
                             the remaining print time.') }}</li>
-                        <li><b>Simply3D</b>: {{ _('With Simplify3D no changes has to be applied to Simplify3D. The
+                        <li><b>Simply3D</b>: {{ _('No changes to the slicer have to be applied. The
                             overall print time is read out of a comment in the GCODE. For a correct estimation
                             OctoPrints percentage done is used as there is only the overall print time available.') }}
                         </li>
@@ -39,6 +39,9 @@
                             continuously the remaining print time.') }}</li>
                         <li><b>Bambu Studio</b>: {{ _('Remaining time is read out of M73 commands. This will update
                             continuously the remaining print time.') }}</li>
+                        <li><b>Snapmaker Luban</b>: {{ _('No changes to the slicer have to be applied.
+                            The overall print time is read out of a comment in the GCODE. This will update continuously
+                            the remaining print time.') }}</li>
                     </ul>
                     <p>
                         {{ _('Additional support or a manual is available on <a
@@ -151,6 +154,7 @@
                     </table>
                     <div class="control">
                         <button class="btn" data-bind="click: crawlMetadata">{{ _('Refresh Metadata') }}</button>
+                        <button class="btn" data-bind="click: deleteMetadataList">{{ _('Delete List') }}</button>
                     </div>
                     <p>
                     <div class="alert alert-info">

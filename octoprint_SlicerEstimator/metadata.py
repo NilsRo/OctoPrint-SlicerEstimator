@@ -71,7 +71,7 @@ class SlicerEstimatorMetadataFiles:
                 for result in results:
                     metadata_obj.process_line(result.encode())
                 metadata_obj.store_metadata()
-                
+
     # Update metadata in all files
     def update_metadata_in_files(self):
         results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)
@@ -94,6 +94,8 @@ class SlicerEstimatorMetadata:
             self._metadata_regex = re.compile("^; (\w*) = (.*)")
         elif self._slicer == SLICER_SIMPLIFY3D:
             self._metadata_regex = re.compile("^;   (\w*),(.*)")
+        elif self._slicer == SLICER_LUBAN:
+            self._metadata_regex = re.compile("^;(.*): (.*)")
 
     # Save gathered information to OctoPrint file metadata
     def store_metadata(self):
@@ -106,30 +108,35 @@ class SlicerEstimatorMetadata:
         # Cura: no standard format for metadata
         # Prusa/SuperSlicer/OrcaSlicer: ; bridge_angle = 0
         # Simplify3D: ;   layerHeight,0.2
-        decoded_line = line.decode()
-        if decoded_line[:13] == ";Slicer info:":
-            slicer_info = decoded_line[13:].rstrip("\n").split(";")
-            self._metadata[slicer_info[0]] = slicer_info[1].strip()
-        elif self._plugin._metadata_slicer:
-            if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA or self._slicer == SLICER_BAMBU:
-                if decoded_line[:2] == "; ":
-                    re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
-                    if re_result and len(re_result.groups()) == 2:
-                        if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config":
-                            if len(re_result.groups()[1].strip()) < 50:
+        if len(line) < 200:
+            decoded_line = line.decode()
+            if decoded_line[:13] == ";Slicer info:":
+                slicer_info = decoded_line[13:].rstrip("\n").split(";")
+                self._metadata[slicer_info[0]] = slicer_info[1].strip()
+            elif self._plugin._metadata_slicer:
+                if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA or self._slicer == SLICER_BAMBU:
+                    if decoded_line[:2] == "; ":
+                        re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
+                        if re_result and len(re_result.groups()) == 2:
+                            if re_result.groups()[0] != "SuperSlicer_config" and re_result.groups()[0] != "prusaslicer_config":
                                 self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
-                            else:
-                                self._logger.debug("Metadata line ignored because of it's length.")
-            elif self._slicer == SLICER_SIMPLIFY3D:
-                if decoded_line[:4] == ";   ":
-                    re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
-                    if re_result and len(re_result.groups()) == 2:
-                        self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
+                elif self._slicer == SLICER_SIMPLIFY3D:
+                    if decoded_line[:4] == ";   ":
+                        re_result = self._metadata_regex.match(decoded_line.rstrip("\n"))
+                        if re_result and len(re_result.groups()) == 2:
+                            self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
+                elif self._slicer == SLICER_LUBAN:
+                    if decoded_line[:1] == ";":
+                        re_result = self._metadata_regex.match(decoded_line.rstrip("\r\n"))
+                        if re_result and len(re_result.groups()) == 2:
+                            self._metadata[re_result.groups()[0]] = re_result.groups()[1].strip()
+        else:
+            self._logger.debug("Metadata line ignored because of it's length.")
         return line
 
     # slicer auto selection
     def detect_slicer(path):
-        line = SlicerEstimatorFileHandling.search_in_file_regex(path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|OrcaSlicer|BambuStudio).*")
+        line = SlicerEstimatorFileHandling.search_in_file_regex(path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|OrcaSlicer|BambuStudio|Snapmaker Luban).*")
         if line:
             if  "Cura_SteamEngine" in line or "Creality Slicer" in line:
                 return SLICER_CURA
@@ -143,6 +150,8 @@ class SlicerEstimatorMetadata:
                 return SLICER_ORCA
             elif "BambuStudio" in line:
                 return SLICER_BAMBU
+            elif "Snapmaker Luban" in line:
+                return SLICER_LUBAN
             else:
                 return None
 
@@ -179,6 +188,8 @@ class SlicerEstimatorEstimator:
         elif self._slicer == SLICER_BAMBU:
             self._logger.info("Detected BambuStudio")
             return(re.compile("M73 P([0-9]+) R([0-9]+).*"))
+        elif self._slicer == SLICER_LUBAN:
+            self._logger.info("Detected Snapmaker Luban")
         else:
             self._logger.warning("Autoselection of slicer not successful!")
 
@@ -188,7 +199,7 @@ class SlicerEstimatorEstimator:
         decoded_line = line.decode()
         if decoded_line[:10] == "@TIME_LEFT":
             return "".encode()
-        elif self._slicer == SLICER_CURA:
+        elif self._slicer == SLICER_CURA or self._slicer == SLICER_LUBAN:
             if decoded_line[:6] == ";TIME:":
                 self.printtime = float(line[6:])
             if decoded_line[:13] == ";TIME_ELAPSED":

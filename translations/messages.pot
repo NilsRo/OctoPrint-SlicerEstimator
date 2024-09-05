@@ -7,64 +7,68 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: OctoPrint-SlicerEstimator 1.6.4\n"
+"Project-Id-Version: OctoPrint-SlicerEstimator 1.6.7\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2024-03-30 18:56+0100\n"
+"POT-Creation-Date: 2024-09-05 21:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.10.3\n"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:59
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:71
 msgid ""
 "No print time estimation from slicer available. Please upload GCODE file "
 "again. The file was uploaded before Slicer Estimator was installed or "
 "Slicer was not detected."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:67
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:79
 msgid ""
 "For the selected file the metadata was missing. It is updated now, "
 "refresh the filelist if you like to see the metadata found."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:75
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:87
 msgid "Slicer not detected. Please open a ticket if the slicer should be known..."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:83
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:95
 msgid ""
 "No timecodes found. Please check if the remaining time feature in the "
 "slicer is active."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:116
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:128
 msgid "Based on information added by the slicer."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:236
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:302
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:327
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:247
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:313
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:338
 msgid "filament change (M600)"
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:238
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:304
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:329
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:249
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:315
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:340
 msgid "filament"
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:238
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:304
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:329
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:249
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:315
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:340
 msgid "tool"
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:331
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:342
 msgid "up to"
+msgstr ""
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:465
+msgid "Delete the list above?"
 msgstr ""
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:6
@@ -72,8 +76,8 @@ msgid "Main"
 msgstr ""
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:7
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:50
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:107
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:53
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:110
 msgid "Metadata"
 msgstr ""
 
@@ -110,8 +114,9 @@ msgid ""
 msgstr ""
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:27
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:42
 msgid ""
-"With Cura native no changes have to be applied to Cura.\n"
+"No changes to the slicer have to be applied.\n"
 "                            The overall print time is read out of a "
 "comment in the GCODE. This will update continuously\n"
 "                            the remaining print time."
@@ -119,7 +124,7 @@ msgstr ""
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:30
 msgid ""
-"With Simplify3D no changes has to be applied to Simplify3D. The\n"
+"No changes to the slicer have to be applied. The\n"
 "                            overall print time is read out of a comment "
 "in the GCODE. For a correct estimation\n"
 "                            OctoPrints percentage done is used as there "
@@ -135,25 +140,25 @@ msgid ""
 "                            continuously the remaining print time."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:44
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:47
 msgid ""
 "Additional support or a manual is available on <a\n"
 "                            href=\"https://github.com/NilsRo/OctoPrint-"
 "SlicerEstimator\" target=\"_blank\">Github</a>."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:46
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:49
 msgid "Create issue"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:52
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:55
 msgid ""
 "How to add custom metadata to OctoPrints filelist see <a\n"
 "                            href=\"https://github.com/NilsRo/OctoPrint-"
 "SlicerEstimator\" target=\"_blank\">here</a>!"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:57
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:60
 msgid ""
 "Metadata has to be added in the Start GCODE in this format: (;Slicer\n"
 "                        info:&lt;key&gt;;&lt;value&gt;). You can add as "
@@ -164,98 +169,102 @@ msgid ""
 "                        for Cura."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:63
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:66
 msgid "Slicer standard metadata will be used also."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:64
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:67
 msgid "Use Slicer standard metadata"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:70
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:73
 msgid "Filelist"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:73
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:76
 msgid ""
 "Add custom metadata like filament brand, material,... in OctoPrints "
 "filebrowser after uploading a file."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:74
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:100
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:77
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:103
 msgid "View metadata"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:81
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:84
 msgid "Orientation"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:83
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:86
 msgid ""
 "Change the orientation in the filelist above or below the standard "
 "metadata."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:87
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:90
 msgid "Top"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:92
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:95
 msgid "Bottom"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:96
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:99
 msgid "Current print"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:99
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:102
 msgid ""
 "Add custom metadata like filament brand, material,... in OctoPrints "
 "current print view."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:103
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:106
 msgid "(restart of GUI - Browsersession - required)"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:113
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:116
 msgid "Filter"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:124
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:127
 msgid "Metadata ID"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:125
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:128
 msgid "Description"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:153
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:156
 msgid "Refresh Metadata"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:158
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:157
+msgid "Delete List"
+msgstr ""
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:162
 msgid "Use Refresh to update metadata from files. It will not delete entries..."
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:163
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:167
 msgid "Developer settings - use at your own risk / enable it on request only"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:166
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:170
 msgid "Update from development branch"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:169
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:173
 msgid "Use development branch <b>Restart of OctoPrint required</b>"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:180
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:184
 msgid "Delete Metadata stored"
 msgstr ""
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:184
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:188
 msgid "Update Metadata stored"
 msgstr ""
 
