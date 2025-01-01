@@ -146,7 +146,7 @@ class SlicerEstimatorMetadata:
                 return SLICER_SUPERSLICER
             elif "Simplify3D" in line:
                 return SLICER_SIMPLIFY3D
-            elif "OrcaSlicer" in line:
+            elif "OrcaSlicer" in line or "Creality_Print V5.1" in line:
                 return SLICER_ORCA
             elif "BambuStudio" in line:
                 return SLICER_BAMBU
