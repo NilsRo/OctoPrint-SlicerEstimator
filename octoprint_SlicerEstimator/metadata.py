@@ -247,13 +247,15 @@ class SlicerEstimatorFilamentChange:
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self._regexStr = "^(M600 |T[0-9])"
         self._compiled = re.compile(self._regexStr)
+        self._line_cnt = 0
         self._command_arr = []
         self._return_arr = []
 
     def process_line(self, line):
+        self._line_cnt += 1
         decoded_line = line.decode()
         if self._compiled.match(decoded_line):
-            self._command_arr.append(decoded_line)
+            self._command_arr.append([self._line_cnt, decoded_line])
         return line
 
     # scan for filament changes
@@ -267,7 +269,7 @@ class SlicerEstimatorFilamentChange:
                 # get the nearest estimation to the filament change
                 time_line = min(time_list, key=lambda x:abs(x[0]-change[0]))
                 self._logger.debug("Slicer-Comment {} found for filament change.".format(time_line[1]))
-                slicer_estimation = [change[1].split()[0], self._plugin._parseEstimation(time_line[1])]
+                slicer_estimation = [change[1].split()[0], time_line[1]]
                 self._return_arr.append(slicer_estimation)
 
     def store_metadata(self):
