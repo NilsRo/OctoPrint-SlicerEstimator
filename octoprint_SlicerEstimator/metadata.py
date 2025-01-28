@@ -136,7 +136,7 @@ class SlicerEstimatorMetadata:
 
     # slicer auto selection
     def detect_slicer(path):
-        line = SlicerEstimatorFileHandling.search_in_file_regex(path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|OrcaSlicer|BambuStudio|Snapmaker Luban).*")
+        line = SlicerEstimatorFileHandling.search_in_file_regex(path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|Creality_Print V5.1|OrcaSlicer|BambuStudio|Snapmaker Luban).*")
         if line:
             if  "Cura_SteamEngine" in line or "Creality Slicer" in line:
                 return SLICER_CURA
