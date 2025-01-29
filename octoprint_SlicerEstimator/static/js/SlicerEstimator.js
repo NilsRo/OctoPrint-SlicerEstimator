@@ -11,6 +11,7 @@ $(function () {
     self.settingsViewModel = parameters[2];
 
     self.currentMetadataArr = ko.observableArray([]);
+    self.currentEstimatedPrinttime = ko.observable();
     self.filamentChangeArr = ko.observableArray([]);
     self.deleteMetadataStoredRunning = ko.observable(false);
     self.updateMetadataStoredRunning = ko.observable(false);
@@ -97,6 +98,15 @@ $(function () {
 
 
     // --- Estimator
+    self.estimatedPrintTimeString = self.printerStateViewModel.estimatedPrintTimeString;
+    self.printerStateViewModel.estimatedPrintTimeString = ko.pureComputed(function () {
+      if (self.printerStateViewModel.estimatedPrintTime() != null && self.currentEstimatedPrinttime() == self.printerStateViewModel.estimatedPrintTime()) {
+        return self.estimatedPrintTimeString() + " ✔";
+      } else {
+        return self.estimatedPrintTimeString();
+      }
+    });
+
 
     // Overwrite the printTimeLeftOriginString function
     ko.extenders.addSlicerEstimator = function (target, option) {
@@ -243,6 +253,9 @@ $(function () {
 
           self.currentMetadataArr.removeAll();
           if (typeof actualFile !== 'undefined') {
+
+            self.currentEstimatedPrinttime(actualFile.slicer_additional['printtime']);
+
             enabledMeta.forEach(function (data) {
               if (actualFile.slicer_metadata != null && Object.keys(actualFile.slicer_metadata).length > 0) {
                 item = actualFile.slicer_metadata[data.id()];

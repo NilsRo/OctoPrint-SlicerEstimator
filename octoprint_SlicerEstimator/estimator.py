@@ -44,6 +44,7 @@ class SlicerEstimatorGcodeAnalysisQueue(GcodeAnalysisQueue):
 
 
     def _do_analysis(self, high_priority=False):
+        # TODO: Noch vereinfachen, da das File nicht mehr geparst werden muss. Kann direkt ausgewertet werden.
         try: # run a standard analysis and update estimation if found in GCODE
             result = super(SlicerEstimatorGcodeAnalysisQueue, self)._do_analysis(high_priority)
             if not self._aborted:
