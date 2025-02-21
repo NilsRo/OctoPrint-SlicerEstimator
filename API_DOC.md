@@ -5,19 +5,20 @@ If your plugin is registered it will be added to the configuration dropdown like
 
 ![](images/Plugin_API_Settings.png)
 
+- [API documentation for other developers](#api-documentation-for-other-developers)
 - [API description](#api-description)
-  * [Summary](#summary)
-  * [Methods](#methods)
-    + [register_plugin(plugin_identifier, plugin_name)](#register-plugin-plugin-identifier--plugin-name-)
-    + [register_plugin_target(plugin_identifier, target, target_name)](#register-plugin-target-plugin-identifier--target--target-name-)
-    + [unregister_plugin(plugin_identifier)](#unregister-plugin-plugin-identifier-)
-    + [unregister_plugin_target(plugin_identifier, target)](#unregister-plugin-target-plugin-identifier--target-)
-    + [get_registered_plugins](#get-registered-plugins)
-    + [get_registered_plugin_targets(plugin_identifier)](#get-registered-plugin-targets-plugin-identifier-)
-    + [get_metadata_file(plugin_identifier, target, origin, path):](#get-metadata-file-plugin-identifier--target--origin--path--)
-  * [Events](#events)
-    + [Metadata](#metadata)
-    + [Time to filament change](#time-to-filament-change)
+  - [Summary](#summary)
+  - [Methods](#methods)
+    - [register\_plugin(plugin\_identifier, plugin\_name)](#register_pluginplugin_identifier-plugin_name)
+    - [register\_plugin\_target(plugin\_identifier, target, target\_name)](#register_plugin_targetplugin_identifier-target-target_name)
+    - [unregister\_plugin(plugin\_identifier)](#unregister_pluginplugin_identifier)
+    - [unregister\_plugin\_target(plugin\_identifier, target)](#unregister_plugin_targetplugin_identifier-target)
+    - [get\_registered\_plugins](#get_registered_plugins)
+    - [get\_registered\_plugin\_targets(plugin\_identifier)](#get_registered_plugin_targetsplugin_identifier)
+    - [get\_metadata\_file(plugin\_identifier, target, origin, path):](#get_metadata_fileplugin_identifier-target-origin-path)
+  - [Events](#events)
+    - [Metadata](#metadata)
+    - [Time to filament change](#time-to-filament-change)
 
 # API description
 ## Summary
@@ -147,9 +148,9 @@ Payload: Payload[plugin_identifier][target]
 ```
 
 ### Time to filament change
-Event contains the remaining time to the filament changes. Actually it is a single event only and is not updated during print. If this is helpful feel free to ask.
+Event contains the remaining time to the filament changes. Actually it is a single event only and is not updated during print. If this is helpful feel free to ask. Actually the fileposition can be used to determine if an event is reached.
 
 Trigger: If a print starts and metadata handling is enabled in settings. 
 Event: Events.PLUGIN__SLICER_ESTIMATOR_FILAMENT_CHANGE or plugin_SlicerEstimator_filament_change
 
-Payload: Array of Array containing GCODE and seconds the filament has to be changed
+Payload: Array of Array containing [GCODE, seconds the filament has to be changed, fileposition in bytes, fileposition in bytes of the nearest time used]

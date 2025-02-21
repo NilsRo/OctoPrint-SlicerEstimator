@@ -203,7 +203,7 @@ class SlicerEstimatorEstimator:
             if decoded_line[:6] == ";TIME:":
                 self.printtime = float(line[6:])
             if decoded_line[:13] == ";TIME_ELAPSED":
-                self.time_list.append([self._line_cnt, self.printtime - float(decoded_line[14:])])
+                self.time_list.append([self._line_cnt, self._bytes_processed,  self.printtime - float(decoded_line[14:])])
                 return(("@TIME_LEFT " + str(self.printtime - float(decoded_line[14:])) + "\r\n").encode() + line)
         elif self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA or self._slicer == SLICER_BAMBU:
             if decoded_line[:4] == "M73 ":
@@ -212,7 +212,7 @@ class SlicerEstimatorEstimator:
                     # first remaining time is the overall printtime
                     if self.printtime == -1.0:
                         self.printtime = float(re_result[2])*60
-                    self.time_list.append([self._line_cnt, float(re_result[2])*60])
+                    self.time_list.append([self._line_cnt, self._bytes_processed, float(re_result[2])*60])
                     return(("@TIME_LEFT " + str(float(re_result[2])*60) + "\r\n").encode() + line)
         elif self._slicer == SLICER_SIMPLIFY3D:
             re_result = self._regex.match(decoded_line)
@@ -238,38 +238,39 @@ class SlicerEstimatorEstimator:
 
 
 class SlicerEstimatorFilamentChange:
-    #TODO: Slicer GCODE ausbauen und auf den eigenen Timestamp umstellen
-    def __init__(self,  origin, path, slicer, plugin):
+    def __init__(self, origin, path, slicer, plugin):
         self._origin = origin
         self.path = path
         self._slicer = slicer
         self._plugin = plugin
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
-        self._regexStr = "^(M600 |T[0-9])"
+        self._regexStr = "^(M600|T[0-9]|M0|M601)"
         self._compiled = re.compile(self._regexStr)
         self._line_cnt = 0
+        self._bytes_processed = 0
         self._command_arr = []
         self._return_arr = []
 
     def process_line(self, line):
         self._line_cnt += 1
+        self._bytes_processed += len(line)
+
         decoded_line = line.decode()
         if self._compiled.match(decoded_line):
-            self._command_arr.append([self._line_cnt, decoded_line])
+            self._command_arr.append([self._line_cnt, self._bytes_processed, decoded_line])
         return line
 
     # scan for filament changes
     def search_filament_changes(self, time_list):
-        change_list = list(filter(lambda p: p[1][:4] == "M600" or p[1][:1] == "T", self._command_arr))
-        # time_list = list(filter(lambda p: p[1][:len(self._slicer_gcode)] == self._slicer_gcode and self._plugin._parseEstimation(p[1]), self._command_arr))
+        # change_list = list(filter(lambda p: p[1][:4] == "M600" or p[1][:1] == "T", self._command_arr))
         self._return_arr = []
 
-        if len(change_list) > 0 and len(time_list) > 0:
-            for change in change_list:
+        if len(self._command_arr) > 0 and len(time_list) > 0:
+            for command in self._command_arr:
                 # get the nearest estimation to the filament change
-                time_line = min(time_list, key=lambda x:abs(x[0]-change[0]))
-                self._logger.debug("Slicer-Comment {} found for filament change.".format(time_line[1]))
-                slicer_estimation = [change[1].split()[0], time_line[1]]
+                time_line = min(time_list, key=lambda x:abs(x[0]-command[0]))
+                self._logger.debug("Slicer-Comment {} found for filament change.".format(time_line[2]))
+                slicer_estimation = [command[2].split()[0], time_line[2], command[1], time_line[1]]
                 self._return_arr.append(slicer_estimation)
 
     def store_metadata(self):

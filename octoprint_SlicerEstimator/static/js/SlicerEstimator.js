@@ -34,6 +34,16 @@ $(function () {
       return fmt(changeTime);
     };
 
+    self.filamentChangeType = function (changeType) {
+      if (changeType == "M600") {
+        return gettext("filament change (M600)");
+      } else if (changeType.substring(0, 1) == "T") {
+        return gettext("filament") + " (" + gettext("tool") + " " + changeType.substring(1, 2) + ")";
+      } else if (changeType == "M0" || changeType == "M601") {
+        return gettext("pause") + " (" + changeType + ")";
+      }
+    };
+
     // receive data from server
     self.onDataUpdaterPluginMessage = function (plugin, data) {
       // Event
@@ -204,7 +214,6 @@ $(function () {
             return_value += description + ": " + value + "<br>";
           }
         }
-
         //filament changes
         if (data.slicer_filament_change != null && Object.keys(data.slicer_filament_change).length > 0 && data.slicer_additional != null && Object.keys(data.slicer_additional).length > 0 && data.slicer_additional["printtime"] != null) {
           let cnt = 0;
@@ -216,13 +225,7 @@ $(function () {
             } else {
               changeTimeString = self.filamentChangeTimeFormat(data.slicer_additional["printtime"] - value[1]);
             }
-            let changeType;
-            if (value[0] == "M600") {
-              changeType = gettext("filament change (M600)");
-            } else {
-              changeType = gettext("filament") + " (" + gettext("tool") + " " + value[0].substring(1, 2) + ")";
-            }
-            return_value += cnt + ". " + changeType + ": " + changeTimeString + '<br>';
+            return_value += cnt + ". " + self.filamentChangeType(value[0]) + ": " + changeTimeString + '<br>';
           }
         }
 
@@ -277,17 +280,11 @@ $(function () {
                 let cnt = 0
                 for (let item of changeList) {
                   let returnArr = [];
-                  let changeType;
                   let changeTime;
                   cnt += 1;
                   if (self.filamentChangeArr.length < 10) {
                     // Return list shown is smaller than 10 filament changes
-                    if (item[0] == "M600") {
-                      changeType = gettext("filament change (M600)");
-                    } else {
-                      changeType = gettext("filament") + " (" + gettext("tool") + " " + item[0].substring(1, 2) + ")";
-                    }
-                    returnArr["description"] = cnt + ". " + changeType;
+                    returnArr["description"] = cnt + ". " + self.filamentChangeType(item[0]);
                     if (item[1] != null) {
                       // SlicerEstimator based calculation - time
                       if (self.printerStateViewModel.printTimeLeft() === null) {
@@ -297,21 +294,15 @@ $(function () {
                       }
                     } else {
                       // progress based calculation
-                      changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[3] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[3] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[3]))
+                      changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[2]))
                     }
-                    if (self.printerStateViewModel.filepos() <= item[3]) {
+                    if (self.printerStateViewModel.filepos() <= item[2]) {
                       let changeTimeString = self.filamentChangeTimeFormat(changeTime);
                       returnArr["value"] = changeTimeString;
                       self.filamentChangeArr.push(returnArr);
                     }
                   } else {
-                    if (changeList[changeList.length - 1][0] == "M600") {
-                      changeType = gettext("filament change (M600)");
-                    } else {
-                      changeType = gettext("filament") + " (" + gettext("tool") + " " + changeList[changeList.length - 1][0].substring(1, 2) + ")";
-                    }
-                    returnArr["description"] = gettext("up to") + " " + changeList.length + ". " + changeType;
-
+                    returnArr["description"] = gettext("up to") + " " + changeList.length + ". " + self.filamentChangeType(changeList[changeList.length - 1][0]);
                     if (item[1] != null) {
                       //SlicerEstimator based calculation - time
                       if (self.printerStateViewModel.printTimeLeft() === null) {
@@ -321,10 +312,9 @@ $(function () {
                       }
                     } else {
                       //progress based calculation
-                      changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[3] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[3] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[3]))
+                      changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[2]))
                     }
-                    let changeTimeString = self.filamentChangeTimeFormat(changeTime);
-                    returnArr["value"] = changeTimeString;
+                    returnArr["value"] = self.filamentChangeTimeFormat(changeTime);;
                     self.filamentChangeArr.push(returnArr);
                     break;
                   }
