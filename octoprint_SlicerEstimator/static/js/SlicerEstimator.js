@@ -299,6 +299,7 @@ $(function () {
                     if (self.printerStateViewModel.filepos() <= item[2]) {
                       let changeTimeString = self.filamentChangeTimeFormat(changeTime);
                       returnArr["value"] = changeTimeString;
+                      returnArr["title"] = formatDuration(changeTime);
                       self.filamentChangeArr.push(returnArr);
                     }
                   } else {
@@ -314,7 +315,8 @@ $(function () {
                       //progress based calculation
                       changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[2]))
                     }
-                    returnArr["value"] = self.filamentChangeTimeFormat(changeTime);;
+                    returnArr["value"] = self.filamentChangeTimeFormat(changeTime);
+                    returnArr["title"] = formatDuration(changeTime);
                     self.filamentChangeArr.push(returnArr);
                     break;
                   }
@@ -362,7 +364,7 @@ $(function () {
         var element = $("#state").find(".accordion-inner .progress");
         if (element.length) {
           element.before(
-            "<div id='filamentChange_list' data-bind='foreach: filamentChangeArr'><span data-bind='text: description'></span>: <strong data-bind='text: value'> - </strong><br></div>"
+            "<div id='filamentChange_list' data-bind='foreach: filamentChangeArr'><span data-bind='text: description'></span>: <strong data-bind='text: value, attr: {title: title}' title=' - '> - </strong><br></div>"
             + "<div id='metadata_list' data-bind='foreach: currentMetadataArr'><span data-bind='text: description'></span>: <strong data-bind='text: value'> - </strong><br></div>"
           );
         }
