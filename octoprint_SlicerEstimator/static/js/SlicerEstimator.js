@@ -11,6 +11,7 @@ $(function () {
     self.settingsViewModel = parameters[2];
 
     self.currentMetadataArr = ko.observableArray([]);
+    self.actualFileMetadata;
     self.currentEstimatedPrinttime = ko.observable();
     self.filamentChangeArr = ko.observableArray([]);
     self.deleteMetadataStoredRunning = ko.observable(false);
@@ -246,22 +247,21 @@ $(function () {
 
     //--- Additional Metadata current print
 
-    // adds metadata to printerStateViewModel
-    self.addMetadata = function (origin, path) {
+    // load file metadata
+    self.getSlicerMetadata = function (origin, path) {
       // start jquery request for metadata
       OctoPrint.files.get(origin, path)
         .done(function (response) {
           let enabledMeta = self.settingsViewModel.settings.plugins.SlicerEstimator.metadata_list().filter(elem => elem.targets["SlicerEstimator"]["printer"]() === true);
-          let actualFile = response;
-
+          actualFileMetadata = response;
           self.currentMetadataArr.removeAll();
-          if (typeof actualFile !== 'undefined') {
+          if (typeof actualFileMetadata !== 'undefined') {
 
-            self.currentEstimatedPrinttime(actualFile.slicer_additional['printtime']);
+            self.currentEstimatedPrinttime(actualFileMetadata.slicer_additional['printtime']);
 
             enabledMeta.forEach(function (data) {
-              if (actualFile.slicer_metadata != null && Object.keys(actualFile.slicer_metadata).length > 0) {
-                item = actualFile.slicer_metadata[data.id()];
+              if (actualFileMetadata.slicer_metadata != null && Object.keys(actualFileMetadata.slicer_metadata).length > 0) {
+                item = actualFileMetadata.slicer_metadata[data.id()];
                 if (item != null) {
                   let returnArr = [];
                   returnArr["description"] = data.description;
@@ -271,60 +271,50 @@ $(function () {
               }
             });
           }
+          // Update visible metadata after refresh from API.
+          self.addMetadata(origin, path);
+        });
+    }
 
-          self.filamentChangeArr.removeAll();
-          if (typeof actualFile !== 'undefined' && actualFile.slicer_additional != null) {
-            if (actualFile.slicer_filament_change != null && Object.keys(actualFile.slicer_filament_change).length > 0) {
-              changeList = actualFile.slicer_filament_change;
-              if (changeList != null) {
-                let cnt = 0
-                for (let item of changeList) {
-                  let returnArr = [];
-                  let changeTime;
-                  cnt += 1;
-                  if (self.filamentChangeArr.length < 10) {
-                    // Return list shown is smaller than 10 filament changes
-                    returnArr["description"] = cnt + ". " + self.filamentChangeType(item[0]);
-                    if (item[1] != null) {
-                      // SlicerEstimator based calculation - time
-                      if (self.printerStateViewModel.printTimeLeft() === null) {
-                        changeTime = self.printerStateViewModel.estimatedPrintTime() - item[1];
-                      } else {
-                        changeTime = (self.printerStateViewModel.estimatedPrintTime() - item[1]) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
-                      }
-                    } else {
-                      // progress based calculation
-                      changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[2]))
-                    }
-                    if (self.printerStateViewModel.filepos() <= item[2]) {
-                      let changeTimeString = self.filamentChangeTimeFormat(changeTime);
-                      returnArr["value"] = changeTimeString;
-                      returnArr["title"] = formatDuration(changeTime);
-                      self.filamentChangeArr.push(returnArr);
-                    }
-                  } else {
-                    returnArr["description"] = gettext("up to") + " " + changeList.length + ". " + self.filamentChangeType(changeList[changeList.length - 1][0]);
-                    if (item[1] != null) {
-                      //SlicerEstimator based calculation - time
-                      if (self.printerStateViewModel.printTimeLeft() === null) {
-                        changeTime = self.printerStateViewModel.estimatedPrintTime() - changeList[changeList.length - 1][1];
-                      } else {
-                        changeTime = (self.printerStateViewModel.estimatedPrintTime() - changeList[changeList.length - 1][1]) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
-                      }
-                    } else {
-                      //progress based calculation
-                      changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[2]))
-                    }
-                    returnArr["value"] = self.filamentChangeTimeFormat(changeTime);
-                    returnArr["title"] = formatDuration(changeTime);
-                    self.filamentChangeArr.push(returnArr);
-                    break;
-                  }
+
+    // adds metadata to printerStateViewModel
+    self.addMetadata = function (origin, path) {
+      debugger;
+      if (typeof actualFileMetadata !== 'undefined' && actualFileMetadata.slicer_additional != null) {
+        if (actualFileMetadata.slicer_filament_change != null && Object.keys(actualFileMetadata.slicer_filament_change).length > 0) {
+          changeList = actualFileMetadata.slicer_filament_change;
+          if (changeList != null) {
+            let cnt = 0
+            for (let item of changeList) {
+              let changeTime;
+              if (item[1] != null) {
+                // SlicerEstimator based calculation - time
+                if (self.printerStateViewModel.printTimeLeft() === null) {
+                  changeTime = self.printerStateViewModel.estimatedPrintTime() - item[1];
+                } else {
+                  changeTime = (self.printerStateViewModel.estimatedPrintTime() - item[1]) - (self.printerStateViewModel.estimatedPrintTime() - self.printerStateViewModel.printTimeLeft());
                 }
+              } else {
+                // progress based calculation
+                changeTime = (self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) - ((self.printerStateViewModel.estimatedPrintTime() * (item[2] / self.printerStateViewModel.filesize())) * (self.printerStateViewModel.filepos() / item[2]))
               }
+              let changeTimeString = self.filamentChangeTimeFormat(changeTime);
+              if (self.filamentChangeArr().length <= cnt) {
+                let returnArr = {
+                  description: ko.observable((cnt + 1) + ". " + self.filamentChangeType(item[0])),
+                  value: ko.observable(changeTimeString),
+                  title: ko.observable(formatDuration(changeTime))
+                };
+                self.filamentChangeArr.push(returnArr);
+              } else {
+                self.filamentChangeArr()[cnt].value(changeTimeString);
+                self.filamentChangeArr()[cnt].title(formatDuration(changeTime));
+              }
+              cnt += 1;
             }
           }
-        });
+        }
+      }
     };
 
     //get list of enabled metadata and filament change if a file is selected
@@ -333,16 +323,24 @@ $(function () {
         self.addMetadata("local", filepath);
       }
     };
-    self.printerStateViewModel.filepath.subscribe(function (filepath) { self.addMetadataLocal(filepath) });
-    self.printerStateViewModel.printTimeLeft.subscribe(function () { self.addMetadataLocal(self.printerStateViewModel.filepath()) });
-    self.printerStateViewModel.estimatedPrintTime.subscribe(function () { self.addMetadataLocal(self.printerStateViewModel.filepath()) });
-    self.printerStateViewModel.filepos.subscribe(function () { self.addMetadataLocal(self.printerStateViewModel.filepath()) });
+    self.getSlicerMetadataLocal = function (filepath) {
+      self.filamentChangeArr.removeAll();
+      if (self.printerStateViewModel.sd() == false && filepath !== null) {
+        self.getSlicerMetadata("local", filepath);
+      }
+    };
+
+    self.printerStateViewModel.filepath.subscribe(function (filepath) { self.getSlicerMetadataLocal(filepath); });
+    // self.printerStateViewModel.printTimeLeft.subscribe(function () { self.addMetadataLocal(self.printerStateViewModel.filepath()) });
+    // self.printerStateViewModel.estimatedPrintTime.subscribe(function () { self.addMetadataLocal(self.printerStateViewModel.filepath()) });
+    self.printerStateViewModel.filepos.subscribe(function () { self.addMetadataLocal(self.printerStateViewModel.filepath()); });
 
     //on reload if GUI refresh selected file
     ko.when(function () {
       return self.printerStateViewModel.sd() !== undefined && self.printerStateViewModel.filepath() !== undefined;
     }, function (result) {
       if (result == true && self.printerStateViewModel.sd() == false && self.printerStateViewModel.filepath() !== null) {
+        self.getSlicerMetadata("local", self.printerStateViewModel.filepath());
         self.addMetadata("local", self.printerStateViewModel.filepath());
       }
     });
