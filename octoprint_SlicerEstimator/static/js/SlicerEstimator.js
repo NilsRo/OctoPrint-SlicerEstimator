@@ -279,7 +279,6 @@ $(function () {
 
     // adds metadata to printerStateViewModel
     self.addMetadata = function (origin, path) {
-      debugger;
       if (typeof actualFileMetadata !== 'undefined' && actualFileMetadata.slicer_additional != null) {
         if (actualFileMetadata.slicer_filament_change != null && Object.keys(actualFileMetadata.slicer_filament_change).length > 0) {
           changeList = actualFileMetadata.slicer_filament_change;
@@ -303,11 +302,15 @@ $(function () {
                 let returnArr = {
                   description: ko.observable((cnt + 1) + ". " + self.filamentChangeType(item[0])),
                   value: ko.observable(changeTimeString),
+                  changeTime: ko.observable(changeTime),
+                  posLeft: ko.observable(item[2] - self.printerStateViewModel.filepos()),
                   title: ko.observable(formatDuration(changeTime))
                 };
                 self.filamentChangeArr.push(returnArr);
               } else {
                 self.filamentChangeArr()[cnt].value(changeTimeString);
+                self.filamentChangeArr()[cnt].changeTime(changeTime);
+                self.filamentChangeArr()[cnt].posLeft(item[2] - self.printerStateViewModel.filepos());
                 self.filamentChangeArr()[cnt].title(formatDuration(changeTime));
               }
               cnt += 1;
@@ -315,6 +318,13 @@ $(function () {
           }
         }
       }
+    };
+
+    //filter finished filamentChanges for display
+    self.displayFilamentChange = function () {
+      return ko.utils.arrayFilter(self.filamentChangeArr(), function (item) {
+        return item["posLeft"]() >= 0;
+      });
     };
 
     //get list of enabled metadata and filament change if a file is selected
@@ -362,7 +372,7 @@ $(function () {
         var element = $("#state").find(".accordion-inner .progress");
         if (element.length) {
           element.before(
-            "<div id='filamentChange_list' data-bind='foreach: filamentChangeArr'><span data-bind='text: description'></span>: <strong data-bind='text: value, attr: {title: title}' title=' - '> - </strong><br></div>"
+            "<div id='filamentChange_list' data-bind='foreach: displayFilamentChange()'><span data-bind='text: description'></span>: <strong data-bind='text: value, attr: {title: title}' title=' - '> - </strong><br></div>"
             + "<div id='metadata_list' data-bind='foreach: currentMetadataArr'><span data-bind='text: description'></span>: <strong data-bind='text: value'> - </strong><br></div>"
           );
         }
