@@ -256,9 +256,7 @@ $(function () {
           actualFileMetadata = response;
           self.currentMetadataArr.removeAll();
           if (typeof actualFileMetadata !== 'undefined') {
-
             self.currentEstimatedPrinttime(actualFileMetadata.slicer_additional['printtime']);
-
             enabledMeta.forEach(function (data) {
               if (actualFileMetadata.slicer_metadata != null && Object.keys(actualFileMetadata.slicer_metadata).length > 0) {
                 item = actualFileMetadata.slicer_metadata[data.id()];
@@ -282,6 +280,7 @@ $(function () {
       if (typeof actualFileMetadata !== 'undefined' && actualFileMetadata.slicer_additional != null) {
         if (actualFileMetadata.slicer_filament_change != null && Object.keys(actualFileMetadata.slicer_filament_change).length > 0) {
           changeList = actualFileMetadata.slicer_filament_change;
+          debugger
           if (changeList != null) {
             let cnt = 0
             for (let item of changeList) {

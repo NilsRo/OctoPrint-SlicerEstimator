@@ -90,14 +90,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     def get_settings_version(self):
-        return 3
+        return 4
 
 
     def on_settings_migrate(self, target, current):
-        self._logger.info("SlicerEstimator: Updating Metadata from files...")
-        metadata_handler = SlicerEstimatorMetadataFiles(self)
-        metadata_handler.update_metadata_in_files()
-
         if current is not None:
             self._logger.info("SlicerEstimator: Setting migration from version {} to {}".format(current, target))
 
@@ -117,7 +113,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 plugins[self._identifier]["name"] = self._plugin_name,
                 plugins[self._identifier]["targets"] = dict(printer= "Printer", filelist= "Filelist")
                 self._settings.set(["plugins"], plugins)
-
+        
+        if current is None or current < 4:
+            self._logger.info("SlicerEstimator: Updating Metadata from files...")
+            metadata_handler = SlicerEstimatorMetadataFiles(self)
+            metadata_handler.update_metadata_in_files()
+        
 
     def on_settings_save(self, data):
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
