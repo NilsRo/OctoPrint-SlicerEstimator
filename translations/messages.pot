@@ -1,74 +1,64 @@
 # Translations template for OctoPrint-SlicerEstimator.
-# Copyright (C) 2024 The OctoPrint Project
+# Copyright (C) 2025 The OctoPrint Project
 # This file is distributed under the same license as the
 # OctoPrint-SlicerEstimator project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: OctoPrint-SlicerEstimator 1.6.7\n"
+"Project-Id-Version: OctoPrint-SlicerEstimator 1.6.9\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2024-09-05 21:45+0200\n"
+"POT-Creation-Date: 2025-02-26 20:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.10.3\n"
+"Generated-By: Babel 2.10.1\n"
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:71
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:41
+msgid "filament change (M600)"
+msgstr ""
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:43
+msgid "filament"
+msgstr ""
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:43
+msgid "tool"
+msgstr ""
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:45
+msgid "pause"
+msgstr ""
+
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:83
 msgid ""
 "No print time estimation from slicer available. Please upload GCODE file "
 "again. The file was uploaded before Slicer Estimator was installed or "
 "Slicer was not detected."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:79
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:91
 msgid ""
 "For the selected file the metadata was missing. It is updated now, "
 "refresh the filelist if you like to see the metadata found."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:87
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:99
 msgid "Slicer not detected. Please open a ticket if the slicer should be known..."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:95
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:107
 msgid ""
 "No timecodes found. Please check if the remaining time feature in the "
 "slicer is active."
 msgstr ""
 
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:128
+#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:149
 msgid "Based on information added by the slicer."
-msgstr ""
-
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:247
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:313
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:338
-msgid "filament change (M600)"
-msgstr ""
-
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:249
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:315
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:340
-msgid "filament"
-msgstr ""
-
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:249
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:315
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:340
-msgid "tool"
-msgstr ""
-
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:342
-msgid "up to"
-msgstr ""
-
-#: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:465
-msgid "Delete the list above?"
 msgstr ""
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:6
