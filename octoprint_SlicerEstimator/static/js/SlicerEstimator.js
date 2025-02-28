@@ -531,26 +531,6 @@ $(function () {
       });
 
       // Settings
-      body += "\n\n**Settings**\n";
-      Object.entries(self.settingsViewModel.settings.plugins.SlicerEstimator).forEach(function (item) {
-        if (item[0] == 'metadata_list') {
-          body += '- ' + item[0] + ": ";
-          item[1]().forEach(function (meta_item) {
-            body += ' (id: ' + meta_item["id"]();
-            body += ', description: ' + meta_item["description"]() + ')';
-          });
-          body += "\n";
-        } else if (item[0] == 'plugins') {
-          body += 'Installed plugins: '
-          Object.entries(item[1]).forEach(function (plugin) {
-            body += '(' + plugin[0] + ')'
-          })
-          body += "\n";
-        } else {
-          body += '- ' + item[0] + ": " + item[1]() + "\n";
-        }
-
-      });
       body += "\n\n**Software versions**\n- " + $('#footer_version li').map(function () { return $(this).text() }).get().join("\n- ");
       body += "\n\n\n**Browser**\n- " + navigator.userAgent
       window.open(url + '?body=' + encodeURIComponent(body));
