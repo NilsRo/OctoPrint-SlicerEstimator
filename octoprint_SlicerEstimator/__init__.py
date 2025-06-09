@@ -402,6 +402,17 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.error("Plugin {} not registered.".format(plugin_identifier))
 
 
+    def update_metadata_in_file(self, path, path_on_disk):
+        """Unrgister a plugins target if you like to remove all target settings
+
+        Args:
+            plugin_identifier (String): OctoPrint Plugin Identifier
+            target (String): ID of a target (you can choose)
+        """
+        self._logger.debug("Updating metadata stored via API from {} to {}".format(path_on_disk, path))
+        metadataFileObj = SlicerEstimatorMetadataFiles(self)
+        metadataFileObj.update_metadata_in_file(path, path_on_disk)
+
     # send the event on printing
     def _send_metadata_print_event(self, origin, path):
         event = "plugin_SlicerEstimator_metadata_print"
@@ -444,10 +455,29 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             metadataFileObj.delete_metadata_in_files()
             # return flask.jsonify(results)
         elif command == "updateMetadataStored":
-            self._logger.debug("Updating metadata stored")
-            metadataFileObj = SlicerEstimatorMetadataFiles(self)
-            metadataFileObj.update_metadata_in_files()
-            # return flask.jsonify(results)
+            # self._logger.debug("Updating metadata stored")
+            # metadataFileObj = SlicerEstimatorMetadataFiles(self)
+            # metadataFileObj.update_metadata_in_files()
+            helpers = self._plugin_manager.get_helpers("SlicerEstimator",
+                                                   "register_plugin",
+                                                   "register_plugin_target",
+                                                   "unregister_plugin",
+                                                   "unregister_plugin_target",
+                                                   "get_metadata_file",
+                                                   "update_metadata_in_file"
+                                                   )
+            if helpers is None:
+                self._logger.info("Slicer Estimator not installed")
+            else:
+                self.se_register_plugin = helpers["register_plugin"]
+                self.se_register_plugin_target = helpers["register_plugin_target"]
+                self.se_unregister_plugin = helpers["unregister_plugin"]
+                self.se_unregister_plugin_target = helpers["unregister_plugin_target"]
+                self.se_get_metadata_file = helpers["get_metadata_file"]
+                self.se_update_metadata_in_file = helpers["update_metadata_in_file"]
+
+                self.se_update_metadata_in_file("3DBenchy_PLA_37m1s.3mf", "C:\\temp\\04_040401XCarriage.gcode")
+                # return flask.jsonify(results)
 
 
 
@@ -539,7 +569,8 @@ def __plugin_load__():
         register_plugin_target = __plugin_implementation__.register_plugin_target,
         unregister_plugin=__plugin_implementation__.unregister_plugin,
         unregister_plugin_target=__plugin_implementation__.unregister_plugin_target,
-        get_metadata_file=__plugin_implementation__.get_metadata_file
+        get_metadata_file=__plugin_implementation__.get_metadata_file,
+        update_metadata_in_file=__plugin_implementation__.update_metadata_in_file
     )
 
     global __plugin_hooks__
