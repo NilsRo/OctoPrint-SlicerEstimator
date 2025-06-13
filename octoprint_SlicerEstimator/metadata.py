@@ -60,43 +60,29 @@ class SlicerEstimatorMetadataFiles:
 
     # Update metadata in one file
     def update_metadata_in_file(self, path):
-        self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
         path_on_disk = self._file_manager._storage_managers[self._origin].path_on_disk(path)
+        self.update_metadata_in_file(path, path_on_disk)
+
+    # Update metadata in one file from a file on the disk
+    def update_metadata_in_file(self, path, path_on_disk):
         slicer = SlicerEstimatorMetadata.detect_slicer(path_on_disk)
-        if slicer is not None:
-            #ToDo: ggf. auf Batchweise verarbeiten umbauen
+        if slicer is not None:            
             results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk)
-            if results is not None:
-                estimator_obj = SlicerEstimatorEstimator("local", path, slicer, self._plugin)
-                metadata_obj = SlicerEstimatorMetadata("local", path, slicer, self._plugin)
-                filament_change_obj = SlicerEstimatorFilamentChange("local", path, slicer, self._plugin)
+            if results is not None:                
+                estimator_obj = SlicerEstimatorEstimator(self._origin, path, slicer, self._plugin)
+                metadata_obj = SlicerEstimatorMetadata(self._origin, path, slicer, self._plugin)
+                filament_change_obj = SlicerEstimatorFilamentChange(self._origin, path, slicer, self._plugin)
                 for result in results:
                     return_line = estimator_obj.process_line(result.encode())
+                    return_line = result.encode()
                     metadata_obj.process_line(return_line)
                     filament_change_obj.process_line(return_line)
+                self._file_manager._storage_managers[self._origin].remove_additional_metadata(path, "slicer_metadata")
                 estimator_obj.store_metadata()
                 metadata_obj.store_metadata()
                 filament_change_obj.search_filament_changes(estimator_obj.time_list)
                 filament_change_obj.store_metadata()
-
-    # Read metadata in one file
-    def update_metadata_in_file(self, path, path_on_disk):
-        slicer = SlicerEstimatorMetadata.detect_slicer(path_on_disk)
-        if slicer is not None:
-            results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk)
-            if results is not None:
-                # estimator_obj = SlicerEstimatorEstimator("local", path, slicer, self._plugin)
-                metadata_obj = SlicerEstimatorMetadata("local", path, slicer, self._plugin)
-                filament_change_obj = SlicerEstimatorFilamentChange("local", path, slicer, self._plugin)
-                for result in results:
-                    # return_line = estimator_obj.process_line(result.encode())
-                    return_line = result.encode()
-                    metadata_obj.process_line(return_line)
-                    # filament_change_obj.process_line(return_line)
-                # estimator_obj.store_metadata()
-                metadata_obj.store_metadata()
-                # filament_change_obj.search_filament_changes(estimator_obj.time_list)
-                # filament_change_obj.store_metadata()
+                self._file_manager.analyse(self._origin, path)
 
     # Update metadata in all files
     def update_metadata_in_files(self):
