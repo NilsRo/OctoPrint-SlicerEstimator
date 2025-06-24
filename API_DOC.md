@@ -16,6 +16,7 @@ If your plugin is registered it will be added to the configuration dropdown like
     - [get\_registered\_plugins](#get_registered_plugins)
     - [get\_registered\_plugin\_targets(plugin\_identifier)](#get_registered_plugin_targetsplugin_identifier)
     - [get\_metadata\_file(plugin\_identifier, target, origin, path):](#get_metadata_fileplugin_identifier-target-origin-path)
+    - [update\_metadata\_in\_file(origin, path, path\_on\_disk):](#update_metadata_in_fileorigin-path-path_on_disk)
   - [Events](#events)
     - [Metadata](#metadata)
     - [Time to filament change](#time-to-filament-change)
@@ -127,6 +128,13 @@ Get the Metadata to a file in an Array containing a tripple array
 
     Returns:
         [Array]: Array of metadata in metadata_id, description and value
+
+### update_metadata_in_file(origin, path, path_on_disk):
+Update metadata from a specific file to a path uploaded.
+
+    Args:
+        path (String): Path to the file
+        path_on_disk (String): Path of the file on the disc that should be scanned
 
 ## Events
 Slicer Estimator sends a custom event to the event bus.

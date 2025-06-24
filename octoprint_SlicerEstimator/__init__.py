@@ -406,7 +406,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         """Update metadata from a specific file to a path uploaded
 
         Args:
-            path (String): Octoprints internal path of the file
+            path (String): Path to the file
             path_on_disk (String): Path of the file on the disc that should be scanned
         """
         if origin != "local":
