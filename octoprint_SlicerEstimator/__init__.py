@@ -413,7 +413,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
             self._logger.error("Only local origin supported!")
         self._logger.debug("Updating metadata stored via API from {} to {}".format(path_on_disk, path))
         metadataFileObj = SlicerEstimatorMetadataFiles(self)
-        metadataFileObj.update_metadata_in_file(path, path_on_disk)
+        metadataFileObj.update_metadata_in_file_on_disk(path, path_on_disk)
         
 
     # send the event on printing

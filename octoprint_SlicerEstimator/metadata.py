@@ -61,10 +61,10 @@ class SlicerEstimatorMetadataFiles:
     # Update metadata in one file
     def update_metadata_in_file(self, path):
         path_on_disk = self._file_manager._storage_managers[self._origin].path_on_disk(path)
-        self.update_metadata_in_file(path, path_on_disk)
+        self.update_metadata_in_file_on_disk(path, path_on_disk)
 
     # Update metadata in one file from a file on the disk
-    def update_metadata_in_file(self, path, path_on_disk):
+    def update_metadata_in_file_on_disk(self, path, path_on_disk):
         slicer = SlicerEstimatorMetadata.detect_slicer(path_on_disk)
         if slicer is not None:            
             results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk)
