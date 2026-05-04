@@ -45,7 +45,7 @@
                     </ul>
                     <p>
                         {{ _('Additional support or a manual is available on <a
-                            href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">Github</a>.') }}
+                            href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">Github</a>.') | safe }}
                         <button class="btn" data-bind="click: createIssue">{{ _('Create issue') }}</button>
                 </div>
             </div>
@@ -53,14 +53,14 @@
                 <h4>{{ _('Metadata') }}</h4>
                 <div class="control-group">
                     <p>{{ _('How to add custom metadata to OctoPrints filelist see <a
-                            href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!') }}
+                            href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">here</a>!') | safe }}
                     </p>
                     <div class="alert alert-info">
                         <i class="fas fa-info icon-info-sign iconRight"></i>
                         {{ _('Metadata has to be added in the Start GCODE in this format: (;Slicer
                         info:&lt;key&gt;;&lt;value&gt;). You can add as much metadata as you like. You can find an
                         example <a href="https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile" target="_blank">here</a>
-                        for Cura.') }}
+                        for Cura.') | safe }}
                     </div>
                     <div class="controls" data-toggle="tooltip"
                         title="{{ _('Slicer standard metadata will be used also.') }}">
@@ -170,7 +170,7 @@
                     <div class="controls" data-toggle="tooltip" title="{{ _('Update from development branch') }}">
                         <label class="checkbox">
                             <input type="checkbox" data-bind="checked: settings.plugins.SlicerEstimator.useDevChannel">
-                            {{ _('Use development branch <b>Restart of OctoPrint required</b>') }}
+                            {{ _('Use development branch <b>Restart of OctoPrint required</b>') | safe }}
                         </label>
                     </div>
                 </div>

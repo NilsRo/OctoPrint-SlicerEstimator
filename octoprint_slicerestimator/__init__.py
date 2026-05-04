@@ -125,6 +125,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         ]
 
 
+    def is_template_autoescaped(self):
+        return True
+
+
 
 # SECTION: Settings helper
     def _update_settings_from_config(self):
