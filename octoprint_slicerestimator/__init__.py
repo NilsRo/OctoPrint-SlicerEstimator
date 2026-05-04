@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import absolute_import, unicode_literals
 
+import flask
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -8,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import octoprint.plugin
 import octoprint.filemanager
 import octoprint.filemanager.util
+from octoprint.access.permissions import Permissions
 from octoprint.events import Events
 
 from .const import SLICER_SIMPLIFY3D
@@ -448,9 +450,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         return {'deleteMetadataStored': [], 'updateMetadataStored': []}
 
     def on_api_command(self, command, data):
-        import flask
-        from octoprint.server import user_permission
-        if not user_permission.can():
+        if not Permissions.SETTINGS.can():
             return flask.make_response("Insufficient rights", 403)
 
         if command == "deleteMetadataStored":
