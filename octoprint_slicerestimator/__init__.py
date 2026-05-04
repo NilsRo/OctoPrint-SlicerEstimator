@@ -90,6 +90,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     def on_settings_migrate(self, target, current):
+        # Migration runs before on_after_startup, so make sure runtime
+        # settings (e.g. self._metadata_slicer) are populated before any
+        # migration step that may depend on them.
+        self._update_settings_from_config()
+
         if current is not None:
             self._logger.info("SlicerEstimator: Setting migration from version {} to {}".format(current, target))
 
