@@ -336,7 +336,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 if meta_items["targets"][plugin_identifier][target].pop() is None:
                     self._logger.error("Could not unregister plugins {} target {}!".format(plugin_identifier, target))
                 self._settings.set(["metadata_list"], self._metadata_list)
-            self._logger.info("Plugin {} unregistered target {}".format())
+            self._logger.info("Plugin {} unregistered target {}".format(plugin_identifier, target))
         else:
             self._logger.error("Plugin {} tried to unregister target {} but not found in registry".format(plugin_identifier, target))
 
