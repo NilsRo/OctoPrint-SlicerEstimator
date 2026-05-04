@@ -134,7 +134,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._plugins = self._settings.get(["plugins"])
         self._metadata_slicer = self._settings.get(["metadata_slicer"])
 
-        if self._estimator != None:
+        if self._estimator is not None:
             self._estimator.average_prio = self._average_prio
 
         self._logger.debug("Average: {}".format(self._average_prio))
@@ -236,7 +236,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
                 self._logger.debug("Filedata of {}: {}".format(payload["path"], vars(self._filedata[payload["path"]])))
-                if self._filedata[payload["path"]].slicer == None:
+                if self._filedata[payload["path"]].slicer is None:
                     self._sendNotificationToClient("no_slicer_detected")
                 self._filedata[payload["path"]].store_metadata()
 
@@ -382,7 +382,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if plugin_identifier in self._plugins:
             if target in self._plugins[plugin_identifier]["targets"].keys():
                 return_list = []
-                meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target] == True, self._metadata_list)
+                meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target], self._metadata_list)
                 additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer_metadata")
                 if additional_metadata:
                     for meta_item in meta_selected:
