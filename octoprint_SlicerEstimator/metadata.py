@@ -1,13 +1,19 @@
-from ast import Constant
-import re
 import logging
+import re
+
 import octoprint.filemanager
-import octoprint.filemanager.storage
 import octoprint.filemanager.util
 
-
-from .const import *
-from .util import *
+from .const import (
+    SLICER_BAMBU,
+    SLICER_CURA,
+    SLICER_LUBAN,
+    SLICER_ORCA,
+    SLICER_PRUSA,
+    SLICER_SIMPLIFY3D,
+    SLICER_SUPERSLICER,
+)
+from .util import SlicerEstimatorFileHandling
 
 
 # Interface to OctoPrints Lineprocessor on file upload

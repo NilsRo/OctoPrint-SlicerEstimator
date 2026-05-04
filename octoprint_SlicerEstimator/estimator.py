@@ -1,9 +1,10 @@
+import logging
 import time
-from .const import *
-from asyncio.log import logger
+
 from octoprint.printer.estimation import PrintTimeEstimator
-from octoprint.filemanager.analysis import AnalysisAborted
-from octoprint.filemanager.analysis import GcodeAnalysisQueue
+from octoprint.filemanager.analysis import AnalysisAborted, GcodeAnalysisQueue
+
+logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
 
 class SlicerEstimator(PrintTimeEstimator):
     def __init__(self, job_type):

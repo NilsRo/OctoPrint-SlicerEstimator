@@ -1,24 +1,18 @@
 # coding=utf-8
 from __future__ import absolute_import, unicode_literals
-from concurrent.futures import ThreadPoolExecutor
 
-import re
-import io
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 import octoprint.plugin
-import octoprint.events
 import octoprint.filemanager
-import octoprint.filemanager.storage
 import octoprint.filemanager.util
 from octoprint.events import Events
 
-from .const import *
-from .metadata import *
-from .util import *
-from octoprint_SlicerEstimator.estimator import SlicerEstimator, SlicerEstimatorGcodeAnalysisQueue
-from flask_babel import gettext
+from .const import SLICER_SIMPLIFY3D
+from .metadata import SlicerEstimatorFiledata, SlicerEstimatorMetadataFiles
+from .estimator import SlicerEstimator, SlicerEstimatorGcodeAnalysisQueue
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
