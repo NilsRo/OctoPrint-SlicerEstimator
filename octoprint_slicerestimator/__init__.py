@@ -441,6 +441,9 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self.unregister_plugin(plugin)
 
 
+    def is_api_protected(self):
+        return True
+
     def get_api_commands(self):
         return {'deleteMetadataStored': [], 'updateMetadataStored': []}
 
