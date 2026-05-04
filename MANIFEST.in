@@ -1,2 +1,4 @@
 include README.md
-include requirements.txt
+recursive-include octoprint_slicerestimator/templates *
+recursive-include octoprint_slicerestimator/translations *
+recursive-include octoprint_slicerestimator/static *

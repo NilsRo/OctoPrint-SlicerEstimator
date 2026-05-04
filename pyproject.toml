@@ -1,0 +1,42 @@
+[build-system]
+requires = [
+    "setuptools>=68",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OctoPrint-SlicerEstimator"
+version = "1.6.11"
+description = "Use Slicer embedded info like estimated printtime, material name,..."
+authors = [
+    { name = "Nils Hendrik Rottgardt", email = "n.rottgardt@gmail.com" },
+]
+requires-python = ">=3.7,<4"
+dependencies = []
+dynamic = [
+    "license",
+]
+
+[project.entry-points."octoprint.plugin"]
+SlicerEstimator = "octoprint_slicerestimator"
+
+[project.urls]
+Homepage = "https://github.com/NilsRo/OctoPrint-SlicerEstimator"
+
+[project.optional-dependencies]
+develop = [
+    "go-task-bin",
+]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = [
+    "octoprint_slicerestimator",
+    "octoprint_slicerestimator.*",
+]
