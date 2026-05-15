@@ -1,24 +1,20 @@
 # coding=utf-8
 from __future__ import absolute_import, unicode_literals
-from concurrent.futures import ThreadPoolExecutor
 
-import re
-import io
+import flask
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 import octoprint.plugin
-import octoprint.events
 import octoprint.filemanager
-import octoprint.filemanager.storage
 import octoprint.filemanager.util
+from octoprint.access.permissions import Permissions
 from octoprint.events import Events
 
-from .const import *
-from .metadata import *
-from .util import *
-from octoprint_SlicerEstimator.estimator import SlicerEstimator, SlicerEstimatorGcodeAnalysisQueue
-from flask_babel import gettext
+from .const import SLICER_SIMPLIFY3D
+from .metadata import SlicerEstimatorFiledata, SlicerEstimatorMetadataFiles
+from .estimator import SlicerEstimator, SlicerEstimatorGcodeAnalysisQueue
 
 class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                             octoprint.plugin.TemplatePlugin,
@@ -94,6 +90,11 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
 
 
     def on_settings_migrate(self, target, current):
+        # Migration runs before on_after_startup, so make sure runtime
+        # settings (e.g. self._metadata_slicer) are populated before any
+        # migration step that may depend on them.
+        self._update_settings_from_config()
+
         if current is not None:
             self._logger.info("SlicerEstimator: Setting migration from version {} to {}".format(current, target))
 
@@ -131,6 +132,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         ]
 
 
+    def is_template_autoescaped(self):
+        return True
+
+
 
 # SECTION: Settings helper
     def _update_settings_from_config(self):
@@ -140,7 +145,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         self._plugins = self._settings.get(["plugins"])
         self._metadata_slicer = self._settings.get(["metadata_slicer"])
 
-        if self._estimator != None:
+        if self._estimator is not None:
             self._estimator.average_prio = self._average_prio
 
         self._logger.debug("Average: {}".format(self._average_prio))
@@ -242,7 +247,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if event == Events.FILE_ADDED:
             if payload["storage"] == "local" and payload["type"][1] == "gcode":
                 self._logger.debug("Filedata of {}: {}".format(payload["path"], vars(self._filedata[payload["path"]])))
-                if self._filedata[payload["path"]].slicer == None:
+                if self._filedata[payload["path"]].slicer is None:
                     self._sendNotificationToClient("no_slicer_detected")
                 self._filedata[payload["path"]].store_metadata()
 
@@ -342,7 +347,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 if meta_items["targets"][plugin_identifier][target].pop() is None:
                     self._logger.error("Could not unregister plugins {} target {}!".format(plugin_identifier, target))
                 self._settings.set(["metadata_list"], self._metadata_list)
-            self._logger.info("Plugin {} unregistered target {}".format())
+            self._logger.info("Plugin {} unregistered target {}".format(plugin_identifier, target))
         else:
             self._logger.error("Plugin {} tried to unregister target {} but not found in registry".format(plugin_identifier, target))
 
@@ -388,7 +393,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if plugin_identifier in self._plugins:
             if target in self._plugins[plugin_identifier]["targets"].keys():
                 return_list = []
-                meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target] == True, self._metadata_list)
+                meta_selected = filter(lambda elem: elem["targets"][plugin_identifier][target], self._metadata_list)
                 additional_metadata = self._file_manager._storage_managers[origin].get_additional_metadata(path, "slicer_metadata")
                 if additional_metadata:
                     for meta_item in meta_selected:
@@ -443,13 +448,14 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self.unregister_plugin(plugin)
 
 
+    def is_api_protected(self):
+        return True
+
     def get_api_commands(self):
         return {'deleteMetadataStored': [], 'updateMetadataStored': []}
 
     def on_api_command(self, command, data):
-        import flask
-        from octoprint.server import user_permission
-        if not user_permission.can():
+        if not Permissions.SETTINGS.can():
             return flask.make_response("Insufficient rights", 403)
 
         if command == "deleteMetadataStored":

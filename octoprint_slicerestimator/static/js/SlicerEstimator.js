@@ -58,18 +58,6 @@ $(function () {
 
 
       // NotificationMessages
-      if (data.notifyType) {
-        var notfiyType = data.notifyType;
-        var notifyTitle = data.notifyTitle;
-        var notifyMessage = data.notifyMessage;
-        var notifyHide = data.notifyHide;
-        new PNotify({
-          title: notifyTitle,
-          text: notifyMessage,
-          type: notfiyType,
-          hide: notifyHide
-        });
-      }
       if (data.notifyMessageID) {
         switch (data.notifyMessageID) {
           case "no_estimation":

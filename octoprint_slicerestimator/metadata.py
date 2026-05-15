@@ -1,13 +1,19 @@
-from ast import Constant
-import re
 import logging
+import re
+
 import octoprint.filemanager
-import octoprint.filemanager.storage
 import octoprint.filemanager.util
 
-
-from .const import *
-from .util import *
+from .const import (
+    SLICER_BAMBU,
+    SLICER_CURA,
+    SLICER_LUBAN,
+    SLICER_ORCA,
+    SLICER_PRUSA,
+    SLICER_SIMPLIFY3D,
+    SLICER_SUPERSLICER,
+)
+from .util import SlicerEstimatorFileHandling
 
 
 # Interface to OctoPrints Lineprocessor on file upload
@@ -103,11 +109,11 @@ class SlicerEstimatorMetadata:
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self._metadata = dict()
         if self._slicer == SLICER_PRUSA or self._slicer == SLICER_SUPERSLICER or self._slicer == SLICER_ORCA or self._slicer == SLICER_BAMBU:
-            self._metadata_regex = re.compile("^; (\w*) = (.*)")
+            self._metadata_regex = re.compile(r"^; (\w*) = (.*)")
         elif self._slicer == SLICER_SIMPLIFY3D:
-            self._metadata_regex = re.compile("^;   (\w*),(.*)")
+            self._metadata_regex = re.compile(r"^;   (\w*),(.*)")
         elif self._slicer == SLICER_LUBAN:
-            self._metadata_regex = re.compile("^;(.*): (.*)")
+            self._metadata_regex = re.compile(r"^;(.*): (.*)")
 
     # Save gathered information to OctoPrint file metadata
     def store_metadata(self):
@@ -148,7 +154,7 @@ class SlicerEstimatorMetadata:
 
     # slicer auto selection
     def detect_slicer(path):
-        line = SlicerEstimatorFileHandling.search_in_file_regex(path,".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|OrcaSlicer|BambuStudio|Snapmaker Luban|Creality_Print).*")
+        line = SlicerEstimatorFileHandling.search_in_file_regex(path, r".*(PrusaSlicer|SuperSlicer|Simplify3D|Cura_SteamEngine|Creality Slicer|OrcaSlicer|BambuStudio|Snapmaker Luban|Creality_Print).*")
         if line:
             if  "Cura_SteamEngine" in line or "Creality Slicer" in line:
                 return SLICER_CURA
@@ -187,19 +193,19 @@ class SlicerEstimatorEstimator:
             self._logger.info("Detected Cura")
         elif self._slicer == SLICER_PRUSA:
             self._logger.info("Detected PrusaSlicer")
-            return(re.compile("M73 P([0-9]+) R([0-9]+).*"))
+            return(re.compile(r"M73 P([0-9]+) R([0-9]+).*"))
         elif self._slicer == SLICER_SUPERSLICER:
             self._logger.info("Detected SuperSlicer")
-            return(re.compile("M73 P([0-9]+) R([0-9]+).*"))
+            return(re.compile(r"M73 P([0-9]+) R([0-9]+).*"))
         elif self._slicer == SLICER_SIMPLIFY3D:
             self._logger.info("Detected Simplify3D")
-            return(re.compile(";   Build [tT]ime: ([0-9]+) hours? ([0-9]+) minutes?"))
+            return(re.compile(r";   Build [tT]ime: ([0-9]+) hours? ([0-9]+) minutes?"))
         elif self._slicer == SLICER_ORCA:
             self._logger.info("Detected OrcaSlicer")
-            return(re.compile("M73 P([0-9]+) R([0-9]+).*"))
+            return(re.compile(r"M73 P([0-9]+) R([0-9]+).*"))
         elif self._slicer == SLICER_BAMBU:
             self._logger.info("Detected BambuStudio")
-            return(re.compile("M73 P([0-9]+) R([0-9]+).*"))
+            return(re.compile(r"M73 P([0-9]+) R([0-9]+).*"))
         elif self._slicer == SLICER_LUBAN:
             self._logger.info("Detected Snapmaker Luban")
         else:
@@ -256,7 +262,7 @@ class SlicerEstimatorFilamentChange:
         self._slicer = slicer
         self._plugin = plugin
         self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
-        self._regexStr = "^(M600|T[0-9]|M0|M601)"
+        self._regexStr = r"^(M600|T[0-9]|M0|M601)"
         self._compiled = re.compile(self._regexStr)
         self._line_cnt = 0
         self._bytes_processed = 0
