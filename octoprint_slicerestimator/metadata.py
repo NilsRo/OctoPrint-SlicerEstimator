@@ -250,7 +250,7 @@ class SlicerEstimatorEstimator:
                 slicer_additional["bytes"] = self._bytes_processed
                 slicer_additional["slicer"] = self._slicer
                 self._plugin._file_manager._storage_managers["local"].set_additional_metadata(self._path, "slicer_additional", slicer_additional, overwrite=True)
-                self._logger.debug(self._plugin._file_manager._storage_managers["local"].get_additional_metadata(self._path,"slicer_additional"))
+                self._logger.debug("Slicer additional metadata: {}".format(self._plugin._file_manager._storage_managers["local"].get_additional_metadata(self._path, "slicer_additional")))
         else:
             self._logger.debug("No slicer additional informations found in GCODE: {}".format(self._path))
 

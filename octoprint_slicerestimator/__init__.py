@@ -94,6 +94,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         # settings (e.g. self._metadata_slicer) are populated before any
         # migration step that may depend on them.
         self._update_settings_from_config()
+        self._logger.debug("SlicerEstimator: Config current {} - target {}".format(current, target))
 
         if current is not None:
             self._logger.info("SlicerEstimator: Setting migration from version {} to {}".format(current, target))
@@ -116,9 +117,10 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
                 self._settings.set(["plugins"], plugins)
         
         if current is None or current < 4:
-            self._logger.info("SlicerEstimator: Updating Metadata from files...")
+            self._logger.info("SlicerEstimator: Updating Metadata from files...this can take a while if you have many files. Please wait until the message 'Metadata updated' appears in the log.")
             metadata_handler = SlicerEstimatorMetadataFiles(self)
             metadata_handler.update_metadata_in_files()
+            self._logger.info("SlicerEstimator: Metadata updated.")
         
 
     def on_settings_save(self, data):
