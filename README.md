@@ -7,12 +7,15 @@
   - [API - for other plugin developers](#api---for-other-plugin-developers)
   - [Slicers supported](#slicers-supported)
     - [Cura](#cura)
+    - [Creality Slicer](#creality-slicer)
+    - [Creality Print](#creality-print)
     - [Simplify3D](#simplify3d)
     - [PrusaSlicer](#prusaslicer)
     - [SuperSlicer](#superslicer)
     - [OrcaSlicer](#orcaslicer)
     - [Bambu Studio](#bambu-studio)
     - [Snapmaker Luban](#snapmaker-luban)
+    - [Snapmaker Orca](#snapmaker-orca)
   - [Notes](#notes)
 
 With this plugin you can use the more accurate estimation of the slicer instead of OctoPrints estimations. So it will be very accurate, as the slicer created each command of the GCODE. 
@@ -21,12 +24,15 @@ Also you can add custom metadata that will be added to the filebrowser to get e.
 The slicer is detected automatically, the default configurations supports the following slicers. Everything is done during upload so you have to upload a file again to get slicer estimator working.
 
 * Cura
+* Creality Print
+* Creality Slicer
 * Simplify3D
 * PrusaSlicer
 * SuperSlicer
 * OrcaSlicer
 * Bambu Studio
 * Snapmaker Luban
+* Snapmaker Orca
 
 # Estimation
 Slicer Estimator detected the embedded remaining time if there is a checkmark right of the estimation:
@@ -69,9 +75,15 @@ Metadata stored can be easily used by other plugins. [An API description is avai
 With Cura native no changes has to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
 [Available placesholders](http://files.fieldofview.com/cura/Replacement_Patterns.html)
 
+### Creality Slicer
+With Cura native no changes has to be applied to Cura. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
+[Available placesholders](http://files.fieldofview.com/cura/Replacement_Patterns.html)
+
+### Creality Print
+Remaining time is read out of M73 commands added by OrcaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filament changes.
+
 ### Simplify3D
 With Simplify3D no changes has to be applied to Simplify3D. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
-
 
 ### PrusaSlicer
 Remaining time is read out of M73 commands added by PrusaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filament changes.
@@ -87,6 +99,9 @@ Remaining time is read out of M73 commands added by Bambu Studio. The slicer wil
 
 ### Snapmaker Luban
 With Snapmaker Luban no changes has to be applied. The overall print time is read out of a comment in the GCODE. For a correct estimation OctoPrints percentage done is used as there is only the overall print time available.
+
+### Snapmaker Orca
+Remaining time is read out of M73 commands added by OrcaSlicer. The slicer will update the remaining print time continuously. Also there is support to show the remaining times to filament changes.
 
 ## Notes
  * If no slicer is detected the original estimator from OctoPrint will be used.

@@ -24,13 +24,17 @@
                     Ticket. A bug for the slicers below or an enhancement request for additional slicers.') }}
                     <p>
                     <ul>
-                        <li><b>Cura</b> (Creality Slicer): {{ _('No changes to the slicer have to be applied.
+                        <li><b>Cura</b>: {{ _('No changes to the slicer have to be applied.
                             The overall print time is read out of a comment in the GCODE. This will update continuously
                             the remaining print time.') }}</li>
+                        <li><b>Creality Slicer</b>: {{ _('No changes to the slicer have to be applied.
+                            The overall print time is read out of a comment in the GCODE. This will update continuously
+                            the remaining print time.') }}</li>
+                        <li><b>Creality Print</b>: {{ _('Remaining time is read out of M73 commands. This will update
+                            continuously the remaining print time.') }}</li>
                         <li><b>Simply3D</b>: {{ _('No changes to the slicer have to be applied. The
                             overall print time is read out of a comment in the GCODE. For a correct estimation
-                            OctoPrints percentage done is used as there is only the overall print time available.') }}
-                        </li>
+                            OctoPrints percentage done is used as there is only the overall print time available.') }}</li>
                         <li><b>PrusaSlicer</b>: {{ _('Remaining time is read out of M73 commands. This will update
                             continuously the remaining print time.') }}</li>
                         <li><b>SuperSlicer</b>: {{ _('Remaining time is read out of M73 commands. This will update
@@ -42,6 +46,8 @@
                         <li><b>Snapmaker Luban</b>: {{ _('No changes to the slicer have to be applied.
                             The overall print time is read out of a comment in the GCODE. This will update continuously
                             the remaining print time.') }}</li>
+                        <li><b>Snapmaker Orca</b>: {{ _('Remaining time is read out of M73 commands. This will update
+                            continuously the remaining print time.') }}</li>
                     </ul>
                     <p>
                         {{ _('Additional support or a manual is available on <a
