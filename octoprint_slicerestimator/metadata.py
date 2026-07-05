@@ -1,5 +1,6 @@
 import logging
 import re
+from time import sleep
 
 import octoprint.filemanager
 import octoprint.filemanager.util
@@ -51,6 +52,7 @@ class SlicerEstimatorFiledata(octoprint.filemanager.util.LineProcessorStream):
 #Todo: nachträgliche Aktualisierung aller Dateien mit den Zeitdaten - dies nicht beim Druck sinnvoll, da die Datei selber abgeändert wird.
 class SlicerEstimatorMetadataFiles:
     def __init__(self, plugin):
+        self._logger = logging.getLogger("octoprint.plugins.SlicerEstimator")
         self._plugin = plugin
         self._file_manager = self._plugin._file_manager
         self._origin = "local"
@@ -72,9 +74,9 @@ class SlicerEstimatorMetadataFiles:
     # Update metadata in one file from a file on the disk
     def update_metadata_in_file_on_disk(self, path, path_on_disk):
         slicer = SlicerEstimatorMetadata.detect_slicer(path_on_disk)
-        if slicer is not None:            
+        if slicer is not None:
             results = SlicerEstimatorFileHandling.return_file_lines(path_on_disk)
-            if results is not None:                
+            if results is not None:
                 estimator_obj = SlicerEstimatorEstimator(self._origin, path, slicer, self._plugin)
                 metadata_obj = SlicerEstimatorMetadata(self._origin, path, slicer, self._plugin)
                 filament_change_obj = SlicerEstimatorFilamentChange(self._origin, path, slicer, self._plugin)
@@ -96,8 +98,19 @@ class SlicerEstimatorMetadataFiles:
         if results is not None:
             filelist = SlicerEstimatorFileHandling.flatten_files(results)
             for path in filelist:
+                while self._plugin._printer.is_printing():
+                    sleep(1)
                 self.update_metadata_in_file(path)
+            self._logger.info("SlicerEstimator: Metadata updated.")
             return filelist
+
+    def update_metadata_in_files_async(self):
+        if self._plugin._update_metadata_in_files_future.running():
+            self._logger.info("SlicerEstimator: Metadata update already running. Please wait until the message 'Metadata updated' appears in the log.")
+        else:
+            self._plugin._update_metadata_in_files_future = self._plugin._executor.submit(
+                self.update_metadata_in_files
+            )
 
 
 class SlicerEstimatorMetadata:

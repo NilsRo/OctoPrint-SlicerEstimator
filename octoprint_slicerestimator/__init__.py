@@ -28,11 +28,12 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
     def __init__(self):
         self._estimator = None
         self._slicer_estimation = None
-        self._executor = ThreadPoolExecutor()
+        self._executor = ThreadPoolExecutor(max_workers=4)
         self._plugins = dict()
         self._filedata = dict()
         self._slicer_filament_change = None
         self._filament_change_cnt = 0
+        self._update_metadata_in_files_future = self._executor.submit(lambda: None)
 
 
 
@@ -119,8 +120,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         if current is None or current < 4:
             self._logger.info("SlicerEstimator: Updating Metadata from files...this can take a while if you have many files. Please wait until the message 'Metadata updated' appears in the log.")
             metadata_handler = SlicerEstimatorMetadataFiles(self)
-            metadata_handler.update_metadata_in_files()
-            self._logger.info("SlicerEstimator: Metadata updated.")
+            metadata_handler.update_metadata_in_files_async()
         
 
     def on_settings_save(self, data):
@@ -468,7 +468,7 @@ class SlicerEstimatorPlugin(octoprint.plugin.StartupPlugin,
         elif command == "updateMetadataStored":
             self._logger.debug("Updating metadata stored")
             metadataFileObj = SlicerEstimatorMetadataFiles(self)            
-            metadataFileObj.update_metadata_in_files()
+            metadataFileObj.update_metadata_in_files_async()
             # return flask.jsonify(results)
 
 
