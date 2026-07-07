@@ -97,9 +97,13 @@ class SlicerEstimatorMetadataFiles:
         results = self._file_manager._storage_managers[self._origin].list_files(recursive=True)
         if results is not None:
             filelist = SlicerEstimatorFileHandling.flatten_files(results)
+            self._logger.info("SlicerEstimator: Updating metadata in {} files. This may take a while.".format(len(filelist)))
+            cnt = 0
             for path in filelist:
+                cnt += 1
                 while self._plugin._printer.is_printing():
                     sleep(1)
+                self._logger.info("SlicerEstimator: {}/{} Updating metadata in file: {}".format(cnt, len(filelist), path))
                 self.update_metadata_in_file(path)
             self._logger.info("SlicerEstimator: Metadata updated.")
             return filelist
