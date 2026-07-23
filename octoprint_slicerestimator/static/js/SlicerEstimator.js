@@ -91,6 +91,23 @@ $(function () {
               type: "warning",
               hide: false
             });
+            break;
+          case "start_update_metadata_in_files":
+            new PNotify({
+              title: "Slicer Estimator",
+              text: gettext("Updating metadata from all files. This may take a while."),
+              type: "warning",
+              hide: false
+            });
+            break;
+          case "finish_update_metadata_in_files":
+            new PNotify({
+              title: "Slicer Estimator",
+              text: gettext("Metadata from all files updated."),
+              type: "info",
+              hide: false
+            });
+            break;
         }
       }
     };

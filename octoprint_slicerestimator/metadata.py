@@ -98,6 +98,7 @@ class SlicerEstimatorMetadataFiles:
         if results is not None:
             filelist = SlicerEstimatorFileHandling.flatten_files(results)
             self._logger.info("SlicerEstimator: Updating metadata in {} files. This may take a while.".format(len(filelist)))
+            self._plugin._sendNotificationToClient("start_update_metadata_in_files")
             cnt = 0
             for path in filelist:
                 cnt += 1
@@ -106,6 +107,7 @@ class SlicerEstimatorMetadataFiles:
                 self._logger.info("SlicerEstimator: {}/{} Updating metadata in file: {}".format(cnt, len(filelist), path))
                 self.update_metadata_in_file(path)
             self._logger.info("SlicerEstimator: Metadata updated.")
+            self._plugin._sendNotificationToClient("finish_update_metadata_in_files")
             return filelist
 
     def update_metadata_in_files_async(self):
