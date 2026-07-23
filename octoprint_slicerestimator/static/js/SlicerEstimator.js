@@ -546,6 +546,6 @@ $(function () {
   OCTOPRINT_VIEWMODELS.push({
     construct: slicerEstimatorViewModel,
     dependencies: ["printerStateViewModel", "filesViewModel", "settingsViewModel"],
-    elements: ['#metadata_list', '#filamentChange_list', '#metadataStored_group']
+    elements: ['#metadata_list', '#filamentChange_list', '#metadataStored_group', '#metadataUpdate_group']
   });
 });

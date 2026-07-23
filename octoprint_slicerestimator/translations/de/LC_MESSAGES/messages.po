@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OctoPrint-SlicerEstimator 1.3.5\n"
 "Report-Msgid-Bugs-To: i18n@octoprint.org\n"
-"POT-Creation-Date: 2026-07-23 23:42+0200\n"
+"POT-Creation-Date: 2026-07-24 00:31+0200\n"
 "PO-Revision-Date: 2022-05-05 19:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -67,7 +67,9 @@ msgstr "Keine Zeitangaben gefunden. Bitte prüfen, ob diese im Slicer aktiv sind
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:103
 msgid "Updating metadata from all files. This may take a while."
-msgstr "Starte Aktualisierung der Metadaten von allen Dateien. Dies kann eine Weile dauern."
+msgstr ""
+"Starte Aktualisierung der Metadaten von allen Dateien. Dies kann eine "
+"Weile dauern."
 
 #: octoprint_SlicerEstimator/static/js/SlicerEstimator.js:111
 msgid "Metadata from all files updated."
@@ -82,8 +84,8 @@ msgid "Main"
 msgstr "Allgemein"
 
 #: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:7
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:59
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:116
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:74
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:131
 msgid "Metadata"
 msgstr "Metadaten"
 
@@ -177,7 +179,21 @@ msgstr ""
 msgid "Create issue"
 msgstr "Ticket erstellen"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:61
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:57
+msgid "Files"
+msgstr "Dateien"
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:58
+msgid ""
+"If you like to update the slicer estimation and metadata for your prints "
+"still uploaded, you can do so here."
+msgstr "Zur Aktualisierung der Druckzeit und Metadaten von bereits hochgeladenen Dateien."
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:66
+msgid "Run update from files"
+msgstr "Aktualisierung von Dateien ausführen"
+
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:76
 msgid ""
 "How to add custom metadata to OctoPrints filelist see <a\n"
 "                            href=\"https://github.com/NilsRo/OctoPrint-"
@@ -187,7 +203,7 @@ msgstr ""
 "findet man <a href=\"https://github.com/NilsRo/OctoPrint-"
 "SlicerEstimator\" target=\"_blank\">hier</a>!"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:66
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:81
 msgid ""
 "Metadata has to be added in the Start GCODE in this format: (;Slicer\n"
 "                        info:&lt;key&gt;;&lt;value&gt;). You can add as "
@@ -203,19 +219,19 @@ msgstr ""
 "href=\"https://github.com/NilsRo/Cura_Anycubic_MegaS_Profile\" "
 "target=\"_blank\">hier</a> für Cura finden."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:72
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:87
 msgid "Slicer standard metadata will be used also."
 msgstr "Slicer Standard-Metadaten werden auch genutzt."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:73
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:88
 msgid "Use Slicer standard metadata"
 msgstr "Slicer Standard-Metadaten nutzen"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:79
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:94
 msgid "Filelist"
 msgstr "Dateibrowser"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:82
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:97
 msgid ""
 "Add custom metadata like filament brand, material,... in OctoPrints "
 "filebrowser after uploading a file."
@@ -223,34 +239,34 @@ msgstr ""
 "Ergänze eigene Metadaten wie Filamenthersteller, Material, ... in "
 "OctoPrints Dateibrowser nach dem Upload."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:83
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:109
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:98
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:124
 msgid "View metadata"
 msgstr "Metadaten anzeigen"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:90
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:105
 msgid "Orientation"
 msgstr "Ausrichtung"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:92
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:107
 msgid ""
 "Change the orientation in the filelist above or below the standard "
 "metadata."
 msgstr "Ändere die Ausrichtung im Dateibrowser auf oben oder unten."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:96
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:111
 msgid "Top"
 msgstr "oben"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:101
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:116
 msgid "Bottom"
 msgstr "unten"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:105
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:120
 msgid "Current print"
 msgstr "Druckstatus"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:108
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:123
 msgid ""
 "Add custom metadata like filament brand, material,... in OctoPrints "
 "current print view."
@@ -258,57 +274,53 @@ msgstr ""
 "Zeige eigene Metadaten wie Filamenthersteller, Material, ... in "
 "OctoPrints Druckbereich an."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:112
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:127
 msgid "(restart of GUI - Browsersession - required)"
 msgstr "(Neustart der GUI - Browsersession - notwendig)"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:122
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:137
 msgid "Filter"
 msgstr "Filter"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:133
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:148
 msgid "Metadata ID"
 msgstr "Metadaten ID"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:134
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:149
 msgid "Description"
 msgstr "Beschreibung"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:162
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:177
 msgid "Refresh Metadata"
 msgstr "Metadaten aktualisieren"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:163
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:178
 msgid "Delete List"
 msgstr "Einträge löschen"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:168
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:183
 msgid "Use Refresh to update metadata from files. It will not delete entries..."
 msgstr ""
 "Nutze 'Aktualisieren' um die Metadaten neu einzulesen. Dies löscht keine "
 "Einträge..."
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:173
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:188
 msgid "Developer settings - use at your own risk / enable it on request only"
 msgstr ""
 "Entwickler-Einstellungen - auf eigene Gefahr / nur auf Rückfrage "
 "aktivieren"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:176
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:191
 msgid "Update from development branch"
 msgstr "Aktualisieren aus Entwickler-Branch"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:179
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:194
 msgid "Use development branch <b>Restart of OctoPrint required</b>"
 msgstr "Benutze Entwickler-Branch <b>Neustart von OctoPrint notwendig</b>"
 
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:190
+#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:205
 msgid "Delete Metadata stored"
 msgstr "gespeicherte Metadaten löschen"
-
-#: octoprint_SlicerEstimator/templates/SlicerEstimator_settings.jinja2:194
-msgid "Update Metadata stored"
-msgstr "gespeicherte Metadaten aktualisieren"
 
 #~ msgid "Custom"
 #~ msgstr "Individuell"
@@ -509,4 +521,7 @@ msgstr "gespeicherte Metadaten aktualisieren"
 
 #~ msgid "Delete the list above?"
 #~ msgstr "Liste wirklich löschen?"
+
+#~ msgid "Update Metadata stored"
+#~ msgstr "gespeicherte Metadaten aktualisieren"
 

@@ -54,6 +54,21 @@
                             href="https://github.com/NilsRo/OctoPrint-SlicerEstimator" target="_blank">Github</a>.') | safe }}
                         <button class="btn" data-bind="click: createIssue">{{ _('Create issue') }}</button>
                 </div>
+                <h4>{{ _('Files') }}</h4>
+                <div class="help-block">{{ _('If you like to update the slicer estimation and metadata for your prints still uploaded, you can do so here.') }}
+                    <br>
+                    <div class="row-fluid" data-bind="allowBindings: false">
+                        <div class="row-fluid" data-bind="allowBindings: true">
+                            <div id="metadataUpdate_group" class="control-group">
+                                <div class="control">
+                                    <button class="btn" data-bind="click: updateMetadataStored, enable: !updateMetadataStoredRunning()"><i
+                                            class="fa fa-spinner fa-spin" data-bind="visible: updateMetadataStoredRunning"
+                                            style="display: none;"></i> {{ _('Run update from files') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="SlicerEstimator_meta" class="tab-pane">
                 <h4>{{ _('Metadata') }}</h4>
@@ -188,10 +203,6 @@
                                     data-bind="click: deleteMetadataStored, enable: !deleteMetadataStoredRunning()"><i
                                         class="fa fa-spinner fa-spin" data-bind="visible: deleteMetadataStoredRunning"
                                         style="display: none;"></i> {{ _('Delete Metadata stored') }}</button>
-                                <button class="btn"
-                                    data-bind="click: updateMetadataStored, enable: !updateMetadataStoredRunning()"><i
-                                        class="fa fa-spinner fa-spin" data-bind="visible: updateMetadataStoredRunning"
-                                        style="display: none;"></i> {{ _('Update Metadata stored') }}</button>
                             </div>
                         </div>
                     </div>
